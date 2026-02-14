@@ -16,7 +16,7 @@ export default function LandingPage() {
           A simple, powerful way to view and inspect your 3D assets directly in the browser. Supports OBJ, FBX, GLTF, and STL.
         </p>
 
-        <div className="flex items-center justify-center gap-4 pt-8">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-8">
           <Link
             href="/editor"
             className="group px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-neutral-200 transition-all active:scale-95 flex items-center gap-2"
@@ -31,14 +31,13 @@ export default function LandingPage() {
             rel="noopener noreferrer"
             className="px-8 py-3 bg-neutral-800 text-white font-semibold rounded-full hover:bg-neutral-700 transition-all border border-neutral-700 flex items-center gap-2"
           >
-            <Linkedin size={18} />
             Connect on LinkedIn
           </a>
         </div>
       </div>
 
       <div className="absolute bottom-8 text-neutral-600 text-sm">
-        Built with React Three Fiber & Next.js
+        Built with React Three Fiber
       </div>
     </div>
   );

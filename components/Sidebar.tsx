@@ -113,7 +113,7 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                                 <input
                                     type="file"
                                     multiple
-                                    accept=".obj,.fbx,.gltf,.glb,.stl,.bin,.png,.jpg,.jpeg"
+                                    accept=".obj,.fbx,.gltf,.glb,.stl,.bin,.png,.jpg,.jpeg,.webp,.tga,.bmp"
                                     onChange={(e) => {
                                         if (e.target.files && e.target.files.length > 0) {
                                             onFileUpload(e.target.files);
