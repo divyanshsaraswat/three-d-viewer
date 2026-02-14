@@ -5,9 +5,16 @@ import SceneViewer from '@/components/SceneViewer';
 import Sidebar from '@/components/Sidebar';
 
 export default function EditorPage() {
-    const [modelUrl, setModelUrl] = useState<string | null>(null);
-    const [modelFormat, setModelFormat] = useState<'obj' | 'fbx' | 'gltf' | 'stl' | null>(null);
+    interface LoadedModel {
+        id: string;
+        url: string;
+        format: 'obj' | 'fbx' | 'gltf' | 'stl';
+        filename: string;
+    }
 
+    const [models, setModels] = useState<LoadedModel[]>([]);
+
+    // settings state remains same...
     const [settings, setSettings] = useState({
         bgColor: '#171717', // Neutral 900
         lightIntensity: 1,
@@ -19,55 +26,70 @@ export default function EditorPage() {
 
     // Load settings from LocalStorage on mount
     useEffect(() => {
-        const saved = localStorage.getItem('3d-viewer-settings');
-        if (saved) {
-            try {
+        try {
+            const saved = localStorage.getItem('3d-viewer-settings');
+            if (saved) {
                 setSettings(prev => ({ ...prev, ...JSON.parse(saved) }));
-            } catch (e) {
-                console.error('Failed to parse settings', e);
             }
+        } catch (e) {
+            console.warn('Failed to access localStorage:', e);
         }
     }, []);
 
     // Save settings to LocalStorage on change
     useEffect(() => {
-        localStorage.setItem('3d-viewer-settings', JSON.stringify(settings));
+        try {
+            localStorage.setItem('3d-viewer-settings', JSON.stringify(settings));
+        } catch (e) {
+            // Ignore write errors (e.g. quota exceeded or access denied)
+        }
     }, [settings]);
 
     const [fileMap, setFileMap] = useState<Map<string, string> | null>(null);
 
     const handleFileUpload = (files: FileList) => {
         const map = new Map<string, string>();
-        let mainUrl: string | null = null;
-        let mainFormat: 'obj' | 'fbx' | 'gltf' | 'stl' | null = null;
+        const newModels: LoadedModel[] = [];
 
         // First pass: Create blobs for all files
         Array.from(files).forEach(file => {
             const path = file.name;
             const url = URL.createObjectURL(file);
             map.set(path, url);
-            console.log('Mapped file:', path, '->', url); // Debug log
 
             const name = file.name.toLowerCase();
-            if (name.endsWith('.obj') || name.endsWith('.fbx') || name.endsWith('.gltf') || name.endsWith('.glb') || name.endsWith('.stl')) {
-                if (!mainUrl) { // Pick the first valid model file found
-                    mainUrl = url;
-                    if (name.endsWith('.obj')) mainFormat = 'obj';
-                    else if (name.endsWith('.fbx')) mainFormat = 'fbx';
-                    else if (name.endsWith('.gltf') || name.endsWith('.glb')) mainFormat = 'gltf';
-                    else if (name.endsWith('.stl')) mainFormat = 'stl';
-                }
+            const isTexture = name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.webp') || name.endsWith('.tga') || name.endsWith('.bmp');
+
+            if (isTexture) {
+                console.log(`[Texture Added]: ${path} -> ${url}`);
+            } else {
+                console.log(`[File Mapped]: ${path} -> ${url}`);
+            }
+
+            let format: 'obj' | 'fbx' | 'gltf' | 'stl' | null = null;
+            if (name.endsWith('.obj')) format = 'obj';
+            else if (name.endsWith('.fbx')) format = 'fbx';
+            else if (name.endsWith('.gltf') || name.endsWith('.glb')) format = 'gltf';
+            else if (name.endsWith('.stl')) format = 'stl';
+
+            if (format) {
+                newModels.push({
+                    id: crypto.randomUUID(),
+                    url,
+                    format,
+                    filename: path
+                });
             }
         });
 
-        if (mainUrl && mainFormat) {
+        if (newModels.length > 0) {
+            // Cleanup old blobs if we are replacing everything
             if (fileMap) {
                 fileMap.forEach(url => URL.revokeObjectURL(url));
             }
 
             setFileMap(map);
-            setModelUrl(mainUrl);
-            setModelFormat(mainFormat);
+            setModels(newModels);
         } else {
             alert('No supported 3D model file found in selection.');
         }
@@ -78,8 +100,7 @@ export default function EditorPage() {
             fileMap.forEach(url => URL.revokeObjectURL(url));
         }
         setFileMap(null);
-        setModelUrl(null);
-        setModelFormat(null);
+        setModels([]);
     };
 
     return (
@@ -91,19 +112,18 @@ export default function EditorPage() {
                 setSettings={setSettings}
                 onCloseModel={handleCloseModel}
                 onFileUpload={handleFileUpload}
-                fileLoaded={!!modelUrl}
+                fileLoaded={models.length > 0}
             />
 
             {/* Main Scene Area */}
             <div className="flex-1 relative">
                 <SceneViewer
-                    modelUrl={modelUrl}
-                    modelFormat={modelFormat}
+                    models={models}
                     settings={settings}
                     fileMap={fileMap}
                 />
 
-                {!modelUrl && (
+                {models.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div className="text-center p-8 bg-black/40 backdrop-blur-sm rounded-xl border border-white/10">
                             <h1 className="text-2xl font-light mb-2">Ready to View</h1>
