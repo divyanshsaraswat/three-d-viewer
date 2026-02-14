@@ -15,6 +15,7 @@ interface SidebarProps {
     setSettings: (settings: any) => void;
     onCloseModel: () => void;
     onFileUpload: (files: FileList) => void;
+    onExampleLoad: (name: string, url: string) => void;
     fileLoaded: boolean;
 }
 
@@ -78,7 +79,7 @@ function DraggableNumberInput({ value, onChange, step = 0.5 }: { value: number, 
     );
 }
 
-export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpload, fileLoaded }: SidebarProps) {
+export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpload, onExampleLoad, fileLoaded }: SidebarProps) {
     const [collapsed, setCollapsed] = useState(false);
 
 
@@ -109,6 +110,23 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                         {/* File Upload */}
                         <div className="space-y-2">
                             <label className="block text-sm font-medium mb-1">Load Model</label>
+
+                            {/* Examples */}
+                            <div className="grid grid-cols-2 gap-2 mb-2">
+                                <button
+                                    onClick={() => onExampleLoad('Apartment', '/examples/apartment.glb')}
+                                    className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
+                                >
+                                    🏠 Apartment
+                                </button>
+                                <button
+                                    onClick={() => onExampleLoad('Sword', '/examples/sword-volcano.glb')}
+                                    className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
+                                >
+                                    ⚔️ Sword
+                                </button>
+                            </div>
+
                             <div className="relative border-2 border-dashed border-neutral-600 rounded-lg p-4 hover:border-neutral-400 text-center cursor-pointer transition-colors">
                                 <input
                                     type="file"

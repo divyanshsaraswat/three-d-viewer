@@ -95,6 +95,20 @@ export default function EditorPage() {
         }
     };
 
+    const handleLoadExample = async (filename: string, url: string) => {
+        handleCloseModel(); // Clear current
+
+        // Ensure unique ID for the new model
+        const newModel: LoadedModel = {
+            id: crypto.randomUUID(),
+            url: url,
+            format: 'gltf', // Examples are known to be GLTF/GLB
+            filename: filename
+        };
+
+        setModels([newModel]);
+    };
+
     const handleCloseModel = () => {
         if (fileMap) {
             fileMap.forEach(url => URL.revokeObjectURL(url));
@@ -112,6 +126,7 @@ export default function EditorPage() {
                 setSettings={setSettings}
                 onCloseModel={handleCloseModel}
                 onFileUpload={handleFileUpload}
+                onExampleLoad={handleLoadExample}
                 fileLoaded={models.length > 0}
             />
 
