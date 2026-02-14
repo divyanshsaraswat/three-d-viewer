@@ -1,121 +1,44 @@
-'use client';
+import Link from 'next/link';
+import { ArrowRight, Linkedin } from 'lucide-react';
+import Image from 'next/image';
 
-import { useState, useEffect } from 'react';
-import SceneViewer from '@/components/SceneViewer';
-import Sidebar from '@/components/Sidebar';
-
-export default function ViewerPage() {
-  const [modelUrl, setModelUrl] = useState<string | null>(null);
-  const [modelFormat, setModelFormat] = useState<'obj' | 'fbx' | 'gltf' | 'stl' | null>(null);
-
-  const [settings, setSettings] = useState({
-    bgColor: '#171717', // Neutral 900
-    lightIntensity: 1,
-    lightColor: '#ffffff',
-    lightX: 10,
-    lightY: 10,
-    lightZ: 10
-  });
-
-  // Load settings from LocalStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('3d-viewer-settings');
-    if (saved) {
-      try {
-        setSettings(prev => ({ ...prev, ...JSON.parse(saved) }));
-      } catch (e) {
-        console.error('Failed to parse settings', e);
-      }
-    }
-  }, []);
-
-  // Save settings to LocalStorage on change
-  useEffect(() => {
-    localStorage.setItem('3d-viewer-settings', JSON.stringify(settings));
-  }, [settings]);
-
-  const [fileMap, setFileMap] = useState<Map<string, string> | null>(null);
-
-  const handleFileUpload = (files: FileList) => {
-    const map = new Map<string, string>();
-    let mainUrl: string | null = null;
-    let mainFormat: 'obj' | 'fbx' | 'gltf' | 'stl' | null = null;
-
-    // First pass: Create blobs for all files
-    Array.from(files).forEach(file => {
-      // Normalizing path to handle relative paths if webkitRelativePath is available
-      // But mainly we just key by name for simple drag-drop flat structure
-      const path = file.name;
-      const url = URL.createObjectURL(file);
-      map.set(path, url);
-      console.log('Mapped file:', path, '->', url); // Debug log
-
-      const name = file.name.toLowerCase();
-      if (name.endsWith('.obj') || name.endsWith('.fbx') || name.endsWith('.gltf') || name.endsWith('.glb') || name.endsWith('.stl')) {
-        if (!mainUrl) { // Pick the first valid model file found
-          mainUrl = url;
-          if (name.endsWith('.obj')) mainFormat = 'obj';
-          else if (name.endsWith('.fbx')) mainFormat = 'fbx';
-          else if (name.endsWith('.gltf') || name.endsWith('.glb')) mainFormat = 'gltf';
-          else if (name.endsWith('.stl')) mainFormat = 'stl';
-        }
-      }
-    });
-
-    if (mainUrl && mainFormat) {
-      // Cleanup old blobs if any (simpler to just revoke all unique values in old map if we tracked it, 
-      // but for now relying on browser cleanup on reload/close is acceptable or we can add a cleanup effect)
-      // ideally we track previous map to revoke.
-      if (fileMap) {
-        fileMap.forEach(url => URL.revokeObjectURL(url));
-      }
-
-      setFileMap(map);
-      setModelUrl(mainUrl);
-      setModelFormat(mainFormat);
-    } else {
-      alert('No supported 3D model file found in selection.');
-    }
-  };
-
-  const handleCloseModel = () => {
-    if (fileMap) {
-      fileMap.forEach(url => URL.revokeObjectURL(url));
-    }
-    setFileMap(null);
-    setModelUrl(null);
-    setModelFormat(null);
-  };
-
+export default function LandingPage() {
   return (
-    <div className="w-screen h-screen overflow-hidden flex relative font-sans text-neutral-100">
+    <div className="h-screen w-screen bg-neutral-950 text-neutral-100 flex flex-col items-center justify-center relative overflow-hidden">
+      {/* Background Gradients */}
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(50,50,50,0.2),rgba(0,0,0,0))] pointer-events-none" />
 
-      {/* Sidebar Overlay */}
-      <Sidebar
-        settings={settings}
-        setSettings={setSettings}
-        onCloseModel={handleCloseModel}
-        onFileUpload={handleFileUpload}
-        fileLoaded={!!modelUrl}
-      />
+      <div className="z-10 text-center space-y-8 p-4">
+        <h1 className="text-6xl font-bold tracking-tighter bg-gradient-to-br from-white to-neutral-500 bg-clip-text text-transparent">
+          3D Model Viewer
+        </h1>
+        <p className="text-neutral-400 text-xl max-w-lg mx-auto">
+          A simple, powerful way to view and inspect your 3D assets directly in the browser. Supports OBJ, FBX, GLTF, and STL.
+        </p>
 
-      {/* Main Scene Area */}
-      <div className="flex-1 relative">
-        <SceneViewer
-          modelUrl={modelUrl}
-          modelFormat={modelFormat}
-          settings={settings}
-          fileMap={fileMap}
-        />
+        <div className="flex items-center justify-center gap-4 pt-8">
+          <Link
+            href="/editor"
+            className="group px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-neutral-200 transition-all active:scale-95 flex items-center gap-2"
+          >
+            Launch Editor
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
 
-        {!modelUrl && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-center p-8 bg-black/40 backdrop-blur-sm rounded-xl border border-white/10">
-              <h1 className="text-2xl font-light mb-2">Ready to View</h1>
-              <p className="text-neutral-400">Upload a 3D model from the sidebar to get started.</p>
-            </div>
-          </div>
-        )}
+          <a
+            href="https://www.linkedin.com/in/imdivyanshmv/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-3 bg-neutral-800 text-white font-semibold rounded-full hover:bg-neutral-700 transition-all border border-neutral-700 flex items-center gap-2"
+          >
+            <Linkedin size={18} />
+            Connect on LinkedIn
+          </a>
+        </div>
+      </div>
+
+      <div className="absolute bottom-8 text-neutral-600 text-sm">
+        Built with React Three Fiber & Next.js
       </div>
     </div>
   );
