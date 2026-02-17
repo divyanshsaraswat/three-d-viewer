@@ -21,7 +21,8 @@ export default function EditorPage() {
         lightColor: '#ffffff',
         lightX: 10,
         lightY: 10,
-        lightZ: 10
+        lightZ: 10,
+        dynamicFocus: true
     });
 
     // Load settings from LocalStorage on mount

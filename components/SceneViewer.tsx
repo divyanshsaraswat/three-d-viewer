@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stage } from '@react-three/drei';
+import { OrbitControls, Stage, AdaptiveDpr } from '@react-three/drei';
 import { Suspense, memo } from 'react';
 import ModelLoader from './ModelLoader';
 import ErrorBoundary from './ErrorBoundary';
@@ -21,6 +21,7 @@ interface SceneViewerProps {
         lightX: number;
         lightY: number;
         lightZ: number;
+        dynamicFocus: boolean;
     };
     fileMap?: Map<string, string> | null;
 }
@@ -65,15 +66,41 @@ const ModelScene = memo(({ models, fileMap }: { models: LoadedModel[], fileMap?:
 
 ModelScene.displayName = 'ModelScene';
 
+import AdaptiveQuality from './AdaptiveQuality';
+
+// ...
+
 export default function SceneViewer({ models, settings, fileMap }: SceneViewerProps) {
     return (
         <div className="w-full h-full relative" style={{ backgroundColor: settings.bgColor }}>
-            <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 5], fov: 50 }}>
+            <Canvas
+                shadows
+                dpr={[1, 2]}
+                camera={{ position: [0, 0, 5], fov: 50 }}
+                gl={{
+                    powerPreference: "high-performance",
+                    antialias: true, // Enable AA for better quality when static
+                    stencil: false,
+                    depth: true
+                }}
+                performance={{ min: 0.5 }} // Allow downgrading to 0.5 DPR
+            >
+                <AdaptiveQuality />
+                {settings.dynamicFocus && <AdaptiveDpr pixelated />}
+
                 <Suspense fallback={null}>
                     <SceneLights settings={settings} />
                     <ModelScene models={models} fileMap={fileMap} />
                 </Suspense>
-                <OrbitControls makeDefault autoRotate autoRotateSpeed={2.0} />
+
+                <OrbitControls
+                    makeDefault
+                    autoRotate
+                    autoRotateSpeed={2.0}
+                    // @ts-ignore - regresses prop exists in drei but might be missing in types
+                    regresses={settings.dynamicFocus}
+                />
+
                 <gridHelper args={[20, 20, 0x444444, 0x222222]} />
                 <axesHelper args={[5]} />
             </Canvas>

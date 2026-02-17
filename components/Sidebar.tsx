@@ -11,6 +11,7 @@ interface SidebarProps {
         lightX: number;
         lightY: number;
         lightZ: number;
+        dynamicFocus: boolean;
     };
     setSettings: (settings: any) => void;
     onCloseModel: () => void;
@@ -225,6 +226,16 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                                         />
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="flex items-center justify-between mt-4 border-t border-neutral-700 pt-4">
+                                <label className="text-xs text-neutral-400">Dynamic Focus</label>
+                                <button
+                                    onClick={() => updateSetting('dynamicFocus', !settings.dynamicFocus)}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.dynamicFocus ? 'bg-blue-500' : 'bg-neutral-600'}`}
+                                >
+                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.dynamicFocus ? 'translate-x-4' : 'translate-x-0'}`} />
+                                </button>
                             </div>
                         </div>
                     </div>
