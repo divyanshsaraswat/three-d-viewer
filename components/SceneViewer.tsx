@@ -68,20 +68,23 @@ ModelScene.displayName = 'ModelScene';
 
 import AdaptiveQuality from './AdaptiveQuality';
 
-// ...
+import { isMobile } from '@/utils/device';
 
 export default function SceneViewer({ models, settings, fileMap }: SceneViewerProps) {
+    const mobile = isMobile();
+
     return (
         <div className="w-full h-full relative" style={{ backgroundColor: settings.bgColor }}>
             <Canvas
-                shadows
-                dpr={[1, 2]}
+                shadows={!mobile} // Disable shadows on mobile
+                dpr={mobile ? 1 : [1, 2]} // Cap DPR at 1 for mobile
                 camera={{ position: [0, 0, 5], fov: 50 }}
                 gl={{
                     powerPreference: "high-performance",
-                    antialias: true, // Enable AA for better quality when static
+                    antialias: !mobile, // Disable AA on mobile for performance
                     stencil: false,
-                    depth: true
+                    depth: true,
+                    precision: mobile ? 'mediump' : 'highp' // Lower precision on mobile
                 }}
                 performance={{ min: 0.5 }} // Allow downgrading to 0.5 DPR
             >
