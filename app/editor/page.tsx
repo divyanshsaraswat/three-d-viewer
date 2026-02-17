@@ -22,7 +22,8 @@ export default function EditorPage() {
         lightX: 10,
         lightY: 10,
         lightZ: 10,
-        dynamicFocus: true
+        dynamicFocus: true,
+        tourMode: false
     });
 
     // Load settings from LocalStorage on mount

@@ -12,6 +12,7 @@ interface SidebarProps {
         lightY: number;
         lightZ: number;
         dynamicFocus: boolean;
+        tourMode: boolean;
     };
     setSettings: (settings: any) => void;
     onCloseModel: () => void;
@@ -90,7 +91,7 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
     };
 
     return (
-        <div className={`absolute top-0 left-0 h-full bg-neutral-900/90 text-white transition-all duration-300 z-10 flex flex-col ${collapsed ? 'w-12' : 'w-80'}`}>
+        <div className={`absolute top-0 left-0 h-full bg-neutral-900/90 text-white transition-all duration-300 z-10 flex flex-col ${collapsed ? 'w-4' : 'w-80'}`}>
             <button
                 onClick={() => setCollapsed(!collapsed)}
                 className="absolute -right-3 top-4 bg-neutral-700 rounded-full p-1 hover:bg-neutral-600"
@@ -98,10 +99,10 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                 {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
             </button>
 
-            <div className="p-4 flex-1 overflow-y-auto overflow-x-hidden">
+            <div className="p-4 flex-1 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-0" style={{ scrollbarWidth: 'none' }}>
                 {collapsed ? (
                     <div className="flex flex-col items-center gap-4 mt-8">
-                        <Upload size={20} />
+                        {collapsed ? null : <Upload size={20} />}
                         <div className="w-4 h-4 rounded-full" style={{ backgroundColor: settings.bgColor }}></div>
                     </div>
                 ) : (
@@ -235,6 +236,19 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                                     className={`w-8 h-4 rounded-full relative transition-colors ${settings.dynamicFocus ? 'bg-blue-500' : 'bg-neutral-600'}`}
                                 >
                                     <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.dynamicFocus ? 'translate-x-4' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+
+                            <div className="flex items-center justify-between border-t border-neutral-700 pt-4">
+                                <label className="text-xs text-neutral-400">
+                                    Tour Mode
+                                    <span className="block text-[10px] text-neutral-500">WASD + Mouse</span>
+                                </label>
+                                <button
+                                    onClick={() => updateSetting('tourMode', !settings.tourMode)}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.tourMode ? 'bg-green-500' : 'bg-neutral-600'}`}
+                                >
+                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.tourMode ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </button>
                             </div>
                         </div>

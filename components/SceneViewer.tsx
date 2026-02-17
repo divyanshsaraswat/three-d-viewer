@@ -1,7 +1,8 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stage, AdaptiveDpr } from '@react-three/drei';
+import { OrbitControls, Stage, AdaptiveDpr, Grid } from '@react-three/drei';
+import * as THREE from 'three';
 import { Suspense, memo } from 'react';
 import ModelLoader from './ModelLoader';
 import ErrorBoundary from './ErrorBoundary';
@@ -22,6 +23,7 @@ interface SceneViewerProps {
         lightY: number;
         lightZ: number;
         dynamicFocus: boolean;
+        tourMode: boolean;
     };
     fileMap?: Map<string, string> | null;
 }
@@ -70,23 +72,27 @@ import AdaptiveQuality from './AdaptiveQuality';
 
 import { isMobile } from '@/utils/device';
 
+import FirstPersonController from './FirstPersonController';
+
+// ...
+
 export default function SceneViewer({ models, settings, fileMap }: SceneViewerProps) {
     const mobile = isMobile();
 
     return (
         <div className="w-full h-full relative" style={{ backgroundColor: settings.bgColor }}>
             <Canvas
-                shadows={!mobile} // Disable shadows on mobile
-                dpr={mobile ? 1 : [1, 2]} // Cap DPR at 1 for mobile
+                shadows={!mobile}
+                dpr={mobile ? 1 : [1, 2]}
                 camera={{ position: [0, 0, 5], fov: 50 }}
                 gl={{
                     powerPreference: "high-performance",
-                    antialias: !mobile, // Disable AA on mobile for performance
+                    antialias: !mobile,
                     stencil: false,
                     depth: true,
-                    precision: mobile ? 'mediump' : 'highp' // Lower precision on mobile
+                    precision: mobile ? 'mediump' : 'highp'
                 }}
-                performance={{ min: 0.5 }} // Allow downgrading to 0.5 DPR
+                performance={{ min: 0.5 }}
             >
                 <AdaptiveQuality />
                 {settings.dynamicFocus && <AdaptiveDpr pixelated />}
@@ -96,17 +102,40 @@ export default function SceneViewer({ models, settings, fileMap }: SceneViewerPr
                     <ModelScene models={models} fileMap={fileMap} />
                 </Suspense>
 
-                <OrbitControls
-                    makeDefault
-                    autoRotate
-                    autoRotateSpeed={2.0}
-                    // @ts-ignore - regresses prop exists in drei but might be missing in types
-                    regresses={settings.dynamicFocus}
-                />
+                {settings.tourMode ? (
+                    <FirstPersonController />
+                ) : (
+                    <OrbitControls
+                        makeDefault
+                        autoRotate
+                        autoRotateSpeed={2.0}
+                        // @ts-ignore
+                        regresses={settings.dynamicFocus}
+                    />
+                )}
 
-                <gridHelper args={[20, 20, 0x444444, 0x222222]} />
+                <Grid
+                    position={[0, -0.01, 0]}
+                    args={[10.5, 10.5]}
+                    cellSize={0.6}
+                    cellThickness={0.6}
+                    cellColor={new THREE.Color('#6f6f6f')}
+                    sectionSize={3.3}
+                    sectionThickness={1.5}
+                    sectionColor={new THREE.Color('#9d4b4b')}
+                    fadeDistance={30}
+                    infiniteGrid
+                    fadeStrength={5}
+                />
                 <axesHelper args={[5]} />
             </Canvas>
+
+            {/* Tour Mode Instructions Overlay */}
+            {settings.tourMode && (
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm backdrop-blur pointer-events-none">
+                    Click to Start • WASD to Move • ESC to Exit
+                </div>
+            )}
         </div>
     );
 }
