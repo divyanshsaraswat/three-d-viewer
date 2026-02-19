@@ -1,9 +1,16 @@
 import { PointerLockControls } from '@react-three/drei';
 import { useThree, useFrame } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import * as THREE from 'three';
 
-export default function FirstPersonController() {
+// Module-level variables to persist state across re-mounts
+let savedPosition: THREE.Vector3 | null = null;
+let savedRotation: THREE.Euler | null = null;
+
+import { useStore } from '@/store/useStore';
+
+const FirstPersonController = memo(() => {
+    const height = useStore(state => state.settings.tourHeight);
     const { camera } = useThree();
     const moveForward = useRef(false);
     const moveBackward = useRef(false);
@@ -11,6 +18,23 @@ export default function FirstPersonController() {
     const moveRight = useRef(false);
     const velocity = useRef(new THREE.Vector3());
     const direction = useRef(new THREE.Vector3());
+
+    // Restore camera state on mount
+    useEffect(() => {
+        if (savedPosition) {
+            camera.position.copy(savedPosition);
+        }
+        if (savedRotation) {
+            camera.rotation.copy(savedRotation);
+        }
+
+        return () => {
+            if (!savedPosition) savedPosition = new THREE.Vector3();
+            if (!savedRotation) savedRotation = new THREE.Euler();
+            savedPosition.copy(camera.position);
+            savedRotation.copy(camera.rotation);
+        };
+    }, [camera]);
 
     useEffect(() => {
         const onKeyDown = (event: KeyboardEvent) => {
@@ -90,8 +114,14 @@ export default function FirstPersonController() {
         // Forward/Back movement
         camera.translateZ(velocity.current.z * delta);
 
-        // LOCK Y AXIS to simulate walking
-        camera.position.y = 1.7; // Standard eye level height
+        // LOCK Y AXIS to simulate walking at specified height
+        camera.position.y = height;
+
+        // Persist state continuously
+        if (!savedPosition) savedPosition = new THREE.Vector3();
+        if (!savedRotation) savedRotation = new THREE.Euler();
+        savedPosition.copy(camera.position);
+        savedRotation.copy(camera.rotation);
     });
 
     return (
@@ -100,4 +130,6 @@ export default function FirstPersonController() {
             maxPolarAngle={Math.PI / 2} // Lock to horizon (90 degrees)
         />
     );
-}
+});
+
+export default FirstPersonController;

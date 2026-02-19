@@ -1,40 +1,18 @@
-'use client';
-
 import { X, ChevronLeft, ChevronRight, Upload, ZoomIn, ZoomOut, Move, RotateCw, Trash2 } from 'lucide-react';
 import { useState, useRef, useCallback } from 'react';
-
-interface SidebarProps {
-    settings: {
-        bgColor: string;
-        lightIntensity: number;
-        lightColor: string;
-        lightX: number;
-        lightY: number;
-        lightZ: number;
-        dynamicFocus: boolean;
-        tourMode: boolean;
-    };
-    setSettings: (settings: any) => void;
-    onCloseModel: () => void;
-    onFileUpload: (files: FileList) => void;
-    onExampleLoad: (name: string, url: string) => void;
-    fileLoaded: boolean;
-}
+import { useStore, LoadedModel } from '@/store/useStore';
 
 function DraggableNumberInput({ value, onChange, step = 0.5 }: { value: number, onChange: (val: number) => void, step?: number }) {
     const [displayValue, setDisplayValue] = useState(value);
     const isDraggingRef = useRef(false);
     const startXRef = useRef(0);
     const startValueRef = useRef(0);
+    const currentValueRef = useRef(value);
 
     // Sync local display value if external value changes (and not dragging)
     if (!isDraggingRef.current && displayValue !== value) {
         setDisplayValue(value);
     }
-
-    // We need a way to pass the final value to handleMouseUp without stale closures.
-    // Let's use a ref to track the "current" calculated value during drag.
-    const currentValueRef = useRef(value);
 
     const handleMouseMoveRef = useCallback((e: MouseEvent) => {
         if (!isDraggingRef.current) return;
@@ -81,13 +59,77 @@ function DraggableNumberInput({ value, onChange, step = 0.5 }: { value: number, 
     );
 }
 
-export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpload, onExampleLoad, fileLoaded }: SidebarProps) {
+export default function Sidebar() {
+    const settings = useStore(state => state.settings);
+    const updateSetting = useStore(state => state.updateSetting);
+    const models = useStore(state => state.models);
+    const setModels = useStore(state => state.setModels);
+    const setFileMap = useStore(state => state.setFileMap);
+
+    const fileLoaded = models.length > 0;
     const [collapsed, setCollapsed] = useState(false);
 
+    const handleCloseModel = () => {
+        const currentFileMap = useStore.getState().fileMap;
+        if (currentFileMap) {
+            currentFileMap.forEach(url => URL.revokeObjectURL(url));
+        }
+        setFileMap(null);
+        setModels([]);
+    };
 
+    const handleFileUpload = (files: FileList) => {
+        const map = new Map<string, string>();
+        const newModels: LoadedModel[] = [];
 
-    const updateSetting = (key: string, value: any) => {
-        setSettings((prev: any) => ({ ...prev, [key]: value }));
+        // Cleanup old blobs
+        const currentFileMap = useStore.getState().fileMap;
+        if (currentFileMap) {
+            currentFileMap.forEach(url => URL.revokeObjectURL(url));
+        }
+
+        // Create blobs
+        Array.from(files).forEach(file => {
+            const path = file.name;
+            const url = URL.createObjectURL(file);
+            map.set(path, url);
+
+            const name = file.name.toLowerCase();
+            let format: 'obj' | 'fbx' | 'gltf' | 'stl' | null = null;
+            if (name.endsWith('.obj')) format = 'obj';
+            else if (name.endsWith('.fbx')) format = 'fbx';
+            else if (name.endsWith('.gltf') || name.endsWith('.glb')) format = 'gltf';
+            else if (name.endsWith('.stl')) format = 'stl';
+
+            if (format) {
+                newModels.push({
+                    id: crypto.randomUUID(),
+                    url,
+                    format,
+                    filename: path
+                });
+            }
+        });
+
+        if (newModels.length > 0) {
+            setFileMap(map);
+            setModels(newModels);
+        } else {
+            alert('No supported 3D model file found in selection.');
+        }
+    };
+
+    const handleExampleLoad = (filename: string, url: string) => {
+        handleCloseModel();
+
+        const newModel: LoadedModel = {
+            id: crypto.randomUUID(),
+            url: url,
+            format: 'gltf',
+            filename: filename
+        };
+
+        setModels([newModel]);
     };
 
     return (
@@ -116,13 +158,13 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                             {/* Examples */}
                             <div className="grid grid-cols-2 gap-2 mb-2">
                                 <button
-                                    onClick={() => onExampleLoad('Apartment', '/examples/apartment.glb')}
+                                    onClick={() => handleExampleLoad('Apartment', '/examples/apartment.glb')}
                                     className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
                                 >
                                     🏠 Apartment
                                 </button>
                                 <button
-                                    onClick={() => onExampleLoad('Sword', '/examples/sword-volcano.glb')}
+                                    onClick={() => handleExampleLoad('Sword', '/examples/sword-volcano.glb')}
                                     className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
                                 >
                                     ⚔️ Sword
@@ -136,7 +178,7 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                                     accept=".obj,.fbx,.gltf,.glb,.stl,.bin,.png,.jpg,.jpeg,.webp,.tga,.bmp"
                                     onChange={(e) => {
                                         if (e.target.files && e.target.files.length > 0) {
-                                            onFileUpload(e.target.files);
+                                            handleFileUpload(e.target.files);
                                         }
                                     }}
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -150,7 +192,7 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                         {/* Main Controls - only show if file loaded */}
                         {fileLoaded && (
                             <button
-                                onClick={onCloseModel}
+                                onClick={handleCloseModel}
                                 className="w-full py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded flex items-center justify-center gap-2 text-sm transition-colors"
                             >
                                 <Trash2 size={16} /> Close Model
@@ -251,6 +293,20 @@ export default function Sidebar({ settings, setSettings, onCloseModel, onFileUpl
                                     <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.tourMode ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </button>
                             </div>
+
+                            {settings.tourMode && (
+                                <div className="mt-4 border-t border-neutral-700 pt-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="text-xs text-neutral-400">Eye Level (Y-Axis)</label>
+                                        <span className="text-xs text-neutral-500">{settings.tourHeight}m</span>
+                                    </div>
+                                    <DraggableNumberInput
+                                        value={settings.tourHeight}
+                                        onChange={(v) => updateSetting('tourHeight', v)}
+                                        step={0.1}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
