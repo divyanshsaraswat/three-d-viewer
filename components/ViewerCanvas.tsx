@@ -13,6 +13,7 @@ import { useStore } from '@/store/useStore';
 import SceneLights from './SceneLights';
 import BookmarkManager from './BookmarkManager';
 import SceneBookmarks from './SceneBookmarks';
+import LoadingOverlay from './LoadingOverlay';
 
 interface LoadedModel {
     id: string;
@@ -72,7 +73,7 @@ function ViewerCanvasComponent() {
             <AdaptiveQuality />
             {dynamicFocus && <AdaptiveDpr pixelated />}
 
-            <Suspense fallback={null}>
+            <Suspense fallback={<LoadingOverlay />}>
                 <SceneLights />
                 <BookmarkManager />
                 <SceneBookmarks />

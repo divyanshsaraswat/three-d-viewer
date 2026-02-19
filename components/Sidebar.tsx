@@ -119,8 +119,89 @@ export default function Sidebar() {
         }
     };
 
+    const [downloading, setDownloading] = useState<{ name: string; progress: number } | null>(null);
+
     const handleExampleLoad = (filename: string, url: string) => {
         handleCloseModel();
+
+        // Check if remote URL
+        if (url.startsWith('http')) {
+            setDownloading({ name: filename, progress: 0 });
+
+            const cacheName = '3d-model-cache-v1';
+
+            (async () => {
+                try {
+                    const cache = await caches.open(cacheName);
+
+                    // Try to find in cache first (using original URL as key)
+                    let response = await cache.match(url);
+
+                    if (response) {
+                        console.log('Serving from cache:', filename);
+                        setDownloading({ name: filename, progress: 100 });
+                    } else {
+                        // Not in cache, fetch from proxy
+                        console.log('Downloading:', filename);
+                        const proxyUrl = `/api/proxy-model?url=${encodeURIComponent(url)}`;
+                        const fetchResponse = await fetch(proxyUrl);
+
+                        if (!fetchResponse.body) throw new Error('No body');
+
+                        const total = Number(fetchResponse.headers.get('content-length')) || 0;
+                        let loaded = 0;
+
+                        const stream = new ReadableStream({
+                            start(controller) {
+                                const reader = fetchResponse.body!.getReader();
+                                function read() {
+                                    reader.read().then(({ done, value }) => {
+                                        if (done) {
+                                            controller.close();
+                                            return;
+                                        }
+                                        loaded += value.length;
+                                        if (total > 0) {
+                                            setDownloading({ name: filename, progress: (loaded / total) * 100 });
+                                        }
+                                        controller.enqueue(value);
+                                        read();
+                                    });
+                                }
+                                read();
+                            }
+                        });
+
+                        const newResponse = new Response(stream);
+                        const blob = await newResponse.blob();
+
+                        // Create a response to store in cache
+                        // We store it under the ORIGINAL url so we can find it next time
+                        await cache.put(url, new Response(blob));
+
+                        // Use this blob
+                        response = new Response(blob);
+                    }
+
+                    const blob = await response.blob();
+                    const objectUrl = URL.createObjectURL(blob);
+                    const newModel: LoadedModel = {
+                        id: crypto.randomUUID(),
+                        url: objectUrl,
+                        format: 'gltf',
+                        filename: filename
+                    };
+                    setModels([newModel]);
+                    setDownloading(null);
+
+                } catch (err) {
+                    console.error('Failed to load example', err);
+                    setDownloading(null);
+                    alert('Failed to load example model.');
+                }
+            })();
+            return;
+        }
 
         const newModel: LoadedModel = {
             id: crypto.randomUUID(),
@@ -173,6 +254,28 @@ export default function Sidebar() {
                                     className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
                                 >
                                     ⚔️ Sword
+                                </button>
+                                <button
+                                    onClick={() => handleExampleLoad('Scene', 'https://d2kpa63owptad0.cloudfront.net/scene.glb')}
+                                    disabled={!!downloading}
+                                    className="col-span-2 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500 flex flex-col justify-center disabled:opacity-50 disabled:cursor-wait relative overflow-hidden"
+                                >
+                                    <div className="flex items-center justify-between w-full z-10">
+                                        <span>🏙️ City Scene</span>
+                                        {downloading?.name === 'Scene' && (
+                                            <span className="text-[10px]">
+                                                {downloading.progress > 0 ? `${Math.round(downloading.progress)}%` : '...'}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Progress Bar Background */}
+                                    {downloading?.name === 'Scene' && (
+                                        <div
+                                            className="absolute bottom-0 left-0 h-0.5 bg-blue-500 transition-all duration-200"
+                                            style={{ width: downloading.progress > 0 ? `${downloading.progress}%` : '100%', opacity: downloading.progress > 0 ? 1 : 0.3 }}
+                                        />
+                                    )}
                                 </button>
                             </div>
 
