@@ -17,17 +17,34 @@ interface Settings {
     dynamicFocus: boolean;
     tourMode: boolean;
     tourHeight: number;
+    autoRotate: boolean;
+}
+
+export interface CameraBookmark {
+    id: string;
+    name: string;
+    position: [number, number, number];
+    rotation: [number, number, number];
 }
 
 interface StoreState {
     models: LoadedModel[];
     settings: Settings;
     fileMap: Map<string, string> | null;
+    bookmarks: CameraBookmark[];
+    capturePending: boolean; // Signal to capture camera state
 
     setModels: (models: LoadedModel[]) => void;
     setSettings: (settings: Settings | ((prev: Settings) => Settings)) => void;
     updateSetting: (key: keyof Settings, value: any) => void;
     setFileMap: (fileMap: Map<string, string> | null) => void;
+
+    addBookmark: (bookmark: CameraBookmark) => void;
+    removeBookmark: (id: string) => void;
+    setBookmarks: (bookmarks: CameraBookmark[]) => void;
+    triggerCapture: () => void;
+    clearCapture: () => void;
+
     reset: () => void;
 }
 
@@ -40,13 +57,16 @@ export const defaultSettings: Settings = {
     lightZ: 10,
     dynamicFocus: true,
     tourMode: false,
-    tourHeight: 1.7
+    tourHeight: 1.7,
+    autoRotate: true
 };
 
 export const useStore = create<StoreState>((set) => ({
     models: [],
     settings: defaultSettings,
     fileMap: null,
+    bookmarks: [],
+    capturePending: false,
 
     setModels: (models) => set({ models }),
     setSettings: (settings) => set((state) => ({
@@ -56,5 +76,12 @@ export const useStore = create<StoreState>((set) => ({
         settings: { ...state.settings, [key]: value }
     })),
     setFileMap: (fileMap) => set({ fileMap }),
-    reset: () => set({ models: [], fileMap: null })
+
+    addBookmark: (bookmark) => set((state) => ({ bookmarks: [...state.bookmarks, bookmark] })),
+    removeBookmark: (id) => set((state) => ({ bookmarks: state.bookmarks.filter(b => b.id !== id) })),
+    setBookmarks: (bookmarks) => set({ bookmarks }),
+    triggerCapture: () => set({ capturePending: true }),
+    clearCapture: () => set({ capturePending: false }),
+
+    reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false })
 }));

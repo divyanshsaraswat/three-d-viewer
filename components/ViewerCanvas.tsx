@@ -11,6 +11,8 @@ import { isMobile } from '@/utils/device';
 import FirstPersonController from './FirstPersonController';
 import { useStore } from '@/store/useStore';
 import SceneLights from './SceneLights';
+import BookmarkManager from './BookmarkManager';
+import SceneBookmarks from './SceneBookmarks';
 
 interface LoadedModel {
     id: string;
@@ -42,6 +44,7 @@ function ViewerCanvasComponent() {
     const fileMap = useStore(state => state.fileMap);
     const dynamicFocus = useStore(state => state.settings.dynamicFocus);
     const tourMode = useStore(state => state.settings.tourMode);
+    const autoRotate = useStore(state => state.settings.autoRotate);
 
     const mobile = isMobile();
 
@@ -71,6 +74,8 @@ function ViewerCanvasComponent() {
 
             <Suspense fallback={null}>
                 <SceneLights />
+                <BookmarkManager />
+                <SceneBookmarks />
                 <ModelScene models={models} fileMap={fileMap} />
             </Suspense>
 
@@ -79,7 +84,7 @@ function ViewerCanvasComponent() {
             ) : (
                 <OrbitControls
                     makeDefault
-                    autoRotate
+                    autoRotate={autoRotate}
                     autoRotateSpeed={2.0}
                     // @ts-ignore
                     regresses={dynamicFocus}

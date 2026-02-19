@@ -1,0 +1,147 @@
+'use client';
+
+import { useState, useRef } from 'react';
+import { useStore, CameraBookmark } from '@/store/useStore';
+import { ChevronUp, ChevronDown, Plus, Trash2, Camera, Eye, Download, Upload } from 'lucide-react';
+
+export default function CameraBookmarks() {
+    const [expanded, setExpanded] = useState(false);
+    const bookmarks = useStore(state => state.bookmarks);
+    const triggerCapture = useStore(state => state.triggerCapture);
+    const removeBookmark = useStore(state => state.removeBookmark);
+    const setBookmarks = useStore(state => state.setBookmarks);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleRestore = (bookmark: CameraBookmark) => {
+        window.dispatchEvent(new CustomEvent('restore-bookmark', { detail: bookmark }));
+    };
+
+    const handleExport = () => {
+        const data = JSON.stringify(bookmarks, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'camera-bookmarks.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const json = JSON.parse(event.target?.result as string);
+                if (Array.isArray(json)) {
+                    // Simple validation
+                    const valid = json.every(b => b.id && b.position && b.rotation);
+                    if (valid) {
+                        setBookmarks(json);
+                        alert('Bookmarks imported successfully!');
+                    } else {
+                        alert('Invalid bookmark file format.');
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to parse bookmarks', err);
+                alert('Failed to parse JSON file.');
+            }
+        };
+        reader.readAsText(file);
+        // Reset input
+        e.target.value = '';
+    };
+
+    return (
+        <div
+            className={`bg-neutral-900/90 text-white rounded-lg shadow-xl border border-neutral-700 transition-all duration-300 flex flex-col ${expanded ? 'h-96 w-64' : 'h-10 w-48'}`}
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerUp={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
+        >
+
+            {/* Header */}
+            <button
+                onClick={() => setExpanded(!expanded)}
+                className="flex items-center justify-between px-3 py-2 w-full hover:bg-neutral-800 rounded-t-lg transition-colors"
+            >
+                <div className="flex items-center gap-2 text-sm font-medium">
+                    <Camera size={16} className="text-blue-400" />
+                    <span>Saved Views ({bookmarks.length})</span>
+                </div>
+                {expanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+            </button>
+
+            {/* Content (only when expanded) */}
+            {expanded && (
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    {/* List */}
+                    <div className="flex-1 overflow-y-auto p-2 space-y-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-neutral-600">
+                        {bookmarks.length === 0 ? (
+                            <div className="text-center text-xs text-neutral-500 mt-8">
+                                No saved views.<br />Move camera and click +
+                            </div>
+                        ) : (
+                            bookmarks.map(b => (
+                                <div key={b.id} className="group bg-neutral-800 p-2 rounded border border-neutral-700 hover:border-blue-500/50 transition-colors flex items-center justify-between">
+                                    <button
+                                        onClick={() => handleRestore(b)}
+                                        className="flex-1 text-left text-xs truncate hover:text-blue-300 flex items-center gap-2"
+                                    >
+                                        <Eye size={12} className="opacity-50" />
+                                        {b.name}
+                                    </button>
+                                    <button
+                                        onClick={() => removeBookmark(b.id)}
+                                        className="text-neutral-500 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <Trash2 size={12} />
+                                    </button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+
+                    {/* Footer Actions */}
+                    <div className="p-2 border-t border-neutral-700 space-y-2">
+                        <button
+                            onClick={triggerCapture}
+                            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white py-1.5 rounded text-xs transition-colors"
+                        >
+                            <Plus size={14} /> Add Current View
+                        </button>
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleExport}
+                                className="flex-1 flex items-center justify-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-neutral-600"
+                                title="Download JSON"
+                            >
+                                <Download size={12} /> Save
+                            </button>
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="flex-1 flex items-center justify-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-neutral-600"
+                                title="Import JSON"
+                            >
+                                <Upload size={12} /> Load
+                            </button>
+                        </div>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImport}
+                            accept=".json"
+                            className="hidden"
+                        />
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

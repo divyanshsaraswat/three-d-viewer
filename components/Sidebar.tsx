@@ -133,7 +133,12 @@ export default function Sidebar() {
     };
 
     return (
-        <div className={`absolute top-0 left-0 h-full bg-neutral-900/90 text-white transition-all duration-300 z-10 flex flex-col ${collapsed ? 'w-4' : 'w-80'}`}>
+        <div
+            className={`absolute top-0 left-0 h-full bg-neutral-900/90 text-white transition-all duration-300 z-10 flex flex-col ${collapsed ? 'w-4' : 'w-80'}`}
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerUp={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
+        >
             <button
                 onClick={() => setCollapsed(!collapsed)}
                 className="absolute -right-3 top-4 bg-neutral-700 rounded-full p-1 hover:bg-neutral-600"
@@ -278,6 +283,16 @@ export default function Sidebar() {
                                     className={`w-8 h-4 rounded-full relative transition-colors ${settings.dynamicFocus ? 'bg-blue-500' : 'bg-neutral-600'}`}
                                 >
                                     <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.dynamicFocus ? 'translate-x-4' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+
+                            <div className="flex items-center justify-between border-t border-neutral-700 pt-4">
+                                <label className="text-xs text-neutral-400">Auto Rotate</label>
+                                <button
+                                    onClick={() => updateSetting('autoRotate', !settings.autoRotate)}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.autoRotate ? 'bg-blue-500' : 'bg-neutral-600'}`}
+                                >
+                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.autoRotate ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </button>
                             </div>
 

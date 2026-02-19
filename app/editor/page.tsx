@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import SceneViewer from '@/components/SceneViewer';
 import Sidebar from '@/components/Sidebar';
+import CameraBookmarks from '@/components/CameraBookmarks';
 import { useStore, defaultSettings } from '@/store/useStore';
 
 export default function EditorPage() {
@@ -39,17 +40,22 @@ export default function EditorPage() {
             <Sidebar />
 
             {/* Main Scene Area */}
-            <div className="flex-1 relative">
+            <div className="flex-1 relative z-0">
                 <SceneViewer />
 
                 {modelsLength === 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                         <div className="text-center p-8 bg-black/40 backdrop-blur-sm rounded-xl border border-white/10">
                             <h1 className="text-2xl font-light mb-2">Ready to View</h1>
                             <p className="text-neutral-400">Upload a 3D model from the sidebar to get started.</p>
                         </div>
                     </div>
                 )}
+
+                {/* Camera Bookmarks UI - Rendered here to be on top of Scene but inside the relative container */}
+                <div className="absolute bottom-4 right-4 z-50">
+                    <CameraBookmarks />
+                </div>
             </div>
         </div>
     );
