@@ -18,6 +18,7 @@ interface Settings {
     tourMode: boolean;
     tourHeight: number;
     autoRotate: boolean;
+    collisionEnabled: boolean;
 }
 
 export interface CameraBookmark {
@@ -34,6 +35,9 @@ interface StoreState {
     bookmarks: CameraBookmark[];
     capturePending: boolean; // Signal to capture camera state
 
+    selectedMeshId: string | null;
+    pendingTexture: { meshId: string, url: string } | null;
+
     setModels: (models: LoadedModel[]) => void;
     setSettings: (settings: Settings | ((prev: Settings) => Settings)) => void;
     updateSetting: (key: keyof Settings, value: any) => void;
@@ -44,6 +48,10 @@ interface StoreState {
     setBookmarks: (bookmarks: CameraBookmark[]) => void;
     triggerCapture: () => void;
     clearCapture: () => void;
+
+    setSelectedMesh: (id: string | null) => void;
+    applyTexture: (meshId: string, url: string) => void;
+    clearPendingTexture: () => void;
 
     reset: () => void;
 }
@@ -58,7 +66,8 @@ export const defaultSettings: Settings = {
     dynamicFocus: true,
     tourMode: false,
     tourHeight: 1.7,
-    autoRotate: true
+    autoRotate: true,
+    collisionEnabled: true
 };
 
 export const useStore = create<StoreState>((set) => ({
@@ -67,6 +76,8 @@ export const useStore = create<StoreState>((set) => ({
     fileMap: null,
     bookmarks: [],
     capturePending: false,
+    selectedMeshId: null,
+    pendingTexture: null,
 
     setModels: (models) => set({ models }),
     setSettings: (settings) => set((state) => ({
@@ -83,5 +94,9 @@ export const useStore = create<StoreState>((set) => ({
     triggerCapture: () => set({ capturePending: true }),
     clearCapture: () => set({ capturePending: false }),
 
-    reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false })
+    setSelectedMesh: (id) => set({ selectedMeshId: id }),
+    applyTexture: (meshId, url) => set({ pendingTexture: { meshId, url } }),
+    clearPendingTexture: () => set({ pendingTexture: null }),
+
+    reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false, selectedMeshId: null, pendingTexture: null })
 }));

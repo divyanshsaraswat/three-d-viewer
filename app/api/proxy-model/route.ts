@@ -22,8 +22,10 @@ export async function GET(request: NextRequest) {
         headers.set('Access-Control-Allow-Origin', '*');
 
         // Forward content-type and length if available
-        if (response.headers.get('content-length')) {
-            headers.set('Content-Length', response.headers.get('content-length')!);
+        const contentLength = response.headers.get('content-length');
+        if (contentLength) {
+            headers.set('Content-Length', contentLength);
+            headers.set('X-Content-Length', contentLength); // Fallback for clients where Content-Length is stripped
         }
 
         return new NextResponse(response.body, {

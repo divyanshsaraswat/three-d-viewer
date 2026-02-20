@@ -9,6 +9,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { KHRMaterialsPbrSpecularGlossinessExtension } from './extensions/KHR_materials_pbrSpecularGlossiness.js';
 import * as THREE from 'three';
 import { useMemo } from 'react';
+import { useStore } from '@/store/useStore';
 
 interface ModelLoaderProps {
     url: string;
@@ -86,7 +87,8 @@ function OBJModel({ url, manager }: { url: string, manager?: THREE.LoadingManage
         if (manager) loader.manager = manager;
     });
     const scene = useMemo(() => obj.clone(), [obj]);
-    return <primitive object={scene} />;
+    const { onPointerDown } = useMeshInteraction(scene);
+    return <primitive object={scene} onPointerDown={onPointerDown} />;
 }
 
 function FBXModel({ url, manager }: { url: string, manager?: THREE.LoadingManager }) {
@@ -94,7 +96,8 @@ function FBXModel({ url, manager }: { url: string, manager?: THREE.LoadingManage
         if (manager) loader.manager = manager;
     });
     const scene = useMemo(() => fbx.clone(), [fbx]);
-    return <primitive object={scene} />;
+    const { onPointerDown } = useMeshInteraction(scene);
+    return <primitive object={scene} onPointerDown={onPointerDown} />;
 }
 
 function GLTFModel({ url, manager }: { url: string, manager?: THREE.LoadingManager }) {
@@ -103,7 +106,8 @@ function GLTFModel({ url, manager }: { url: string, manager?: THREE.LoadingManag
         loader.register((parser) => new KHRMaterialsPbrSpecularGlossinessExtension(parser));
     });
     const scene = useMemo(() => gltf.scene.clone(), [gltf]);
-    return <primitive object={scene} />;
+    const { onPointerDown } = useMeshInteraction(scene);
+    return <primitive object={scene} onPointerDown={onPointerDown} />;
 }
 
 function STLModel({ url, manager }: { url: string, manager?: THREE.LoadingManager }) {
@@ -117,7 +121,8 @@ function STLModel({ url, manager }: { url: string, manager?: THREE.LoadingManage
         return new THREE.Mesh(stl, material);
     }, [stl]);
 
-    return <primitive object={mesh} />;
+    const { onPointerDown } = useMeshInteraction(mesh);
+    return <primitive object={mesh} onPointerDown={onPointerDown} />;
 }
 
 export default function ModelLoader({ url, format, fileMap }: ModelLoaderProps) {
@@ -138,3 +143,53 @@ export default function ModelLoader({ url, format, fileMap }: ModelLoaderProps) 
             return null;
     }
 }
+
+// Hook to handle selection and texture application
+function useMeshInteraction(scene: THREE.Object3D) {
+    const setSelectedMesh = useStore(state => state.setSelectedMesh);
+    const pendingTexture = useStore(state => state.pendingTexture);
+    const clearPendingTexture = useStore(state => state.clearPendingTexture);
+    const selectedMeshId = useStore(state => state.selectedMeshId);
+
+    // Apply Texture Effect
+    useMemo(() => {
+        if (pendingTexture) {
+            const mesh = scene.getObjectByProperty('uuid', pendingTexture.meshId);
+            if (mesh && mesh instanceof THREE.Mesh) {
+                const loader = new THREE.TextureLoader();
+                loader.load(pendingTexture.url, (texture) => {
+                    texture.colorSpace = THREE.SRGBColorSpace;
+                    texture.flipY = false; // Usually needed for GLTF, maybe generic
+
+                    const material = mesh.material;
+                    if (Array.isArray(material)) {
+                        material.forEach(m => {
+                            m.map = texture;
+                            m.needsUpdate = true;
+                        });
+                    } else {
+                        material.map = texture;
+                        material.needsUpdate = true;
+                    }
+                    clearPendingTexture();
+                });
+            }
+        }
+    }, [pendingTexture, scene, clearPendingTexture]);
+
+    // Highlight selection (optional visual feedback could go here)
+    // For now, just explicit clicking
+
+    return {
+        onPointerDown: (e: any) => {
+            e.stopPropagation();
+            // Toggle selection or set new
+            const id = e.object.uuid;
+            setSelectedMesh(id === selectedMeshId ? null : id);
+
+            // Log for debug
+            console.log('Selected Mesh:', id, e.object.name);
+        }
+    };
+}
+

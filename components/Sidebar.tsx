@@ -69,6 +69,17 @@ export default function Sidebar() {
     const fileLoaded = models.length > 0;
     const [collapsed, setCollapsed] = useState(false);
 
+    const selectedMeshId = useStore(state => state.selectedMeshId);
+    const applyTexture = useStore(state => state.applyTexture);
+
+    const handleTextureUpload = (files: FileList) => {
+        if (files.length > 0 && selectedMeshId) {
+            const file = files[0];
+            const url = URL.createObjectURL(file);
+            applyTexture(selectedMeshId, url);
+        }
+    };
+
     const handleCloseModel = () => {
         const currentFileMap = useStore.getState().fileMap;
         if (currentFileMap) {
@@ -128,14 +139,13 @@ export default function Sidebar() {
         if (url.startsWith('http')) {
             setDownloading({ name: filename, progress: 0 });
 
-            const cacheName = '3d-model-cache-v1';
-
             (async () => {
                 try {
-                    const cache = await caches.open(cacheName);
-
-                    // Try to find in cache first (using original URL as key)
-                    let response = await cache.match(url);
+                    // Caching disabled for now as per user request to avoid quota issues
+                    // const cacheName = '3d-model-cache-v1';
+                    // const cache = await caches.open(cacheName);
+                    // let response = await cache.match(url);
+                    let response = null;
 
                     if (response) {
                         console.log('Serving from cache:', filename);
@@ -148,7 +158,10 @@ export default function Sidebar() {
 
                         if (!fetchResponse.body) throw new Error('No body');
 
-                        const total = Number(fetchResponse.headers.get('content-length')) || 0;
+                        if (!fetchResponse.body) throw new Error('No body');
+
+                        const contentLength = fetchResponse.headers.get('content-length') || fetchResponse.headers.get('x-content-length');
+                        const total = Number(contentLength) || 0;
                         let loaded = 0;
 
                         const stream = new ReadableStream({
@@ -157,15 +170,25 @@ export default function Sidebar() {
                                 function read() {
                                     reader.read().then(({ done, value }) => {
                                         if (done) {
-                                            controller.close();
+                                            try { controller.close(); } catch (e) {
+                                                console.error('Failed to close stream controller', e);
+                                            }
                                             return;
                                         }
                                         loaded += value.length;
                                         if (total > 0) {
                                             setDownloading({ name: filename, progress: (loaded / total) * 100 });
                                         }
-                                        controller.enqueue(value);
-                                        read();
+                                        try {
+                                            controller.enqueue(value);
+                                            read();
+                                        } catch (e) {
+                                            console.warn('Stream controller enqueue failed, likely cancelled', e);
+                                            return;
+                                        }
+                                    }).catch(err => {
+                                        console.error('Stream read error', err);
+                                        try { controller.error(err); } catch (e) { }
                                     });
                                 }
                                 read();
@@ -175,9 +198,13 @@ export default function Sidebar() {
                         const newResponse = new Response(stream);
                         const blob = await newResponse.blob();
 
-                        // Create a response to store in cache
-                        // We store it under the ORIGINAL url so we can find it next time
-                        await cache.put(url, new Response(blob));
+                        // Cache disabled
+                        // try {
+                        //     const cacheResponse = new Response(blob);
+                        //     await cache.put(url, cacheResponse);
+                        // } catch (cacheErr) {
+                        //     console.warn('Failed to cache file (likely too large):', cacheErr);
+                        // }
 
                         // Use this blob
                         response = new Response(blob);
@@ -197,7 +224,7 @@ export default function Sidebar() {
                 } catch (err) {
                     console.error('Failed to load example', err);
                     setDownloading(null);
-                    alert('Failed to load example model.');
+                    alert(`Failed to load example model: ${(err as Error).message}`);
                 }
             })();
             return;
@@ -309,6 +336,30 @@ export default function Sidebar() {
 
                         <div className="border-t border-neutral-700 my-4"></div>
 
+                        {/* Texture Customization - Show when mesh selected */}
+                        {selectedMeshId && (
+                            <div className="space-y-2 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg animate-in slide-in-from-left-4 fade-in">
+                                <h3 className="text-sm font-semibold text-blue-200">Selected Mesh</h3>
+                                <div className="text-[10px] font-mono text-neutral-400 break-all bg-black/30 p-1 rounded">
+                                    {selectedMeshId}
+                                </div>
+                                <label className="block text-xs font-medium text-blue-300 mt-2 mb-1">Apply Texture</label>
+                                <div className="relative border border-dashed border-blue-500/50 rounded p-2 hover:bg-blue-500/10 cursor-pointer transition-colors text-center">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            if (e.target.files) handleTextureUpload(e.target.files);
+                                        }}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    />
+                                    <span className="text-xs text-blue-200">Upload Image</span>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="border-t border-neutral-700 my-4"></div>
+
                         {/* Settings */}
                         <div className="space-y-4">
                             <h3 className="text-sm font-semibold text-neutral-300">Scene Settings</h3>
@@ -399,6 +450,8 @@ export default function Sidebar() {
                                 </button>
                             </div>
 
+
+
                             <div className="flex items-center justify-between border-t border-neutral-700 pt-4">
                                 <label className="text-xs text-neutral-400">
                                     Tour Mode
@@ -409,6 +462,19 @@ export default function Sidebar() {
                                     className={`w-8 h-4 rounded-full relative transition-colors ${settings.tourMode ? 'bg-green-500' : 'bg-neutral-600'}`}
                                 >
                                     <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.tourMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+
+                            <div className={`flex items-center justify-between border-t border-neutral-700 pt-4 ${!settings.tourMode ? 'opacity-50 pointer-events-none' : ''}`}>
+                                <label className="text-xs text-neutral-400">
+                                    Wall Collision
+                                    <span className="block text-[10px] text-neutral-500">Requires Tour Mode</span>
+                                </label>
+                                <button
+                                    onClick={() => updateSetting('collisionEnabled', !settings.collisionEnabled)}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.collisionEnabled ? 'bg-blue-500' : 'bg-neutral-600'}`}
+                                >
+                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.collisionEnabled ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </button>
                             </div>
 
@@ -423,6 +489,8 @@ export default function Sidebar() {
                                         onChange={(v) => updateSetting('tourHeight', v)}
                                         step={0.1}
                                     />
+
+
                                 </div>
                             )}
                         </div>
