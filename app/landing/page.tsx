@@ -8,6 +8,7 @@ import { Search, Menu, ArrowRight, ArrowUpRight, Play, Star, ArrowDown, Shopping
 import HeroImageBlob from '@/components/HeroImageBlob';
 import ProductCarousel from '@/components/ProductCarousel';
 import FullScreenMenu from '@/components/FullScreenMenu';
+import ScrollRevealText from '@/components/ScrollRevealText';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -19,6 +20,20 @@ export default function LandingPage() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
     const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 150) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         if (theme === 'system') {
@@ -83,7 +98,28 @@ export default function LandingPage() {
             <div ref={containerRef} className="bg-[#f5f5f5] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen overflow-hidden font-sans transition-colors duration-500">
 
                 {/* ---------- NAVBAR ---------- */}
-                <nav className="fixed w-full z-50 px-6 py-5 mix-blend-difference top-0 left-0 bg-transparent">
+                <nav className="relative w-full z-50 px-6 py-4 top-0 left-0  dark:bg-[#0a0a0a]/90  border-b border-black/5 dark:border-white/10 transition-colors duration-500">
+                    <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
+                        <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
+                            <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
+                            <span>AXIOM BUILD</span>
+                        </div>
+                        <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
+                            <a href="#" className="text-[#ccff00]">Home</a>
+                            <a href="#" className="hover:text-[#ccff00] transition-colors">Project</a>
+                            <a href="#" className="hover:text-[#ccff00] transition-colors">Service</a>
+                            <a href="#" className="hover:text-[#ccff00] transition-colors">Blog</a>
+                        </div>
+                        <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
+                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer"><Search size={18} /></button>
+                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer"><ShoppingCart size={22} /></button>
+                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer" onClick={() => setIsMenuOpen(true)}>
+                                <Menu size={22} />
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+                <nav className={`fixed w-full z-[100] px-6 py-4 top-0 left-0 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10 transition-all duration-500 transform ${isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
                     <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
                         <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
                             <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
@@ -131,15 +167,10 @@ export default function LandingPage() {
                     </div>
                 </section>
 
-                {/* ---------- TRANSFORMATION STORY (BENTO GRID) ---------- */}
-                <section className="py-24 px-4 md:px-8 max-w-[1200px] mx-auto text-black dark:text-white transition-colors duration-500">
-                    <div className="text-center mb-20 animate-section">
-                        <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 text-[#ccff00]">Transformation Story</h2>
-                        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed transition-colors">
-                            From Waste to Worth: Follow the journey of how we reclaim discarded textiles and transform them into premium, sustainable luxury.
-                        </p>
-                    </div>
+                {/* ---------- TRANSFORMATION STORY (TEXT REVEAL + BENTO GRID) ---------- */}
+                <ScrollRevealText />
 
+                <section className="pb-24 pt-12 px-4 md:px-8 max-w-[1200px] mx-auto text-black dark:text-white transition-colors duration-500 relative z-30">
                     <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-[repeat(4,_minmax(260px,_auto))] gap-4 h-auto animate-section">
 
                         {/* Stage 4 (Top Left) */}
