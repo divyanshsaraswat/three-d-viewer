@@ -17,7 +17,7 @@ const specs = [
         title: "Translating vision into highly curated design",
         date: "2024 / OVER 50 PROJECTS",
         image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200",
-        colorClass: "bg-[#111111]"
+        colorClass: "dark:bg-[#111111]"
     },
     {
         id: 2,
@@ -25,7 +25,7 @@ const specs = [
         title: "Crafting spaces that breathe life and elegance",
         date: "2024 / 30+ PROJECTS",
         image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1200",
-        colorClass: "bg-[#16120e]"
+        colorClass: "dark:bg-[#16120e]"
     },
     {
         id: 3,
@@ -33,7 +33,7 @@ const specs = [
         title: "Designing sustainable cities for future generations",
         date: "ONGOING",
         image: "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=1200",
-        colorClass: "bg-[#0e1610]"
+        colorClass: "dark:bg-[#0e1610]"
     },
     {
         id: 4,
@@ -41,7 +41,7 @@ const specs = [
         title: "Building with precision, durability, and art",
         date: "AVERAGE 18 MO",
         image: "https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=1200",
-        colorClass: "bg-[#160e0e]"
+        colorClass: "dark:bg-[#160e0e]"
     },
     {
         id: 5,
@@ -49,7 +49,7 @@ const specs = [
         title: "Preserving architectural heritage properly",
         date: "ARCHIVE",
         image: "https://images.unsplash.com/photo-1455390582262-044cdead27d8?q=80&w=1200",
-        colorClass: "bg-[#0f0e16]"
+        colorClass: "dark:bg-[#0f0e16]"
     }
 ];
 
@@ -172,13 +172,13 @@ export default function SpecializationCarousel() {
     return (
         <section
             ref={rootRef}
-            className={`min-h-[100vh] w-full relative transition-colors duration-1000 ease-in-out ${specs[activeIdx].colorClass} overflow-hidden flex flex-col`}
+            className={`min-h-[100vh] w-full relative transition-colors duration-1000 ease-in-out bg-gray-100 ${specs[activeIdx].colorClass} overflow-hidden flex flex-col`}
         >
             {/* Header Content & Navigation locked to top */}
-            <div className="pt-28 pb-8 px-4 md:px-8 z-20 shrink-0 flex flex-col items-center text-center w-full max-w-[1200px] mx-auto">
+            <div className="pt-22 pb-8 px-4 md:px-8 z-20 shrink-0 flex flex-col items-center text-center w-full max-w-[1200px] mx-auto text-black dark:text-white transition-colors duration-1000">
                 <div className="mb-0">
-                    <h2 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter text-white transition-colors duration-1000 mb-6">OUR SPECIALIZATION</h2>
-                    <p className="text-white/50 max-w-xl mx-auto text-sm uppercase tracking-widest leading-loose transition-colors duration-1000 mb-8">
+                    <h2 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter mb-6 transition-colors">OUR SPECIALIZATION</h2>
+                    <p className="opacity-60 max-w-xl mx-auto text-sm uppercase tracking-widest leading-loose transition-colors mb-8">
                         We translate our client&apos;s vision into highly curated design <br className="hidden md:block" />
                         across diverse typologies
                     </p>
@@ -252,8 +252,8 @@ export default function SpecializationCarousel() {
                         key={i}
                         onClick={() => scrollToIdx(i)}
                         className={`transition-all duration-300 rounded-full ${i === activeIdx
-                                ? "w-10 h-2 bg-[#ccff00]"
-                                : "w-2 h-2 bg-white/30 hover:bg-white/60"
+                            ? "w-10 h-2 bg-black dark:bg-[#ccff00]"
+                            : "w-2 h-2 bg-black/20 hover:bg-black/40 dark:bg-white/30 dark:hover:bg-white/60"
                             }`}
                         aria-label={`Go to slide ${i + 1}`}
                     />

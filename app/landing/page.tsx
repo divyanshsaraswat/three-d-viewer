@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react';
 import { Search, Menu, ArrowRight, ArrowUpRight, Play, Star, ArrowDown, ShoppingCart, Monitor, Sun, Moon } from 'lucide-react';
 import HeroImageBlob from '@/components/HeroImageBlob';
 import ProductCarousel from '@/components/ProductCarousel';
+import { useRouter } from 'next/navigation';
 import FullScreenMenu from '@/components/FullScreenMenu';
 import ScrollRevealText from '@/components/ScrollRevealText';
 import SpecializationCarousel from '@/components/SpecializationCarousel';
@@ -23,6 +24,7 @@ export default function LandingPage() {
     const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [isScrolled, setIsScrolled] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -67,6 +69,29 @@ export default function LandingPage() {
     ];
 
     useGSAP(() => {
+        // Hero entry animation
+        const heroTl = gsap.timeline();
+
+        heroTl.fromTo('.hero-bg-video',
+            { scale: 1.1, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 1.5, ease: "power3.out" }
+        )
+            .fromTo('.hero-title-word',
+                { y: 40, opacity: 0, scale: 0.9, rotationX: -15 },
+                { y: 0, opacity: 1, scale: 1, rotationX: 0, duration: 0.8, stagger: 0.08, ease: "back.out(1.5)" },
+                "-=1.0"
+            )
+            .fromTo('.hero-subtitle',
+                { y: 20, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+                "-=0.5"
+            )
+            .fromTo('.hero-cta',
+                { scale: 0.9, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" },
+                "-=0.3"
+            );
+
         // Section reveal animations
         const sections = gsap.utils.toArray('.animate-section') as HTMLElement[];
         sections.forEach((section: HTMLElement) => {
@@ -100,22 +125,22 @@ export default function LandingPage() {
             <div ref={containerRef} className="bg-[#f5f5f5] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen overflow-hidden font-sans transition-colors duration-500">
 
                 {/* ---------- NAVBAR ---------- */}
-                <nav className="relative w-full z-50 px-6 py-4 top-0 left-0 border-b border-black/5 dark:border-white/10 transition-colors duration-500">
+                <nav className="absolute w-full z-50 px-6 py-4 top-0 left-0 transition-colors duration-500 bg-transparent">
                     <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
                         <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
                             <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
                             <span>AXIOM BUILD</span>
                         </div>
                         <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
-                            <a href="#" className="text-[#ccff00]">Home</a>
-                            <a href="#" className="hover:text-[#ccff00] transition-colors">Project</a>
-                            <a href="#" className="hover:text-[#ccff00] transition-colors">Service</a>
-                            <a href="#" className="hover:text-[#ccff00] transition-colors">Blog</a>
+                            <a href="#" className="hover:opacity-70 transition-opacity">Home</a>
+                            <a href="#" className="hover:opacity-70 transition-opacity">Project</a>
+                            <a href="#" className="hover:opacity-70 transition-opacity">Service</a>
+                            <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
                         </div>
                         <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
-                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer"><Search size={18} /></button>
-                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer"><ShoppingCart size={22} /></button>
-                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer" onClick={() => setIsMenuOpen(true)}>
+                            <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
+                            <button className="hover:opacity-70 transition-opacity cursor-pointer"><ShoppingCart size={22} /></button>
+                            <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
                                 <Menu size={22} />
                             </button>
                         </div>
@@ -128,15 +153,15 @@ export default function LandingPage() {
                             <span>AXIOM BUILD</span>
                         </div>
                         <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
-                            <a href="#" className="text-[#ccff00]">Home</a>
-                            <a href="#" className="hover:text-[#ccff00] transition-colors">Project</a>
-                            <a href="#" className="hover:text-[#ccff00] transition-colors">Service</a>
-                            <a href="#" className="hover:text-[#ccff00] transition-colors">Blog</a>
+                            <a href="#" className="hover:opacity-70 transition-opacity">Home</a>
+                            <a href="#" className="hover:opacity-70 transition-opacity">Project</a>
+                            <a href="#" className="hover:opacity-70 transition-opacity">Service</a>
+                            <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
                         </div>
                         <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
-                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer"><Search size={18} /></button>
-                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer"><ShoppingCart size={22} /></button>
-                            <button className="hover:text-[#ccff00] transition-colors cursor-pointer" onClick={() => setIsMenuOpen(true)}>
+                            <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
+                            <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => router.push('/cart')}><ShoppingCart size={22} /></button>
+                            <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
                                 <Menu size={22} />
                             </button>
                         </div>
@@ -144,29 +169,46 @@ export default function LandingPage() {
                 </nav>
 
                 {/* ---------- HERO SECTION ---------- */}
-                <section className="relative min-h-[110vh] flex flex-col items-center pt-28 pb-8 px-4 md:px-8 bg-gray-100 dark:bg-[#171717] text-black dark:text-white overflow-hidden transition-colors duration-500">
+                <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
+
+                    {/* Background Video */}
+                    <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
+                        <video
+                            key={isDarkMode ? 'dark' : 'light'}
+                            className="hero-bg-video w-full h-full object-cover"
+                            src={isDarkMode ? "hero-section-2.mp4" : "hero-section.mp4"}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                        />
+                    </div>
+
                     {/* Content Overlay */}
-                    <div className="w-full max-w-[900px] mx-auto z-10 animate-section flex flex-col items-center justify-center pointer-events-none relative mt-8">
-                        <h1 className="text-[18vw] dark:border-white transition-colors md:text-[4.5rem] font-bold leading-[1.1] tracking-tight text-center max-w-[1500px] uppercase">
-                            SLEEP SUSTAINABLE, <br /> Wake up purposeful
+                    <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center justify-center text-center px-4 md:px-8 mt-[-6rem] pointer-events-auto">
+
+                        {/* Title Lines (split for staggered animation) */}
+                        <h1 className="hero-title text-4xl md:text-6xl lg:text-7xl font-semibold leading-tight tracking-tight text-center text-black dark:text-white mb-6 drop-shadow-sm">
+                            <span className="inline-block hero-title-word px-1">A</span>
+                            <span className="inline-block hero-title-word px-1">new</span>
+                            <span className="inline-block hero-title-word px-1">era</span>
+                            <span className="inline-block hero-title-word px-1">of</span>
+                            <br className="hidden md:block" />
+                            <span className="inline-block hero-title-word px-1">sustainable</span>
+                            <span className="inline-block hero-title-word px-1">sleep</span>
                         </h1>
 
+                        <p className="hero-subtitle text-lg md:text-xl font-medium text-black/80 dark:text-white/80 max-w-2xl mx-auto leading-relaxed mb-8 drop-shadow-md">
+                            The world&apos;s most advanced textile clinic to help you live longer, prevent disease, and feel your best
+                        </p>
 
-                        {/* Centered Consultation Badge / Button equivalent */}
-                        <div className="mt-10 mb-8 pointer-events-auto">
-                            <button className="  text-black font-bold uppercase tracking-widest text-sm px-8 py-4 rounded-full shadow-[0_0_30px_rgba(204,255,0,0.3)] hover:scale-105 hover:bg-white transition-all cursor-pointer">
-                                Book a Consultation
+                        <div className="hero-cta">
+                            <button className="bg-black text-white dark:bg-white dark:text-black font-semibold tracking-normal text-base px-10 py-4 lg:px-12 lg:py-[18px] rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.1)] hover:scale-[1.03] transition-transform duration-300">
+                                Join waitlist
                             </button>
                         </div>
                     </div>
-
-                    {/* 3D Image Blob (Rendered as an overlapping object) */}
-                    <div className="relative w-full max-w-[800px] h-[50vh] md:h-[800px] mt-[-4rem] md:mt-[-10rem] z-30 pointer-events-auto">
-                        <HeroImageBlob
-                            imageOne="build-1.png"
-                            imageTwo="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop"
-                        />
-                    </div>
+                    <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-white dark:to-[#0a0a0a] pointer-events-none"></div>
                 </section>
 
                 {/* ---------- TRANSFORMATION STORY (TEXT REVEAL + BENTO GRID) ---------- */}
@@ -202,10 +244,13 @@ export default function LandingPage() {
                         </div>
 
                         {/* Stage 3 pt2 (Top Mid-R) */}
-                        <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-center items-end text-right group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500">
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 transition-colors">No Chemicals</p>
-                            <h3 className="text-5xl font-bold text-black dark:text-white mb-1 group-hover:scale-105 transition-transform origin-right">0%</h3>
-                            <p className="text-[#e78b1f] text-sm font-bold">Dyes used</p>
+                        <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-end items-end text-right group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500 relative overflow-hidden">
+                            <img src="mesh.png" alt="" className="w-48 h-48 object-cover absolute -top-8 -left-8 opacity-40 group-hover:opacity-60 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 pointer-events-none" />
+                            <div className="relative z-10 w-full flex flex-col items-end justify-end">
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 transition-colors">No Chemicals</p>
+                                <h3 className="text-5xl font-bold text-black dark:text-white mb-1 group-hover:scale-105 transition-transform origin-right">0%</h3>
+                                <p className="text-[#e78b1f] text-sm font-bold">Dyes used</p>
+                            </div>
                         </div>
 
                         {/* Stage 2 (Top Right) */}
@@ -214,9 +259,39 @@ export default function LandingPage() {
                                 <h3 className="text-lg font-bold text-black dark:text-white mb-6 leading-snug transition-colors">Every piece is sorted by hand. Quality matters, even in waste.</h3>
                                 <div className="flex -space-x-3 mb-8">
                                     <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
-                                    <img src="https://images.unsplash.com/photo-1589156280159-4cbcdce4b07e?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
                                     <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
-                                    <div className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] bg-[#ccff00] text-black flex items-center justify-center text-xs font-bold transition-colors">+</div>
+                                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
+                                    <button
+                                        className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] bg-[#ccff00] text-black flex items-center justify-center text-xl font-bold transition-transform hover:scale-110 active:scale-95 cursor-pointer z-10 relative"
+                                        onClick={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            const x = rect.left + rect.width / 2;
+                                            const y = rect.top + rect.height / 2;
+
+                                            for (let i = 0; i < 12; i++) {
+                                                const particle = document.createElement('div');
+                                                particle.className = 'fixed w-2 h-2 rounded-full bg-[#ccff00] pointer-events-none z-[100]';
+                                                particle.style.left = `${x}px`;
+                                                particle.style.top = `${y}px`;
+                                                document.body.appendChild(particle);
+
+                                                const angle = (Math.PI * 2 * i) / 12;
+                                                const velocity = 50 + Math.random() * 50;
+
+                                                gsap.to(particle, {
+                                                    x: Math.cos(angle) * velocity,
+                                                    y: Math.sin(angle) * velocity,
+                                                    opacity: 0,
+                                                    scale: 0.5 + Math.random(),
+                                                    duration: 0.6 + Math.random() * 0.4,
+                                                    ease: "power2.out",
+                                                    onComplete: () => particle.remove()
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        <span className="mb-1">+</span>
+                                    </button>
                                 </div>
                             </div>
                             <div>
@@ -230,7 +305,7 @@ export default function LandingPage() {
 
                         {/* Stage 1 (Center Big) */}
                         <div className="md:col-span-2 md:row-span-2 rounded-[2rem] relative flex items-center justify-center p-0 overflow-hidden group cursor-pointer">
-                            <img src="https://images.unsplash.com/photo-1532453288672-3a27e9be2efd?q=80&w=800&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Collection" />
+                            <img src="collection.jpeg" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Collection" />
                             <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#171717] dark:via-[#171717]/40 to-transparent transition-colors duration-500"></div>
 
                             <div className="absolute left-6 bottom-1/3 bg-white/50 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 p-3 rounded-2xl flex items-center gap-3 group-hover:-translate-y-2 transition-all duration-500 delay-100">
@@ -264,8 +339,8 @@ export default function LandingPage() {
                                 Ancient Craft <br /> + Sustainability
                             </div>
                             <div className="relative w-full h-40 mb-6 flex justify-center items-center">
-                                <img src="https://images.unsplash.com/photo-1445583934335-ce065b75a40a?q=80&w=400&auto=format&fit=crop" className="w-24 h-32 rounded-[1rem] object-cover absolute -rotate-12 group-hover:rotate-0 transition-transform duration-500" alt="Weaving 1" />
-                                <img src="https://images.unsplash.com/photo-1605280263929-1c42c62ef169?q=80&w=400&auto=format&fit=crop" className="w-24 h-32 rounded-[1rem] object-cover absolute rotate-12 mt-8 ml-8 group-hover:rotate-0 transition-transform duration-500 delay-100 border-2 border-white dark:border-[#1a1a1a] transition-colors" alt="Weaving 2" />
+                                <img src="weaving-1.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute -rotate-12 group-hover:rotate-0 transition-transform duration-500" alt="Weaving 1" />
+                                <img src="weaving-2.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute rotate-12 mt-8 ml-8 group-hover:rotate-0 transition-transform duration-500 delay-100 border-2 border-white dark:border-[#1a1a1a] transition-colors" alt="Weaving 2" />
                             </div>
                             <p className="text-black dark:text-white text-center text-sm font-medium leading-relaxed mt-4 transition-colors">
                                 Traditional looms weave rescued fibers into premium sheets. Each takes 4 hours, touching 12 pairs of skilled hands.
@@ -305,7 +380,7 @@ export default function LandingPage() {
                                 <p className="text-black/80 text-sm font-semibold max-w-[200px] mt-4">Every sheet passes 7 quality checks before reaching you.</p>
                             </div>
                             <div className="absolute -right-10 -top-10 text-black/10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
-                                <Star size={240} fill="currentColor" />
+                                <img src="spring.png" alt="Interactive placeholder" className="w-[240px] h-[240px] rounded-[3rem] object-cover opacity-100" />
                             </div>
                         </div>
 
@@ -608,7 +683,7 @@ export default function LandingPage() {
                             <p>© 2024 Axiom Build. All Rights Reserved.</p>
 
                             {/* Theme Toggle Pill (Moved from right side to bottom bar for space) */}
-                            <div className="flex items-center justify-center rounded-[#2rem] p-1.5 shadow-inner bg-black/5 dark:bg-white/5 mt-4 md:mt-0 transition-colors">
+                            <div className="flex items-center justify-center rounded-[#2rem] p-1.5 shadow-inner   mt-4 md:mt-0 transition-colors">
                                 <button
                                     onClick={() => setTheme('light')}
                                     className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'light' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
@@ -631,6 +706,17 @@ export default function LandingPage() {
                                     <Monitor size={14} strokeWidth={2} />
                                 </button>
                             </div>
+                        </div>
+
+                        {/* Antimetal Brand Footer */}
+                        <div className="mt-16 flex items-center justify-center gap-8 opacity-60 hover:opacity-100 transition-opacity cursor-pointer text-black dark:text-[#a0a0a0]">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-10 bg-[#ccff00] transform -skew-x-12" />
+                                <div className="w-5 h-10 bg-[#171717] dark:bg-white transform -skew-x-12 -ml-2 transition-colors" />
+                            </div>
+                            <span className="text-8xl font-medium tracking-wide bg-clip-text text-transparent bg-gradient-to-b from-black to-black/60 dark:from-[#cfcfcf] dark:to-[#555]">
+                                AXIOM BUILD
+                            </span>
                         </div>
                     </div>
                 </footer>

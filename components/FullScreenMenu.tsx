@@ -89,16 +89,16 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
             {/* Menu side panel */}
             <div className="relative w-full md:w-[600px] h-full flex pointer-events-none overflow-hidden">
                 {/* 3 background panels animated in sync (stacked deeply) */}
-                <div ref={el => { if (el) bgPanelsRef.current[0] = el }} className="absolute inset-0 w-full h-full bg-[#2a2a2a] z-0"></div>
-                <div ref={el => { if (el) bgPanelsRef.current[1] = el }} className="absolute inset-0 w-full h-full bg-[#1a1a1a] z-10"></div>
-                <div ref={el => { if (el) bgPanelsRef.current[2] = el }} className="absolute inset-0 w-full h-full bg-[#111111] z-20"></div>
+                <div ref={el => { if (el) bgPanelsRef.current[0] = el }} className="absolute inset-0 w-full h-full bg-gray-200 dark:bg-[#2a2a2a] z-0"></div>
+                <div ref={el => { if (el) bgPanelsRef.current[1] = el }} className="absolute inset-0 w-full h-full bg-gray-100 dark:bg-[#1a1a1a] z-10"></div>
+                <div ref={el => { if (el) bgPanelsRef.current[2] = el }} className="absolute inset-0 w-full h-full bg-white dark:bg-[#111111] z-20"></div>
 
                 {/* Content overlay */}
-                <div ref={contentRef} className="absolute inset-0 w-full h-full flex flex-col pt-8 md:pt-12 px-6 md:px-16 pb-12 opacity-0 pointer-events-auto text-white z-30">
+                <div ref={contentRef} className="absolute inset-0 w-full h-full flex flex-col pt-8 md:pt-12 px-6 md:px-16 pb-12 opacity-0 pointer-events-auto text-black dark:text-white z-30">
 
                     <button
                         onClick={onClose}
-                        className="absolute top-8 right-8 md:top-12 md:right-12 flex items-center gap-2 uppercase text-xs font-bold tracking-widest group hover:text-[#ccff00] transition-colors z-50 cursor-pointer"
+                        className="absolute top-8 right-8 md:top-12 md:right-12 flex items-center gap-2 uppercase text-xs font-bold tracking-widest group hover:text-[#ccff00] transition-colors z-50 cursor-pointer text-black dark:text-white"
                     >
                         Close
                         <X size={24} className="group-hover:rotate-180 transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)]" />
@@ -118,21 +118,21 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
 
                                 <div className="relative z-10 overflow-hidden pointer-events-none flex items-start shadow-none">
                                     {/* Primary Text */}
-                                    <h2 className="text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-white transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                    <h2 className="text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-black dark:text-white transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
                                         {link.title}
                                     </h2>
                                     {/* Secondary Text absolutely positioned under the first */}
-                                    <h2 className="absolute top-0 left-0 text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-[#171717] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                    <h2 className="absolute top-0 left-0 text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-black dark:text-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
                                         {link.title}
                                     </h2>
                                 </div>
 
                                 {/* Numbers container */}
                                 <div className="relative z-10 overflow-hidden ml-3 md:ml-4 mt-1 md:mt-2 pointer-events-none">
-                                    <span className="block text-[#ccff00] text-xs font-bold transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                    <span className="block text-[#ccff00] dark:text-[#ccff00] text-xs font-bold transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
                                         {link.num}
                                     </span>
-                                    <span className="absolute top-0 left-0 block text-[#171717] text-xs font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                    <span className="absolute top-0 left-0 block text-black dark:text-black text-xs font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
                                         {link.num}
                                     </span>
                                 </div>
@@ -141,8 +141,8 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                     </div>
 
                     {/* Socials Bottom Row */}
-                    <div className="flex flex-col gap-4 text-xs font-bold uppercase tracking-widest text-gray-500 mt-auto border-t border-white/10 pt-8">
-                        <span className="text-white">Socials</span>
+                    <div className="flex flex-col gap-4 text-xs font-bold uppercase tracking-widest text-gray-500 mt-auto border-t border-black/10 dark:border-white/10 pt-8">
+                        <span className="text-black dark:text-white">Socials</span>
                         <div className="flex flex-wrap gap-6">
                             <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Instagram size={16} /> Instagram</a>
                             <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Linkedin size={16} /> LinkedIn</a>
