@@ -69,12 +69,25 @@ export default function LandingPage() {
     ];
 
     useGSAP(() => {
-        // Hero entry animation
-        const heroTl = gsap.timeline();
+        // Master startup timeline
+        const masterTl = gsap.timeline();
 
-        heroTl.fromTo('.hero-bg-video',
+        // 1. Initial logo fade up
+        masterTl.to('.loader-text', { opacity: 1, duration: 0.8, y: -20, ease: "power3.out" })
+            // 2. Logo fade out
+            .to('.loader-text', { opacity: 0, duration: 0.5, delay: 0.6, y: -40, ease: "power3.in" })
+            // 3. Black background slides up
+            .to('.loader-bg', { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.2")
+            // 4. Yellow container slides up
+            .to('.loader-container', { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.65")
+            // 5. Hide container
+            .set('.loader-container', { display: "none" });
+
+        // Hero entry animation correctly sequenced after the loader finishes
+        masterTl.fromTo('.hero-bg-video',
             { scale: 1.1, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 1.5, ease: "power3.out" }
+            { scale: 1, opacity: 1, duration: 1.5, ease: "power3.out" },
+            "-=0.4"
         )
             .fromTo('.hero-title-word',
                 { y: 40, opacity: 0, scale: 0.9, rotationX: -15 },
@@ -118,10 +131,19 @@ export default function LandingPage() {
             ease: "linear"
         });
 
-    }, { scope: containerRef });
+    });
 
     return (
         <div className={isDarkMode ? 'dark' : ''}>
+            {/* ---------- INITIAL LOADING SCREEN ---------- */}
+            <div className="loader-container fixed inset-0 z-[200] bg-[#ccff00] flex flex-col items-center justify-center">
+                <div className="loader-bg absolute inset-0 bg-[#0a0a0a]" />
+                <div className="loader-text relative z-10 opacity-0 transform translate-y-5 text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4">
+                    <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
+                    <span>WEINIX</span>
+                </div>
+            </div>
+
             <div ref={containerRef} className="bg-[#f5f5f5] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen overflow-hidden font-sans transition-colors duration-500">
 
                 {/* ---------- NAVBAR ---------- */}
@@ -129,7 +151,7 @@ export default function LandingPage() {
                     <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
                         <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
                             <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                            <span>AXIOM BUILD</span>
+                            <span>WEINIX</span>
                         </div>
                         <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
                             <a href="#" className="hover:opacity-70 transition-opacity">Home</a>
@@ -150,7 +172,7 @@ export default function LandingPage() {
                     <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
                         <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
                             <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                            <span>AXIOM BUILD</span>
+                            <span>WEINIX</span>
                         </div>
                         <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
                             <a href="#" className="hover:opacity-70 transition-opacity">Home</a>
@@ -213,6 +235,40 @@ export default function LandingPage() {
 
                 {/* ---------- TRANSFORMATION STORY (TEXT REVEAL + BENTO GRID) ---------- */}
                 <ScrollRevealText />
+
+                {/* ---------- SUBTLE TICKER ---------- */}
+                <div className="w-full bg-[#ccff00] py-4 md:py-6 transform -rotate-3 scale-110 my-12 overflow-hidden flex whitespace-nowrap z-20 relative border-y-[3px] border-black drop-shadow-lg">
+                    <style dangerouslySetInnerHTML={{
+                        __html: `
+                        @keyframes ticker-marquee {
+                            0% { transform: translateX(0%); }
+                            100% { transform: translateX(-50%); }
+                        }
+                        .animate-ticker {
+                            animation: ticker-marquee 30s linear infinite;
+                            display: flex;
+                            width: max-content;
+                        }
+                    `}} />
+                    <div className="animate-ticker items-center flex">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="flex items-center">
+                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">2M+ liters water saved</span>
+                                <svg className="w-8 h-8 md:w-12 md:h-12 text-black fill-current mx-2 transform scale-y-90" viewBox="0 0 10 9" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 0h2v1h1v1h2V1h1V0h2v3h1v2h-1v1H8v1H7v1H6v1H4V8H3V7H2V6H1V5H0V3h1V0z" />
+                                </svg>
+                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">50K+ sheets transformed</span>
+                                <svg className="w-8 h-8 md:w-12 md:h-12 text-black fill-current mx-2 transform scale-y-90" viewBox="0 0 10 9" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 0h2v1h1v1h2V1h1V0h2v3h1v2h-1v1H8v1H7v1H6v1H4V8H3V7H2V6H1V5H0V3h1V0z" />
+                                </svg>
+                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">100% Carbon Neutral Operations</span>
+                                <svg className="w-8 h-8 md:w-12 md:h-12 text-black fill-current mx-2 transform scale-y-90" viewBox="0 0 10 9" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 0h2v1h1v1h2V1h1V0h2v3h1v2h-1v1H8v1H7v1H6v1H4V8H3V7H2V6H1V5H0V3h1V0z" />
+                                </svg>
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
                 <section className="pb-24 pt-12 px-4 md:px-8 max-w-[1200px] mx-auto text-black dark:text-white transition-colors duration-500 relative z-30">
                     <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-[repeat(4,_minmax(260px,_auto))] gap-4 h-auto animate-section">
@@ -613,7 +669,7 @@ export default function LandingPage() {
                                 <div className="flex items-center gap-3 font-bold text-2xl tracking-tighter mb-6">
                                     <div className="w-5 h-5 bg-[#ccff00] transform -skew-x-12" />
                                     <div className="w-2 h-5 bg-[#171717] dark:bg-white transform -skew-x-12 -ml-2 transition-colors" />
-                                    <span>AXIOM BUILD</span>
+                                    <span>WEINIX</span>
                                 </div>
                                 <p className="text-sm max-w-[280px] leading-relaxed mb-8 opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
                                     We are a multidisciplinary architecture studio crafting bold, purposeful spaces that stand the test of time.
@@ -680,7 +736,7 @@ export default function LandingPage() {
 
                         {/* Footer Bottom Bar */}
                         <div className="pt-8 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center text-xs opacity-60 text-black dark:text-white transition-colors">
-                            <p>© 2024 Axiom Build. All Rights Reserved.</p>
+                            <p>© 2024 WEINIX. All Rights Reserved.</p>
 
                             {/* Theme Toggle Pill (Moved from right side to bottom bar for space) */}
                             <div className="flex items-center justify-center rounded-[#2rem] p-1.5 shadow-inner   mt-4 md:mt-0 transition-colors">
@@ -715,7 +771,7 @@ export default function LandingPage() {
                                 <div className="w-5 h-10 bg-[#171717] dark:bg-white transform -skew-x-12 -ml-2 transition-colors" />
                             </div>
                             <span className="text-8xl font-medium tracking-wide bg-clip-text text-transparent bg-gradient-to-b from-black to-black/60 dark:from-[#cfcfcf] dark:to-[#555]">
-                                AXIOM BUILD
+                                WEINIX
                             </span>
                         </div>
                     </div>
