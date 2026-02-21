@@ -24,6 +24,13 @@ export default function LandingPage() {
     const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [isScrolled, setIsScrolled] = useState(false);
+
+    // Audio and Loader State
+    const [hasEntered, setHasEntered] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const masterTlRef = useRef<gsap.core.Timeline | null>(null);
+
     const router = useRouter();
 
     useEffect(() => {
@@ -68,14 +75,35 @@ export default function LandingPage() {
         { title: "Horizon", subtitle: "2023 / RESIDENTIAL", image: "https://images.unsplash.com/photo-1545622744-8d4cb237deaf?q=80&w=800&auto=format&fit=crop" },
     ];
 
+    // Handle Audio Mute Toggle
+    const toggleMute = () => {
+        if (audioRef.current) {
+            audioRef.current.muted = !isMuted;
+            setIsMuted(!isMuted);
+        }
+    };
+
+    // Handle actual entry after clicking "Enter"
+    const handleEnter = () => {
+        setHasEntered(true);
+        if (audioRef.current) {
+            audioRef.current.volume = 0.5;
+            audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+        }
+        if (masterTlRef.current) {
+            masterTlRef.current.play();
+        }
+    };
+
     useGSAP(() => {
-        // Master startup timeline
-        const masterTl = gsap.timeline();
+        // Master startup timeline (paused until user interaction)
+        const masterTl = gsap.timeline({ paused: true });
+        masterTlRef.current = masterTl;
 
         // 1. Initial logo fade up
         masterTl.to('.loader-text', { opacity: 1, duration: 0.8, y: -20, ease: "power3.out" })
             // 2. Logo fade out
-            .to('.loader-text', { opacity: 0, duration: 0.5, delay: 0.6, y: -40, ease: "power3.in" })
+            .to('.loader-text', { opacity: 0, duration: 0.5, delay: 0.2, y: -40, ease: "power3.in" })
             // 3. Black background slides up
             .to('.loader-bg', { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.2")
             // 4. Yellow container slides up
@@ -135,13 +163,61 @@ export default function LandingPage() {
 
     return (
         <div className={isDarkMode ? 'dark' : ''}>
+            {/* ---------- BACKGROUND AUDIO ---------- */}
+            <audio ref={audioRef} src="/music.mp3" loop preload="auto" />
+
+            {/* ---------- AUDIO TOGGLE ---------- */}
+            {hasEntered && (
+                <button
+                    onClick={toggleMute}
+                    className="fixed bottom-6 left-6 z-[100] w-12 h-12 rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-md flex justify-center cursor-pointer items-center hover:bg-white dark:hover:bg-white/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.1)] overflow-hidden group"
+                    aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+                >
+                    {isMuted ? (
+                        <div className="w-5 h-[2px] bg-black dark:bg-white rounded-full transition-all duration-300"></div>
+                    ) : (
+                        <svg className="w-6 h-6 text-black dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <style dangerouslySetInnerHTML={{
+                                __html: `
+                                @keyframes wave {
+                                    0% { d: path("M3 12h2l2-2 3 4 3-4 3 4 2-2h3"); }
+                                    20% { d: path("M3 12h2l2-8 3 16 3-16 3 16 2-8h3"); }
+                                    40% { d: path("M3 12h2l2-4 3 8 3-8 3 8 2-4h3"); }
+                                    60% { d: path("M3 12h2l2-10 3 20 3-20 3 20 2-10h3"); }
+                                    80% { d: path("M3 12h2l2-6 3 12 3-12 3 12 2-6h3"); }
+                                    100% { d: path("M3 12h2l2-2 3 4 3-4 3 4 2-2h3"); }
+                                }
+                                .wave-path { animation: wave 1.2s infinite ease-in-out; }
+                            `}} />
+                            <path className="wave-path" d="M3 12h2l2-2 3 4 3-4 3 4 2-2h3" />
+                        </svg>
+                    )}
+                </button>
+            )}
+
             {/* ---------- INITIAL LOADING SCREEN ---------- */}
             <div className="loader-container fixed inset-0 z-[200] bg-[#ccff00] flex flex-col items-center justify-center">
                 <div className="loader-bg absolute inset-0 bg-[#0a0a0a]" />
-                <div className="loader-text relative z-10 opacity-0 transform translate-y-5 text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4">
-                    <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                    <span>WEINIX</span>
-                </div>
+
+                {!hasEntered ? (
+                    <div className="relative z-10 flex flex-col items-center">
+                        <div className="text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4 mb-8">
+                            <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
+                            <span>WEINIX</span>
+                        </div>
+                        <button
+                            onClick={handleEnter}
+                            className="text-white border border-white/30 px-8 py-3 rounded-full hover:bg-white hover:text-black transition-colors cursor-pointer duration-300 uppercase tracking-widest text-sm font-bold animate-pulse"
+                        >
+                            Enter Experience
+                        </button>
+                    </div>
+                ) : (
+                    <div className="loader-text relative z-10 opacity-0 transform translate-y-5 text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4">
+                        <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
+                        <span>AXIOM BUILD</span>
+                    </div>
+                )}
             </div>
 
             <div ref={containerRef} className="bg-[#f5f5f5] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen overflow-hidden font-sans transition-colors duration-500">
