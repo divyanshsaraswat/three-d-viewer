@@ -9,6 +9,8 @@ import HeroImageBlob from '@/components/HeroImageBlob';
 import ProductCarousel from '@/components/ProductCarousel';
 import FullScreenMenu from '@/components/FullScreenMenu';
 import ScrollRevealText from '@/components/ScrollRevealText';
+import SpecializationCarousel from '@/components/SpecializationCarousel';
+import TestimonialVideo from '@/components/TestimonialVideo';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -98,7 +100,7 @@ export default function LandingPage() {
             <div ref={containerRef} className="bg-[#f5f5f5] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen overflow-hidden font-sans transition-colors duration-500">
 
                 {/* ---------- NAVBAR ---------- */}
-                <nav className="relative w-full z-50 px-6 py-4 top-0 left-0  dark:bg-[#0a0a0a]/90  border-b border-black/5 dark:border-white/10 transition-colors duration-500">
+                <nav className="relative w-full z-50 px-6 py-4 top-0 left-0 border-b border-black/5 dark:border-white/10 transition-colors duration-500">
                     <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
                         <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
                             <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
@@ -145,8 +147,8 @@ export default function LandingPage() {
                 <section className="relative min-h-[110vh] flex flex-col items-center pt-28 pb-8 px-4 md:px-8 bg-gray-100 dark:bg-[#171717] text-black dark:text-white overflow-hidden transition-colors duration-500">
                     {/* Content Overlay */}
                     <div className="w-full max-w-[900px] mx-auto z-10 animate-section flex flex-col items-center justify-center pointer-events-none relative mt-8">
-                        <h1 className="text-[18vw] border border-black dark:border-white transition-colors md:text-[4.5rem] font-bold leading-[1.1] tracking-tight text-center max-w-[1500px] uppercase">
-                            Bold Designs, <br /> Timeless Architecture
+                        <h1 className="text-[18vw] dark:border-white transition-colors md:text-[4.5rem] font-bold leading-[1.1] tracking-tight text-center max-w-[1500px] uppercase">
+                            SLEEP SUSTAINABLE, <br /> Wake up purposeful
                         </h1>
 
 
@@ -311,32 +313,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* ---------- OUR SPECIALIZATION ---------- */}
-                <section className="py-32 px-4 md:px-8 bg-white dark:bg-[#121212] text-black dark:text-white transition-colors duration-500">
-                    <div className="max-w-[1200px] mx-auto animate-section">
-                        <div className="text-center mb-20">
-                            <h2 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter mb-6">OUR SPECIALIZATION</h2>
-                            <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-sm uppercase tracking-widest leading-loose transition-colors">
-                                we translate our client&apos;s vision into highly curated design <br />
-                                across diverse typologies
-                            </p>
-                        </div>
-
-                        <div className="border-t border-black/10 dark:border-white/20 max-w-4xl mx-auto transition-colors">
-                            {specializations.map((spec, idx) => (
-                                <div
-                                    key={idx}
-                                    className={`border-b border-black/10 dark:border-white/20 py-8 px-4 flex items-center justify-between cursor-pointer group transition-all ${activeAccordion === idx ? 'text-[#ccff00]' : 'text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-300'}`}
-                                    onMouseEnter={() => setActiveAccordion(idx)}
-                                >
-                                    <h3 className="text-4xl md:text-5xl font-bold tracking-tighter">{spec}</h3>
-                                    <div className="w-12 h-12 rounded-full border border-current flex items-center justify-center group-hover:bg-black/5 dark:group-hover:bg-white/10 transition-colors">
-                                        <ArrowUpRight size={24} />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                <SpecializationCarousel />
 
                 {/* ---------- PRODUCT SHOWCASE (3D CAROUSEL) ---------- */}
                 <ProductCarousel />
@@ -477,7 +454,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* ---------- TESTIMONIALS ---------- */}
-                <section className="py-32 px-4 md:px-8 max-w-[1200px] mx-auto text-center bg-gray-100 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500 rounded-3xl mb-24">
+                <section className="py-12 px-4 md:px-8 max-w-[1200px] mx-auto text-center bg-gray-100 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500 rounded-3xl mb-8">
                     <div className="animate-section mb-16 pt-16">
                         <h2 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter mb-6 text-black dark:text-white transition-colors">WHAT ARE THEY<br />SAYING?</h2>
                         <p className="text-gray-500 dark:text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest leading-loose transition-colors">
@@ -485,6 +462,8 @@ export default function LandingPage() {
                             and deliver top-tier architectural results.
                         </p>
                     </div>
+
+                    <TestimonialVideo />
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-section text-left px-8">
                         {[1, 2, 3].map((_, i) => (
@@ -520,67 +499,138 @@ export default function LandingPage() {
                     </div>
                 </section>
 
-                {/* ---------- FOOTER ---------- */}
-                <footer className="bg-white dark:bg-[#0a0a0a] text-black dark:text-white pt-24 pb-8 px-4 md:px-8 border-t border-gray-200 dark:border-transparent transition-colors duration-500">
-                    <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 mb-24 animate-section">
+                {/* ---------- NEW FOOTER ---------- */}
+                <footer className="relative pt-32 pb-12 px-4 md:px-8 mt-12 bg-gray-100 dark:bg-[#0a0a0a] transition-colors duration-500 overflow-hidden">
+                    {/* Background subtle lines / grain simulation */}
+                    <div className="absolute inset-0 opacity-10 dark:opacity-5 mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.1) 4px, rgba(0,0,0,0.1) 5px)' }}></div>
 
-                        <div>
-                            <div className="flex items-center gap-3 font-bold text-2xl tracking-tighter text-black dark:text-white transition-colors mb-6">
-                                <div className="w-5 h-5 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                                <span>AXIOM BUILD</span>
-                            </div>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm max-w-sm leading-relaxed mb-8 transition-colors">
-                                Building difference through innovative design and unparalleled expertise in modern architecture.
-                            </p>
-                        </div>
+                    <div className="max-w-[1200px] mx-auto relative z-10 animate-section">
 
-                        <div>
-                            <h4 className="text-2xl font-bold uppercase tracking-tighter mb-8 text-black dark:text-white transition-colors">Contact Us</h4>
-                            <form className="space-y-6">
-                                <div className="flex gap-6">
-                                    <input type="text" placeholder="First Name" className="w-full bg-transparent border-b border-black/20 dark:border-white/20 pb-4 text-sm focus:outline-none focus:border-[#ccff00] transition-colors" />
-                                    <input type="text" placeholder="Last Name" className="w-full bg-transparent border-b border-black/20 dark:border-white/20 pb-4 text-sm focus:outline-none focus:border-[#ccff00] transition-colors" />
-                                </div>
-                                <div className="flex items-end gap-6">
-                                    <input type="email" placeholder="Email Address" className="w-full bg-transparent border-b border-black/20 dark:border-white/20 pb-4 text-sm focus:outline-none focus:border-[#ccff00] transition-colors" />
-                                    <button type="button" className="bg-[#ccff00] text-[#171717] p-4 rounded-xl hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-colors">
-                                        <ArrowRight size={20} />
+                        {/* CTA Floating Card */}
+                        <div className="bg-white dark:bg-[#111111] rounded-[3rem] p-10 md:p-16 mb-24 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-12 border border-black/5 dark:border-white/5 transition-colors">
+                            <div className="flex-1 max-w-2xl">
+                                <h3 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-black dark:text-white leading-[1.1] mb-10 transition-colors">
+                                    Let&apos;s Turn Big Ideas Into Extraordinary Realities – Together
+                                </h3>
+                                <div className="flex flex-wrap items-center gap-4">
+                                    <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
+                                        Contact Sales
+                                    </button>
+                                    <button className="bg-transparent border border-black/20 dark:border-white/20 hover:border-black dark:hover:border-white text-black dark:text-white px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase flex items-center gap-2 transition-colors">
+                                        <ArrowRight size={16} /> Book a Consultation
                                     </button>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
+                            </div>
 
-                    <div className="max-w-[1200px] mx-auto border-t border-black/10 dark:border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 uppercase tracking-widest transition-colors">
-                        <p>© 2024 Axiom Build. All Rights Reserved.</p>
-                        <div className="flex gap-8 mt-4 md:mt-0 items-center">
-                            {/* Theme Toggle Pill */}
-                            <div className="flex items-center justify-center rounded-[#2rem] p-1.5 shadow-inner transition-colors duration-500 p-2">
+                            {/* Abstract Brand Graphic */}
+                            <div className="shrink-0 relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+                                <div className="absolute inset-0 rounded-full border-[1.5rem] md:border-[2rem] border-[#ccff00]"></div>
+                                <div className="absolute w-20 h-20 md:w-28 md:h-28 bg-[#ccff00] rounded-full"></div>
+                                <div className="absolute top-0 right-1/2 translate-x-12 -translate-y-4 md:translate-x-16 md:-translate-y-6 w-10 h-10 md:w-14 md:h-14 bg-[#ccff00] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        {/* 4 Column Layout */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-20 text-black dark:text-white transition-colors">
+
+                            {/* Col 1: Brand */}
+                            <div className="lg:col-span-4">
+                                <div className="flex items-center gap-3 font-bold text-2xl tracking-tighter mb-6">
+                                    <div className="w-5 h-5 bg-[#ccff00] transform -skew-x-12" />
+                                    <div className="w-2 h-5 bg-[#171717] dark:bg-white transform -skew-x-12 -ml-2 transition-colors" />
+                                    <span>AXIOM BUILD</span>
+                                </div>
+                                <p className="text-sm max-w-[280px] leading-relaxed mb-8 opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
+                                    We are a multidisciplinary architecture studio crafting bold, purposeful spaces that stand the test of time.
+                                </p>
+                                <div className="flex gap-4">
+                                    <a href="#" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-[#ccff00] hover:text-black transition-colors">
+                                        <span className="font-serif font-bold text-sm">f</span>
+                                    </a>
+                                    <a href="#" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-[#ccff00] hover:text-black transition-colors">
+                                        <span className="font-bold text-xs uppercase tracking-widest">in</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Col 2: Nav Items */}
+                            <div className="lg:col-span-2">
+                                <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Nav Item</h4>
+                                <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
+                                    <li><a href="#" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">About</a></li>
+                                    <li><a href="#" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Our Architect</a></li>
+                                    <li><a href="#" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Process</a></li>
+                                </ul>
+                            </div>
+
+                            {/* Col 3: Contact */}
+                            <div className="lg:col-span-3">
+                                <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Contact</h4>
+                                <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
+                                    <li className="flex gap-3">
+                                        <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                        <a href="mailto:hello@axiombuild.com" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">hello@axiombuild.com</a>
+                                    </li>
+                                    <li className="flex gap-3">
+                                        <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                        <span>+1 (123) 985 789</span>
+                                    </li>
+                                    <li className="flex justify-start gap-3">
+                                        {/* Simple Map Pin Icon */}
+                                        <svg className="w-4 h-4 mt-1 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                        <span>213 West Orchard Street<br />Kings Mountain, NC 28086</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            {/* Col 4: Newsletter */}
+                            <div className="lg:col-span-3">
+                                <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Newsletter</h4>
+                                <p className="text-sm opacity-60 text-gray-800 dark:text-gray-300 mb-6 leading-relaxed transition-colors">
+                                    Stay informed with the latest listings, insights, and real estate news.
+                                </p>
+                                <div className="relative flex items-center bg-white dark:bg-[#1a1a1a] rounded-full p-1 border border-black/10 dark:border-white/10 shadow-sm transition-colors">
+                                    <input
+                                        type="email"
+                                        placeholder="Email Address"
+                                        className="w-full bg-transparent pl-4 pr-2 text-sm focus:outline-none text-black dark:text-white"
+                                    />
+                                    <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors shrink-0">
+                                        Subscribe
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {/* Footer Bottom Bar */}
+                        <div className="pt-8 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center text-xs opacity-60 text-black dark:text-white transition-colors">
+                            <p>© 2024 Axiom Build. All Rights Reserved.</p>
+
+                            {/* Theme Toggle Pill (Moved from right side to bottom bar for space) */}
+                            <div className="flex items-center justify-center rounded-[#2rem] p-1.5 shadow-inner bg-black/5 dark:bg-white/5 mt-4 md:mt-0 transition-colors">
                                 <button
                                     onClick={() => setTheme('light')}
-                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'light' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'text-gray-500 hover:text-black dark:text-gray-500 dark:hover:text-gray-300 border border-transparent'}`}
+                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'light' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
                                     aria-label="Light Theme"
                                 >
-                                    <Sun size={18} strokeWidth={2} />
+                                    <Sun size={14} strokeWidth={2} />
                                 </button>
                                 <button
                                     onClick={() => setTheme('dark')}
-                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'dark' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'text-gray-500 hover:text-black dark:text-gray-500 dark:hover:text-gray-300 border border-transparent'}`}
+                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'dark' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
                                     aria-label="Dark Theme"
                                 >
-                                    <Moon size={18} strokeWidth={2} />
+                                    <Moon size={14} strokeWidth={2} />
                                 </button>
                                 <button
                                     onClick={() => setTheme('system')}
-                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'system' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'text-gray-500 hover:text-black dark:text-gray-500 dark:hover:text-gray-300 border border-transparent'}`}
+                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'system' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
                                     aria-label="System Theme"
                                 >
-                                    <Monitor size={18} strokeWidth={2} />
+                                    <Monitor size={14} strokeWidth={2} />
                                 </button>
                             </div>
-                            <a href="#" className="hover:text-black dark:hover:text-white transition-colors">Twitter</a>
-                            <a href="#" className="hover:text-black dark:hover:text-white transition-colors">Instagram</a>
-                            <a href="#" className="hover:text-black dark:hover:text-white transition-colors">LinkedIn</a>
                         </div>
                     </div>
                 </footer>

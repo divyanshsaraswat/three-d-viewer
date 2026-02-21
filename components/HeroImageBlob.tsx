@@ -128,20 +128,34 @@ const BlobPlane = ({ img1, img2 }: { img1: string; img2: string }) => {
     const targetMouse = useRef(new THREE.Vector2(0.5, 0.5));
     const currentMouse = useRef(new THREE.Vector2(0.5, 0.5));
 
+    const globalMouse = useRef({ x: typeof window !== 'undefined' ? window.innerWidth / 2 : 0, y: typeof window !== 'undefined' ? window.innerHeight / 2 : 0 });
+
     React.useEffect(() => {
         const handlePointerMove = (e: PointerEvent) => {
-            const rect = gl.domElement.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            const y = 1.0 - ((e.clientY - rect.top) / rect.height);
-            targetMouse.current.set(x, y);
+            globalMouse.current.x = e.clientX;
+            globalMouse.current.y = e.clientY;
         };
+
         window.addEventListener('pointermove', handlePointerMove);
         return () => window.removeEventListener('pointermove', handlePointerMove);
-    }, [gl]);
+    }, []);
 
     useFrame((state) => {
         if (materialRef.current) {
             materialRef.current.uniforms.uTime.value = state.clock.getElapsedTime();
+
+            // Calculate the mouse relative to the canvas *on every frame*
+            // so if the canvas scrolls up/down under the mouse, it perfectly updates!
+            const rect = gl.domElement.getBoundingClientRect();
+
+            // Client X/Y are relative to the viewport.
+            let x = (globalMouse.current.x - rect.left) / rect.width;
+            let y = 1.0 - ((globalMouse.current.y - rect.top) / rect.height);
+
+            x = Math.max(0, Math.min(1, x));
+            y = Math.max(0, Math.min(1, y));
+
+            targetMouse.current.set(x, y);
 
             // Interpolate mouse for smooth following
             currentMouse.current.lerp(targetMouse.current, 0.1);
