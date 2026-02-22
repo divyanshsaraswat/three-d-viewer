@@ -77,8 +77,7 @@ export default function ScrollRevealText() {
             opacity: 0.15,
             scale: (i, target: any) => {
                 if (target.classList.contains('icon-item')) return 0.3;
-                if (target.classList.contains('highlight-item')) return 0.85;
-                return 1;
+                return 1; // Both normal words and highlight wrappers start at exactly 1
             },
             y: (i, target: any) => target.classList.contains('highlight-item') ? 15 : 0
         });
@@ -122,12 +121,24 @@ export default function ScrollRevealText() {
             }
 
             if (isHighlight) {
+                // The item itself just scales up naturally
                 tl.to(item, {
                     scale: 1,
                     y: 0,
                     duration: 0.15,
                     ease: "back.out(1.5)"
                 }, startTime);
+
+                // We find the overlay inside this specific highlight item and pop it in
+                const overlay = item.querySelector('.highlight-overlay');
+                if (overlay) {
+                    tl.to(overlay, {
+                        opacity: 1,
+                        scale: 1,
+                        duration: 0.2,
+                        ease: "back.out(1.5)"
+                    }, startTime);
+                }
             }
         });
 
@@ -139,23 +150,43 @@ export default function ScrollRevealText() {
                 {words.map((w, i) => {
                     const isIcon = w.type === 'icon';
                     const isHighlight = w.type === 'highlight';
-                    let colorClass = "text-black dark:text-white";
 
-                    if (isHighlight) {
-                        if (w.color === 'blue') colorClass = "text-blue-500 border-blue-500/50 dark:border-blue-500 bg-blue-500/5 drop-shadow-md";
-                        if (w.color === 'green') colorClass = "text-[#7ea600] border-[#7ea600]/50 dark:text-[#ccff00] dark:border-[#ccff00] bg-[#ccff00]/5 drop-shadow-md";
-                        if (w.color === 'orange') colorClass = "text-orange-500 dark:text-orange-400 border-orange-500/50 dark:border-orange-400 bg-orange-500/5 drop-shadow-md";
-                        if (w.color === 'purple') colorClass = "text-purple-500 dark:text-purple-400 border-purple-500/50 dark:border-purple-400 bg-purple-500/5 drop-shadow-md";
+                    const typography = "text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight";
+
+                    if (!isHighlight) {
+                        return (
+                            <span
+                                key={i}
+                                className={`reveal-item ${typography} text-black dark:text-white transition-colors ${isIcon ? 'icon-item inline-flex items-center justify-center transform origin-bottom translate-y-1 md:translate-y-2' : ''
+                                    }`}
+                            >
+                                {w.text}
+                            </span>
+                        );
                     }
 
+                    // For highlight elements, they start as pure text to not break sentence flow.
+                    let highlightColors = "";
+                    if (w.color === 'blue') highlightColors = "border-blue-500/50 bg-blue-500/5 text-blue-500";
+                    if (w.color === 'green') highlightColors = "border-[#ccff00]/50 bg-[#ccff00]/5 text-[#ccff00]";
+                    if (w.color === 'orange') highlightColors = "border-orange-500/50 bg-orange-500/5 text-orange-500";
+                    if (w.color === 'purple') highlightColors = "border-purple-500/50 bg-purple-500/5 text-purple-500";
+
                     return (
-                        <span
-                            key={i}
-                            className={`reveal-item text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight transition-colors ${colorClass} ${isIcon ? 'icon-item inline-flex items-center justify-center transform origin-bottom translate-y-1 md:translate-y-2' : ''
-                                } ${isHighlight ? 'highlight-item inline-flex items-center justify-center border-[3px] border-dotted px-4 py-1.5 md:py-2 rounded-[2rem] mx-1 md:mx-2 transform transition-all duration-300' : ''
-                                }`}
-                        >
-                            {w.text}
+                        <span key={i} className={`reveal-item highlight-item relative inline-flex items-center justify-center transform`}>
+                            {/* Inactive state text (looks identically spaced and placed like normal words) */}
+                            <span className={`${typography} text-black dark:text-white transition-colors relative z-10`}>
+                                {w.text}
+                            </span>
+
+                            {/* Animated Active State overlay (colored box + colored text)
+                                We use negative absolute positioning to create the padding *outward* 
+                                from the base word without shifting the rest of the sentence. */}
+                            <span className={`highlight-overlay absolute -inset-y-1.5 -inset-x-4 md:-inset-y-2 flex items-center justify-center border-[3px] border-dotted rounded-[2rem] opacity-0 scale-95 z-20 ${highlightColors} drop-shadow-sm pointer-events-none`}>
+                                <span className={`${typography}`}>
+                                    {w.text}
+                                </span>
+                            </span>
                         </span>
                     );
                 })}

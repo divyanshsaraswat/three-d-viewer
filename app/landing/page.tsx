@@ -17,7 +17,7 @@ import CustomCursor from '@/components/CustomCursor';
 const AnimatedWord = ({ text, highlight }: { text: string; highlight?: boolean }) => (
     <span className={`inline-block whitespace-nowrap px-1 ${highlight ? 'font-light italic font-serif tracking-normal' : ''}`}>
         {text.split('').map((char, index) => (
-            <span key={index} className="inline-block overflow-hidden pb-4 -mb-4">
+            <span key={index} className="inline-block  py-4 -my-4">
                 <span className="hero-title-char inline-block translate-y-[120%] opacity-0 origin-bottom-left">
                     {char === ' ' ? '\u00A0' : char}
                 </span>
@@ -30,20 +30,26 @@ const AnimatedNumber = ({ target, suffix = "" }: { target: number, suffix?: stri
     const numRef = useRef<HTMLHeadingElement>(null);
 
     useGSAP(() => {
-        gsap.to(numRef.current, {
-            innerHTML: target,
+        const counter = { val: 0 };
+        gsap.to(counter, {
+            val: target,
             duration: 2.5,
-            snap: { innerHTML: 1 },
             ease: "power3.out",
             scrollTrigger: {
                 trigger: numRef.current,
                 start: "top 85%",
+                toggleActions: "play none none reverse"
+            },
+            onUpdate: () => {
+                if (numRef.current) {
+                    numRef.current.innerText = Math.round(counter.val).toString();
+                }
             }
         });
-    }, []);
+    }, [target]);
 
     return (
-        <h2 ref={numRef} className="text-6xl font-bold text-black dark:text-white group-hover:-translate-y-2 transition-transform transition-colors drop-shadow-sm">
+        <h2 ref={numRef} className="text-6xl font-bold text-black dark:text-white group-hover:-translate-y-2 transition-transform transition-colors drop-shadow-sm leading-none m-0">
             0
         </h2>
     );
@@ -53,18 +59,19 @@ const AnimatedLineGraph = () => {
     const pathRef = useRef<SVGPathElement>(null);
 
     useGSAP(() => {
-        const length = pathRef.current?.getTotalLength() || 500;
-        gsap.set(pathRef.current, { strokeDasharray: length, strokeDashoffset: length, opacity: 0 });
+        if (!pathRef.current) return;
+        const length = pathRef.current.getTotalLength() || 500;
+        gsap.set(pathRef.current, { strokeDasharray: length, strokeDashoffset: length });
 
         gsap.to(pathRef.current, {
             strokeDashoffset: 0,
-            opacity: 1,
             duration: 1.5,
             delay: 0.2, // slight delay after scroll
             ease: "power2.out",
             scrollTrigger: {
                 trigger: pathRef.current,
                 start: "top 85%",
+                toggleActions: "play none none reverse"
             }
         });
     }, []);
@@ -351,23 +358,27 @@ export default function LandingPage() {
                 <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
 
                     {/* Background Video */}
-                    <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
+                    <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center bg-black">
                         <video
                             key={isDarkMode ? 'dark' : 'light'}
-                            className="hero-bg-video w-full h-full object-cover"
+                            className="hero-bg-video w-full h-full object-cover opacity-90"
                             src="hero-section 2.mp4"
                             autoPlay
                             loop
                             muted
                             playsInline
                         />
+                        {/* Linear Tint Overlay */}
+                        {/* <div className="absolute inset-0 bg-black/15 z-[1]"></div> */}
+                        {/* Radial Gradient overlay focused on center */}
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,transparent_70%)] z-[2]"></div>
                     </div>
 
                     {/* Content Overlay */}
                     <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center justify-center text-center px-4 md:px-8 mt-[-6rem] pointer-events-auto">
 
                         {/* Title Lines (split for staggered animation) */}
-                        <h1 className="hero-title text-4xl sm:text-5xl lg:text-[4rem] font-extrabold leading-[1.1] tracking-tight text-center text-black dark:text-white mb-6 drop-shadow-sm flex flex-col w-full max-w-[800px] mx-auto uppercase">
+                        <h1 className="hero-title text-4xl sm:text-5xl lg:text-[4rem] font-extrabold leading-[1.1] tracking-tight text-center text-black dark:text-white mb-6 flex flex-col w-full max-w-[800px] mx-auto uppercase [text-shadow:0px_4px_20px_rgba(0,0,0,0.1)]">
                             <div className="flex flex-wrap justify-center items-center w-full gap-x-2 sm:gap-x-3">
                                 <AnimatedWord text="Build" />
                                 <AnimatedWord text="Sustainable." highlight={true} />
@@ -378,18 +389,18 @@ export default function LandingPage() {
                             </div>
                         </h1>
 
-                        <p className="hero-subtitle text-sm md:text-base font-medium text-black/80 dark:text-white/80 max-w-xl mx-auto leading-snug mb-8 drop-shadow-md">
+                        <p className="hero-subtitle text-sm md:text-base font-bold tracking-wide text-black/80 dark:text-white/80 max-w-xl mx-auto leading-relaxed mb-8 [text-shadow:0px_4px_20px_rgba(0,0,0,0.8)]">
                             Revolutionary building materials crafted from recycled textiles. <br className="hidden md:block" /> Structural strength meets environmental conscience.
                         </p>
 
                         <div className="hero-cta flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 w-full">
-                            <button className="bg-black text-white dark:bg-white dark:text-black font-semibold tracking-normal text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.1)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto">
+                            <button className="bg-black/60 dark:bg-white/10 text-white backdrop-blur-sm border border-white/20 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-black/80 dark:hover:bg-white/20 transition-all duration-300 w-full sm:w-auto shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
                                 Explore Our Story
                             </button>
-                            <button className="bg-transparent text-black dark:text-white border-2 border-black/20 dark:border-white/20 font-semibold tracking-normal text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-black/5 dark:hover:bg-white/10 hover:border-black/50 dark:hover:border-white/50 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm">
+                            <button className="bg-transparent text-white border-2 border-white/30 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-white/10 hover:border-white/60 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm [text-shadow:0px_2px_10px_rgba(0,0,0,0.5)]">
                                 Shop Sustainable Bricks
                             </button>
-                            <button className="bg-[#ccff00] text-black font-semibold tracking-normal text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto">
+                            <button className="bg-[#ccff00] text-black font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto border border-[#ccff00]">
                                 Experience in 3D
                             </button>
                         </div>
