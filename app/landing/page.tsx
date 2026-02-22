@@ -26,6 +26,70 @@ const AnimatedWord = ({ text, highlight }: { text: string; highlight?: boolean }
     </span>
 );
 
+const AnimatedNumber = ({ target, suffix = "" }: { target: number, suffix?: string }) => {
+    const numRef = useRef<HTMLHeadingElement>(null);
+
+    useGSAP(() => {
+        gsap.to(numRef.current, {
+            innerHTML: target,
+            duration: 2.5,
+            snap: { innerHTML: 1 },
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: numRef.current,
+                start: "top 85%",
+            }
+        });
+    }, []);
+
+    return (
+        <h2 ref={numRef} className="text-6xl font-bold text-black dark:text-white group-hover:-translate-y-2 transition-transform transition-colors drop-shadow-sm">
+            0
+        </h2>
+    );
+};
+
+const AnimatedLineGraph = () => {
+    const pathRef = useRef<SVGPathElement>(null);
+
+    useGSAP(() => {
+        const length = pathRef.current?.getTotalLength() || 500;
+        gsap.set(pathRef.current, { strokeDasharray: length, strokeDashoffset: length, opacity: 0 });
+
+        gsap.to(pathRef.current, {
+            strokeDashoffset: 0,
+            opacity: 1,
+            duration: 1.5,
+            delay: 0.2, // slight delay after scroll
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: pathRef.current,
+                start: "top 85%",
+            }
+        });
+    }, []);
+
+    return (
+        <div className="w-full h-16 my-4 w-[120%] -ml-[10%] opacity-80 group-hover:opacity-100 transition-opacity">
+            <svg className="w-full h-full overflow-visible" viewBox="0 0 200 50" preserveAspectRatio="none">
+                {/* Subtle background grid lines */}
+                <path d="M 0 12.5 L 200 12.5 M 0 25 L 200 25 M 0 37.5 L 200 37.5" stroke="currentColor" strokeWidth="0.5" className="text-black/5 dark:text-white/5" />
+
+                {/* The animated trend line */}
+                <path
+                    ref={pathRef}
+                    d="M 0 45 Q 20 40 40 35 T 80 20 T 120 15 T 160 5 T 200 0"
+                    fill="none"
+                    stroke="#ccff00"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    className="drop-shadow-[0_0_8px_rgba(204,255,0,0.6)]"
+                />
+            </svg>
+        </div>
+    );
+};
+
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 }
@@ -458,10 +522,13 @@ export default function LandingPage() {
                                     </button>
                                 </div>
                             </div>
-                            <div>
+
+                            <AnimatedLineGraph />
+
+                            <div className="relative z-10">
                                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 transition-colors">Rural Women Employed</p>
                                 <div className="flex items-baseline gap-2">
-                                    <h2 className="text-6xl font-bold text-black dark:text-white group-hover:-translate-y-2 transition-transform transition-colors">50</h2>
+                                    <AnimatedNumber target={50} />
                                     <span className="text-[#ccff00] text-xl font-bold">+</span>
                                 </div>
                             </div>
