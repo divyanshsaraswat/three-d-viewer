@@ -12,6 +12,19 @@ import FullScreenMenu from '@/components/FullScreenMenu';
 import ScrollRevealText from '@/components/ScrollRevealText';
 import SpecializationCarousel from '@/components/SpecializationCarousel';
 import TestimonialVideo from '@/components/TestimonialVideo';
+import CustomCursor from '@/components/CustomCursor';
+
+const AnimatedWord = ({ text, highlight }: { text: string; highlight?: boolean }) => (
+    <span className={`inline-block whitespace-nowrap px-1 ${highlight ? 'font-light italic font-serif tracking-normal' : ''}`}>
+        {text.split('').map((char, index) => (
+            <span key={index} className="inline-block overflow-hidden pb-4 -mb-4">
+                <span className="hero-title-char inline-block translate-y-[120%] opacity-0 origin-bottom-left">
+                    {char === ' ' ? '\u00A0' : char}
+                </span>
+            </span>
+        ))}
+    </span>
+);
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -28,6 +41,7 @@ export default function LandingPage() {
     // Audio and Loader State
     const [hasEntered, setHasEntered] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
+    const [hasScrolledTable, setHasScrolledTable] = useState(false);
     const audioRef = useRef<HTMLAudioElement>(null);
     const masterTlRef = useRef<gsap.core.Timeline | null>(null);
 
@@ -117,9 +131,9 @@ export default function LandingPage() {
             { scale: 1, opacity: 1, duration: 1.5, ease: "power3.out" },
             "-=0.4"
         )
-            .fromTo('.hero-title-word',
-                { y: 40, opacity: 0, scale: 0.9, rotationX: -15 },
-                { y: 0, opacity: 1, scale: 1, rotationX: 0, duration: 0.8, stagger: 0.08, ease: "back.out(1.5)" },
+            .fromTo('.hero-title-char',
+                { y: '120%', opacity: 0, rotationZ: 10 },
+                { y: '0%', opacity: 1, rotationZ: 0, duration: 0.8, stagger: 0.03, ease: "power4.out" },
                 "-=1.0"
             )
             .fromTo('.hero-subtitle',
@@ -195,8 +209,10 @@ export default function LandingPage() {
                 </button>
             )}
 
+            <CustomCursor />
+
             {/* ---------- INITIAL LOADING SCREEN ---------- */}
-            <div className="loader-container fixed inset-0 z-[200] bg-[#ccff00] flex flex-col items-center justify-center">
+            <div className={`loader-container fixed inset-0 z-[200] bg-[#ccff00] flex flex-col items-center justify-center ${hasEntered ? 'pointer-events-none' : ''}`}>
                 <div className="loader-bg absolute inset-0 bg-[#0a0a0a]" />
 
                 {!hasEntered ? (
@@ -274,7 +290,7 @@ export default function LandingPage() {
                         <video
                             key={isDarkMode ? 'dark' : 'light'}
                             className="hero-bg-video w-full h-full object-cover"
-                            src={isDarkMode ? "hero-section-2.mp4" : "hero-section.mp4"}
+                            src="hero-section 2.mp4"
                             autoPlay
                             loop
                             muted
@@ -286,27 +302,42 @@ export default function LandingPage() {
                     <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center justify-center text-center px-4 md:px-8 mt-[-6rem] pointer-events-auto">
 
                         {/* Title Lines (split for staggered animation) */}
-                        <h1 className="hero-title text-4xl md:text-6xl lg:text-7xl font-semibold leading-tight tracking-tight text-center text-black dark:text-white mb-6 drop-shadow-sm">
-                            <span className="inline-block hero-title-word px-1">A</span>
-                            <span className="inline-block hero-title-word px-1">new</span>
-                            <span className="inline-block hero-title-word px-1">era</span>
-                            <span className="inline-block hero-title-word px-1">of</span>
-                            <br className="hidden md:block" />
-                            <span className="inline-block hero-title-word px-1">sustainable</span>
-                            <span className="inline-block hero-title-word px-1">sleep</span>
+                        <h1 className="hero-title text-4xl sm:text-5xl lg:text-[4rem] font-extrabold leading-[1.1] tracking-tight text-center text-black dark:text-white mb-6 drop-shadow-sm flex flex-col w-full max-w-[800px] mx-auto uppercase">
+                            <div className="flex flex-wrap justify-center items-center w-full gap-x-2 sm:gap-x-3">
+                                <AnimatedWord text="Build" />
+                                <AnimatedWord text="Sustainable." highlight={true} />
+                            </div>
+                            <div className="flex flex-wrap justify-center items-center w-full gap-x-2 sm:gap-x-3 md:-mt-2">
+                                <AnimatedWord text="Live" />
+                                <AnimatedWord text="Purposeful." highlight={true} />
+                            </div>
                         </h1>
 
-                        <p className="hero-subtitle text-lg md:text-xl font-medium text-black/80 dark:text-white/80 max-w-2xl mx-auto leading-relaxed mb-8 drop-shadow-md">
-                            The world&apos;s most advanced textile clinic to help you live longer, prevent disease, and feel your best
+                        <p className="hero-subtitle text-sm md:text-base font-medium text-black/80 dark:text-white/80 max-w-xl mx-auto leading-snug mb-8 drop-shadow-md">
+                            Revolutionary building materials crafted from recycled textiles. <br className="hidden md:block" /> Structural strength meets environmental conscience.
                         </p>
 
-                        <div className="hero-cta">
-                            <button className="bg-black text-white dark:bg-white dark:text-black font-semibold tracking-normal text-base px-10 py-4 lg:px-12 lg:py-[18px] rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.1)] hover:scale-[1.03] transition-transform duration-300">
-                                Join waitlist
+                        <div className="hero-cta flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 w-full">
+                            <button className="bg-black text-white dark:bg-white dark:text-black font-semibold tracking-normal text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.1)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto">
+                                Explore Our Story
+                            </button>
+                            <button className="bg-transparent text-black dark:text-white border-2 border-black/20 dark:border-white/20 font-semibold tracking-normal text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-black/5 dark:hover:bg-white/10 hover:border-black/50 dark:hover:border-white/50 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm">
+                                Shop Sustainable Bricks
+                            </button>
+                            <button className="bg-[#ccff00] text-black font-semibold tracking-normal text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto">
+                                Experience in 3D
                             </button>
                         </div>
                     </div>
-                    <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-white dark:to-[#0a0a0a] pointer-events-none"></div>
+                    <div className={`absolute bottom-0 left-0 w-full ${isDarkMode ? 'h-24' : 'h-8 opacity-20'}  bg-gradient-to-b from-transparent to-white dark:to-[#0a0a0a] pointer-events-none`}></div>
+
+                    {/* Scroll Indicator */}
+                    <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-20 mix-blend-difference text-white opacity-80">
+                        <span className="text-[9px] uppercase tracking-[0.3em] font-bold">Scroll</span>
+                        <div className="w-[1px] h-10 bg-white/30 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-1/2 bg-white animate-[scrollLine_2s_infinite_ease-in-out]" />
+                        </div>
+                    </div>
                 </section>
 
                 {/* ---------- TRANSFORMATION STORY (TEXT REVEAL + BENTO GRID) ---------- */}
@@ -329,15 +360,15 @@ export default function LandingPage() {
                     <div className="animate-ticker items-center flex">
                         {[...Array(6)].map((_, i) => (
                             <div key={i} className="flex items-center">
-                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">2M+ liters water saved</span>
+                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">500+ tons textile waste transformed</span>
                                 <svg className="w-8 h-8 md:w-12 md:h-12 text-black fill-current mx-2 transform scale-y-90" viewBox="0 0 10 9" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 0h2v1h1v1h2V1h1V0h2v3h1v2h-1v1H8v1H7v1H6v1H4V8H3V7H2V6H1V5H0V3h1V0z" />
                                 </svg>
-                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">50K+ sheets transformed</span>
+                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">50K+ sustainable bricks produced</span>
                                 <svg className="w-8 h-8 md:w-12 md:h-12 text-black fill-current mx-2 transform scale-y-90" viewBox="0 0 10 9" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 0h2v1h1v1h2V1h1V0h2v3h1v2h-1v1H8v1H7v1H6v1H4V8H3V7H2V6H1V5H0V3h1V0z" />
                                 </svg>
-                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">100% Carbon Neutral Operations</span>
+                                <span className="text-black font-semibold text-3xl md:text-5xl lg:text-[4rem] uppercase tracking-tighter mx-4 md:mx-8">100% Carbon Neutral Manufacturing</span>
                                 <svg className="w-8 h-8 md:w-12 md:h-12 text-black fill-current mx-2 transform scale-y-90" viewBox="0 0 10 9" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1 0h2v1h1v1h2V1h1V0h2v3h1v2h-1v1H8v1H7v1H6v1H4V8H3V7H2V6H1V5H0V3h1V0z" />
                                 </svg>
@@ -584,78 +615,120 @@ export default function LandingPage() {
                         <div className="text-center mb-20">
                             <h2 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter mb-6 text-black dark:text-white transition-colors">Honest Comparison</h2>
                             <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-sm uppercase tracking-widest leading-loose transition-colors">
-                                Weinix Recycled Sheets — Your Best Choice for Sustainability & Luxury
+                                Weinix Sustainable Brick — Your Best Choice for Sustainable Construction
                             </p>
                         </div>
 
-                        <div className="bg-gray-50 dark:bg-[#1a1a1a] rounded-[2rem] border border-gray-200 dark:border-white/5 overflow-hidden shadow-2xl transition-colors duration-500">
-                            {/* Table Header */}
-                            <div className="grid grid-cols-3 border-b border-black/10 dark:border-white/10 relative transition-colors">
-                                <div className="p-8 flex items-center">
-                                    <span className="font-bold text-xl uppercase tracking-widest text-gray-500 dark:text-gray-400 transition-colors">Features</span>
-                                </div>
-                                <div className="p-8 flex flex-col items-center justify-center text-center border-l border-black/10 dark:border-white/5 transition-colors">
-                                    <span className="font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">Conventional Cotton</span>
-                                </div>
-                                <div className="p-8 flex flex-col items-center justify-center text-center bg-[#ccff00]/10 border-l border-[#ccff00]/20 relative overflow-hidden group">
-                                    <div className="absolute top-0 w-full h-1 bg-[#ccff00]"></div>
-                                    <div className="w-12 h-12 rounded-full bg-[#ccff00]/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                        <Star size={24} className="text-[#ccff00] drop-shadow-md" />
-                                    </div>
-                                    <span className="font-bold text-xl tracking-tighter text-[#ccff00]">Weinix Recycled Sheets</span>
+                        <div className="relative rounded-[2rem] overflow-hidden shadow-2xl transition-colors duration-500">
+                            {/* Scroll Hint Overlay (Mobile Only) */}
+                            <div className={`md:hidden absolute inset-y-0 right-0 z-10 w-24 flex items-center justify-end pr-4 pointer-events-none bg-gradient-to-l from-black/80 dark:from-black via-black/40 to-transparent transition-opacity duration-500 ${!hasScrolledTable ? 'opacity-100' : 'opacity-0'}`}>
+                                <div className="flex flex-col items-center gap-2 text-white drop-shadow-md pb-4">
+                                    <ArrowRight size={24} className="animate-[fadeSlideRight_1.5s_infinite_ease-in-out]" />
+                                    <span className="text-[10px] font-bold uppercase tracking-widest">Swipe</span>
                                 </div>
                             </div>
 
-                            {/* Table Rows */}
-                            {[
-                                {
-                                    feature: "Water Usage",
-                                    conventional: "2,700L per sheet",
-                                    weinix: "200L per sheet (93% less)"
-                                },
-                                {
-                                    feature: "CO2 Emissions",
-                                    conventional: "5.5 kg",
-                                    weinix: "0.3 kg (95% less)"
-                                },
-                                {
-                                    feature: "Pesticides",
-                                    conventional: "150g toxic chemicals",
-                                    weinix: "0g (100% less)"
-                                },
-                                {
-                                    feature: "Thread Count",
-                                    conventional: "300",
-                                    weinix: "300 (same luxury)"
-                                },
-                                {
-                                    feature: "Softness",
-                                    conventional: "Standard",
-                                    weinix: "Softer (pre-washed fibers)"
-                                },
-                                {
-                                    feature: "Durability",
-                                    conventional: "2-3 years",
-                                    weinix: "3-5 years"
-                                },
-                                {
-                                    feature: "Price",
-                                    conventional: "₹₹₹",
-                                    weinix: "₹₹₹ (competitive)"
-                                }
-                            ].map((row, idx) => (
-                                <div key={idx} className="grid grid-cols-3 border-b border-black/5 dark:border-white/5 last:border-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors group">
+                            <div
+                                onScroll={(e) => {
+                                    const target = e.target as HTMLDivElement;
+                                    // Hide hint when scrolled right, show again when back at the start
+                                    setHasScrolledTable(target.scrollLeft > 20);
+                                }}
+                                className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 overflow-x-auto w-full smooth-scroll"
+                            >
+                                {/* Table Header */}
+                                <div className="grid grid-cols-4 min-w-[800px] border-b border-black/10 dark:border-white/10 relative transition-colors">
                                     <div className="p-6 md:p-8 flex items-center">
-                                        <span className="font-medium text-gray-700 dark:text-gray-300 transition-colors">{row.feature}</span>
+                                        <span className="font-bold text-base md:text-xl uppercase tracking-widest text-gray-500 dark:text-gray-400 transition-colors">Feature</span>
                                     </div>
-                                    <div className="p-6 md:p-8 flex items-center justify-center text-center border-l border-black/5 dark:border-white/5 text-gray-500 dark:text-gray-400 transition-colors">
-                                        <span>{row.conventional}</span>
+                                    <div className="p-6 md:p-8 flex flex-col items-center justify-center text-center border-l border-black/10 dark:border-white/5 transition-colors">
+                                        <span className="font-bold text-base md:text-xl tracking-tighter text-black dark:text-white transition-colors">Fired Clay Brick</span>
                                     </div>
-                                    <div className="p-6 md:p-8 flex items-center justify-center text-center bg-[#ccff00]/5 border-l border-[#ccff00]/20 text-black dark:text-white font-bold group-hover:bg-[#ccff00]/10 transition-colors">
-                                        <span>{row.weinix}</span>
+                                    <div className="p-6 md:p-8 flex flex-col items-center justify-center text-center border-l border-black/10 dark:border-white/5 transition-colors">
+                                        <span className="font-bold text-base md:text-xl tracking-tighter text-black dark:text-white transition-colors">Concrete Block</span>
+                                    </div>
+                                    <div className="p-6 md:p-8 flex flex-col items-center justify-center text-center bg-[#ccff00]/10 border-l border-[#ccff00]/20 relative overflow-hidden group">
+                                        <div className="absolute top-0 w-full h-1 bg-[#ccff00]"></div>
+                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#ccff00]/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                            <Star className="w-5 h-5 md:w-6 md:h-6 text-[#ccff00] drop-shadow-md" />
+                                        </div>
+                                        <span className="font-bold text-base md:text-xl tracking-tighter text-[#ccff00]">Weinix Sustainable Brick</span>
                                     </div>
                                 </div>
-                            ))}
+
+                                {/* Table Rows */}
+                                {[
+                                    {
+                                        feature: "Water Usage",
+                                        firedClay: "15L per brick",
+                                        concrete: "8L per brick",
+                                        weinix: "0.3L per brick (98% less)"
+                                    },
+                                    {
+                                        feature: "CO2 Emissions",
+                                        firedClay: "0.5 kg (kiln firing)",
+                                        concrete: "0.4 kg (cement)",
+                                        weinix: "0.05 kg (90% less)"
+                                    },
+                                    {
+                                        feature: "Energy Consumption",
+                                        firedClay: "Very High (firing)",
+                                        concrete: "High (cement production)",
+                                        weinix: "Low (compression only)"
+                                    },
+                                    {
+                                        feature: "Compressive Strength",
+                                        firedClay: "3.5-10 MPa",
+                                        concrete: "4-12 MPa",
+                                        weinix: "5-8 MPa (load-bearing certified)"
+                                    },
+                                    {
+                                        feature: "Thermal Insulation",
+                                        firedClay: "0.6-0.8 W/mK",
+                                        concrete: "1.0-1.3 W/mK",
+                                        weinix: "0.4-0.5 W/mK (40% better)"
+                                    },
+                                    {
+                                        feature: "Fire Resistance",
+                                        firedClay: "Excellent",
+                                        concrete: "Excellent",
+                                        weinix: "Good (Class B fire rating)"
+                                    },
+                                    {
+                                        feature: "Weight",
+                                        firedClay: "3-3.5 kg",
+                                        concrete: "8-10 kg",
+                                        weinix: "2.5-3 kg (easier handling)"
+                                    },
+                                    {
+                                        feature: "Recyclability",
+                                        firedClay: "Low",
+                                        concrete: "Low",
+                                        weinix: "High (can be reprocessed)"
+                                    },
+                                    {
+                                        feature: "Price per sq meter",
+                                        firedClay: "₹400-500",
+                                        concrete: "₹350-450",
+                                        weinix: "₹420-480 (competitive premium)"
+                                    }
+                                ].map((row, idx) => (
+                                    <div key={idx} className="grid grid-cols-4 min-w-[800px] border-b border-black/5 dark:border-white/5 last:border-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors group">
+                                        <div className="p-4 md:p-8 flex items-center">
+                                            <span className="font-medium text-sm md:text-base text-gray-700 dark:text-gray-300 transition-colors">{row.feature}</span>
+                                        </div>
+                                        <div className="p-4 md:p-8 flex items-center justify-center text-center border-l border-black/5 dark:border-white/5 text-sm md:text-base text-gray-500 dark:text-gray-400 transition-colors">
+                                            <span>{row.firedClay}</span>
+                                        </div>
+                                        <div className="p-4 md:p-8 flex items-center justify-center text-center border-l border-black/5 dark:border-white/5 text-sm md:text-base text-gray-500 dark:text-gray-400 transition-colors">
+                                            <span>{row.concrete}</span>
+                                        </div>
+                                        <div className="p-4 md:p-8 flex items-center justify-center text-center bg-[#ccff00]/5 border-l border-[#ccff00]/20 text-sm md:text-base text-black dark:text-white font-bold group-hover:bg-[#ccff00]/10 transition-colors">
+                                            <span>{row.weinix}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </section>
