@@ -40,6 +40,7 @@ export default function LandingPage() {
 
     // Audio and Loader State
     const [hasEntered, setHasEntered] = useState(false);
+    const [isVideoEnded, setIsVideoEnded] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [hasScrolledTable, setHasScrolledTable] = useState(false);
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -142,8 +143,8 @@ export default function LandingPage() {
                 "-=0.5"
             )
             .fromTo('.hero-cta',
-                { scale: 0.9, opacity: 0 },
-                { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" },
+                { filter: 'blur(12px)', opacity: 0, y: 15 },
+                { filter: 'blur(0px)', opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
                 "-=0.3"
             );
 
@@ -223,7 +224,7 @@ export default function LandingPage() {
                         </div>
                         <button
                             onClick={handleEnter}
-                            className="text-white border border-white/30 px-8 py-3 rounded-full hover:bg-white hover:text-black transition-colors cursor-pointer duration-300 uppercase tracking-widest text-sm font-bold animate-pulse"
+                            className="text-white border border-white/30 px-8 py-3 rounded-full hover:bg-white hover:text-black transition-colors cursor-pointer duration-300 uppercase tracking-widest text-sm font-bold animate-pulse text-center"
                         >
                             Enter Experience
                         </button>
@@ -231,7 +232,7 @@ export default function LandingPage() {
                 ) : (
                     <div className="loader-text relative z-10 opacity-0 transform translate-y-5 text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4">
                         <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                        <span>AXIOM BUILD</span>
+                        <span>WEINIX</span>
                     </div>
                 )}
             </div>
