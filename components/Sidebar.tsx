@@ -285,13 +285,17 @@ export default function Sidebar() {
                                     ⚔️ Sword
                                 </button>
                                 <button
-                                    onClick={() => handleExampleLoad('Scene', 'https://d2kpa63owptad0.cloudfront.net/scene.glb')}
+                                    onClick={() => {
+                                        const isMobile = typeof window !== 'undefined' && (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768);
+                                        const url = isMobile ? '/examples/apartment-interior_optimized.glb' : '/examples/apartment-interior.glb';
+                                        handleExampleLoad('Interior', url);
+                                    }}
                                     disabled={!!downloading}
                                     className="col-span-2 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500 flex flex-col justify-center disabled:opacity-50 disabled:cursor-wait relative overflow-hidden"
                                 >
                                     <div className="flex items-center justify-between w-full z-10">
-                                        <span>🏙️ City Scene</span>
-                                        {downloading?.name === 'Scene' && (
+                                        <span>🛋️ Interior</span>
+                                        {downloading?.name === 'Interior' && (
                                             <span className="text-[10px]">
                                                 {downloading.progress > 0 ? `${Math.round(downloading.progress)}%` : '...'}
                                             </span>
@@ -299,7 +303,7 @@ export default function Sidebar() {
                                     </div>
 
                                     {/* Progress Bar Background */}
-                                    {downloading?.name === 'Scene' && (
+                                    {downloading?.name === 'Interior' && (
                                         <div
                                             className="absolute bottom-0 left-0 h-0.5 bg-blue-500 transition-all duration-200"
                                             style={{ width: downloading.progress > 0 ? `${downloading.progress}%` : '100%', opacity: downloading.progress > 0 ? 1 : 0.3 }}
