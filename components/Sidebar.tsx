@@ -310,6 +310,28 @@ export default function Sidebar() {
                                         />
                                     )}
                                 </button>
+                                <button
+                                    onClick={() => handleExampleLoad('Interior 2', '/examples/scene_optimized.glb')}
+                                    disabled={!!downloading}
+                                    className="col-span-2 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500 flex flex-col justify-center disabled:opacity-50 disabled:cursor-wait relative overflow-hidden"
+                                >
+                                    <div className="flex items-center justify-between w-full z-10">
+                                        <span>🏙️ Interior 2</span>
+                                        {downloading?.name === 'Interior 2' && (
+                                            <span className="text-[10px]">
+                                                {downloading.progress > 0 ? `${Math.round(downloading.progress)}%` : '...'}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Progress Bar Background */}
+                                    {downloading?.name === 'Interior 2' && (
+                                        <div
+                                            className="absolute bottom-0 left-0 h-0.5 bg-blue-500 transition-all duration-200"
+                                            style={{ width: downloading.progress > 0 ? `${downloading.progress}%` : '100%', opacity: downloading.progress > 0 ? 1 : 0.3 }}
+                                        />
+                                    )}
+                                </button>
                             </div>
 
                             <div className="relative border-2 border-dashed border-neutral-600 rounded-lg p-4 hover:border-neutral-400 text-center cursor-pointer transition-colors">
