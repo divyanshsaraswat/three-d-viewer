@@ -190,6 +190,49 @@ export default function ViewerCanvas() {
                 orbitDistance.current = pc.math.clamp(orbitDistance.current, 0.5, 50);
             });
 
+            // Touch Input Handlers
+            if (pc.TouchDevice) {
+                app.touch = new pc.TouchDevice(canvasRef.current!);
+                let lastTouchX = 0;
+                let lastTouchY = 0;
+                let lastPinchDist = 0;
+
+                app.touch.on(pc.EVENT_TOUCHSTART, (e: pc.TouchEvent) => {
+                    if (e.touches.length === 1) {
+                        lastTouchX = e.touches[0].x;
+                        lastTouchY = e.touches[0].y;
+                    } else if (e.touches.length === 2) {
+                        const dx = e.touches[0].x - e.touches[1].x;
+                        const dy = e.touches[0].y - e.touches[1].y;
+                        lastPinchDist = Math.sqrt(dx * dx + dy * dy);
+                    }
+                    e.event.preventDefault();
+                });
+
+                app.touch.on(pc.EVENT_TOUCHMOVE, (e: pc.TouchEvent) => {
+                    if (e.touches.length === 1) {
+                        const dx = e.touches[0].x - lastTouchX;
+                        const dy = e.touches[0].y - lastTouchY;
+                        orbitYaw.current -= dx * 0.3;
+                        orbitPitch.current -= dy * 0.3;
+                        orbitPitch.current = pc.math.clamp(orbitPitch.current, -89, 89);
+                        lastTouchX = e.touches[0].x;
+                        lastTouchY = e.touches[0].y;
+                    } else if (e.touches.length === 2) {
+                        const dx = e.touches[0].x - e.touches[1].x;
+                        const dy = e.touches[0].y - e.touches[1].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        // Pinch to zoom logic
+                        const delta = lastPinchDist - dist;
+                        orbitDistance.current += delta * 0.05;
+                        orbitDistance.current = pc.math.clamp(orbitDistance.current, 0.5, 50);
+                        lastPinchDist = dist;
+                    }
+                    e.event.preventDefault();
+                });
+            }
+
             // Update Loop
             app.on('update', (dt: number) => {
                 // Handle Bookmark Tweening
