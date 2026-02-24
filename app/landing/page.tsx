@@ -174,6 +174,7 @@ export default function LandingPage() {
     // Audio and Loader State
     const [hasEntered, setHasEntered] = useState(false);
     const [isVideoEnded, setIsVideoEnded] = useState(false);
+    const [isVideoLoaded, setIsVideoLoaded] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [hasScrolledTable, setHasScrolledTable] = useState(false);
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -357,9 +358,10 @@ export default function LandingPage() {
                         </div>
                         <button
                             onClick={handleEnter}
-                            className="text-white border border-white/30 px-8 py-3 rounded-full hover:bg-white hover:text-black transition-colors cursor-pointer duration-300 uppercase tracking-widest text-sm font-bold animate-pulse text-center"
+                            disabled={!isVideoLoaded}
+                            className={`text-white border border-white/30 px-8 py-3 rounded-full uppercase tracking-widest text-sm font-bold text-center transition-all duration-300 ${isVideoLoaded ? 'hover:bg-white hover:text-black cursor-pointer animate-pulse' : 'opacity-50 cursor-wait'}`}
                         >
-                            Enter Experience
+                            {isVideoLoaded ? 'Enter Experience' : 'Loading Experience...'}  
                         </button>
                     </div>
                 ) : (
@@ -424,14 +426,17 @@ export default function LandingPage() {
                         <video
                             key={isDarkMode ? 'dark' : 'light'}
                             className="hero-bg-video w-full h-full object-cover opacity-90"
-                            src="hero-section 2.mp4"
                             autoPlay
                             loop
                             muted
-                            preload="auto"
                             playsInline
-                        />
-                        {/* Linear Tint Overlay */}
+                            preload="auto"
+                            onCanPlayThrough={() => setIsVideoLoaded(true)}
+                            onLoadedData={() => setIsVideoLoaded(true)}
+                        >
+                            <source src="hero-section 2.mp4" type="video/mp4" />
+                            <source src="hero-section 2.webm" type="video/webm" />
+                        </video>
                         {/* <div className="absolute inset-0 bg-black/15 z-[1]"></div> */}
                         {/* Radial Gradient overlay focused on center */}
                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,transparent_70%)] z-[2]"></div>
