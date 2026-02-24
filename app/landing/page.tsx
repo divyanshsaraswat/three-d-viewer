@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { Search, Menu, ArrowRight, ArrowUpRight, Play, Star, ArrowDown, ShoppingCart, Monitor, Sun, Moon } from 'lucide-react';
-import HeroImageBlob from '@/components/HeroImageBlob';
+
 import ProductCarousel from '@/components/ProductCarousel';
 import { useRouter } from 'next/navigation';
 import FullScreenMenu from '@/components/FullScreenMenu';
@@ -93,6 +93,68 @@ const AnimatedLineGraph = () => {
                     className="drop-shadow-[0_0_8px_rgba(204,255,0,0.6)]"
                 />
             </svg>
+        </div>
+    );
+};
+
+const AnimatedCircleGraph = () => {
+    const circleRef = useRef<SVGCircleElement>(null);
+    const numRef = useRef<HTMLSpanElement>(null);
+
+    useGSAP(() => {
+        if (!circleRef.current) return;
+
+        // Math for 40px radius circle
+        const length = 251.2;
+        const targetOffset = 100.48; // 60% full
+
+        gsap.set(circleRef.current, { strokeDasharray: length, strokeDashoffset: length });
+
+        const counter = { val: 0 };
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: circleRef.current,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+            }
+        });
+
+        tl.to(circleRef.current, {
+            strokeDashoffset: targetOffset,
+            duration: 2.5,
+            ease: "power3.out",
+        }, 0);
+
+        tl.to(counter, {
+            val: 60,
+            duration: 2.5,
+            ease: "power3.out",
+            onUpdate: () => {
+                if (numRef.current) {
+                    numRef.current.innerText = Math.round(counter.val) + "%";
+                }
+            }
+        }, 0);
+    }, []);
+
+    return (
+        <div className="relative w-40 h-40 mb-8 flex items-center justify-center">
+            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-black/10 dark:text-white/10 transition-colors" />
+                <circle
+                    ref={circleRef}
+                    cx="50" cy="50" r="40"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    fill="transparent"
+                    className="text-[#ccff00] drop-shadow-[0_0_8px_rgba(204,255,0,0.4)]"
+                    style={{ strokeLinecap: "round" }}
+                />
+            </svg>
+            <div className="absolute flex flex-col items-center">
+                <span ref={numRef} className="text-3xl font-bold text-black dark:text-white transition-colors">0%</span>
+                <span className="text-[10px] uppercase tracking-widest text-[#ccff00]">Recycled</span>
+            </div>
         </div>
     );
 };
@@ -400,7 +462,9 @@ export default function LandingPage() {
                             <button className="bg-transparent text-white border-2 border-white/30 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-white/10 hover:border-white/60 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm [text-shadow:0px_2px_10px_rgba(0,0,0,0.5)]">
                                 Shop Sustainable Bricks
                             </button>
-                            <button className="bg-[#ccff00] text-black font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto border border-[#ccff00]">
+                            <button
+                                onClick={() => router.push('/editor')}
+                                className="bg-[#ccff00] text-black font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto border border-[#ccff00]">
                                 Experience in 3D
                             </button>
                         </div>
@@ -459,16 +523,7 @@ export default function LandingPage() {
                         {/* Stage 4 (Top Left) */}
                         <div className="md:col-span-1 md:row-span-2 bg-white dark:bg-[#222222] border border-gray-100 dark:border-transparent transition-colors duration-500 rounded-[2rem] p-8 flex flex-col items-center justify-center text-center group relative overflow-hidden cursor-pointer">
                             <h3 className="text-xl font-bold mb-8 text-black dark:text-white transition-colors">Fiber Blending</h3>
-                            <div className="relative w-40 h-40 mb-8 flex items-center justify-center">
-                                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-black/10 dark:text-white/10 transition-colors" />
-                                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="251.2" strokeDashoffset="100.48" className="text-[#ccff00] transition-all duration-1000 group-hover:strokeDashoffset-0" />
-                                </svg>
-                                <div className="absolute flex flex-col items-center">
-                                    <span className="text-3xl font-bold text-black dark:text-white transition-colors">60%</span>
-                                    <span className="text-[10px] uppercase tracking-widest text-[#ccff00]">Recycled</span>
-                                </div>
-                            </div>
+                            <AnimatedCircleGraph />
                             <h4 className="text-3xl font-bold text-black dark:text-white mb-2 transition-colors">+ 40%</h4>
                             <p className="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 transition-colors">Virgin Cotton.<br />Perfect blend of sustainability.</p>
                         </div>

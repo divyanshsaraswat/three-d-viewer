@@ -2,7 +2,6 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { Html } from '@react-three/drei';
 
 interface Props {
     children: ReactNode;
@@ -29,9 +28,8 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     public render() {
         if (this.state.hasError) {
-            // Use Html from @react-three/drei to render HTML inside the Canvas
             return (
-                <Html center>
+                <div className="absolute inset-0 flex items-center justify-center z-50">
                     <div className="flex flex-col items-center justify-center p-4 text-center bg-black/80 rounded-xl border border-red-500/50 backdrop-blur-md text-red-100 w-80">
                         <AlertTriangle size={32} className="mb-2 text-red-500" />
                         <h2 className="text-lg font-bold mb-1">Load Error</h2>
@@ -48,7 +46,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                             Dismiss
                         </button>
                     </div>
-                </Html>
+                </div>
             );
         }
 

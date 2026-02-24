@@ -135,6 +135,17 @@ export default function Sidebar() {
     const handleExampleLoad = (filename: string, url: string) => {
         handleCloseModel();
 
+        // Determine format based on url or filename
+        const determineFormat = (path: string): 'obj' | 'fbx' | 'gltf' | 'stl' => {
+            const name = path.toLowerCase();
+            if (name.endsWith('.obj')) return 'obj';
+            if (name.endsWith('.fbx')) return 'fbx';
+            if (name.endsWith('.gltf') || name.endsWith('.glb')) return 'gltf';
+            if (name.endsWith('.stl')) return 'stl';
+            return 'gltf'; // default
+        };
+        const format = determineFormat(url);
+
         // Check if remote URL
         if (url.startsWith('http')) {
             setDownloading({ name: filename, progress: 0 });
@@ -155,8 +166,6 @@ export default function Sidebar() {
                         console.log('Downloading:', filename);
                         const proxyUrl = `/api/proxy-model?url=${encodeURIComponent(url)}`;
                         const fetchResponse = await fetch(proxyUrl);
-
-                        if (!fetchResponse.body) throw new Error('No body');
 
                         if (!fetchResponse.body) throw new Error('No body');
 
@@ -197,25 +206,18 @@ export default function Sidebar() {
 
                         const newResponse = new Response(stream);
                         const blob = await newResponse.blob();
-
-                        // Cache disabled
-                        // try {
-                        //     const cacheResponse = new Response(blob);
-                        //     await cache.put(url, cacheResponse);
-                        // } catch (cacheErr) {
-                        //     console.warn('Failed to cache file (likely too large):', cacheErr);
-                        // }
-
-                        // Use this blob
                         response = new Response(blob);
                     }
 
                     const blob = await response.blob();
+
+                    // Create object URL with explicit extension hints for PlayCanvas if needed, but standard createObjectURL doesn't allow extensions. 
+                    // Extension is handled by the viewer app manually.
                     const objectUrl = URL.createObjectURL(blob);
                     const newModel: LoadedModel = {
                         id: crypto.randomUUID(),
                         url: objectUrl,
-                        format: 'gltf',
+                        format: format,
                         filename: filename
                     };
                     setModels([newModel]);
@@ -233,7 +235,7 @@ export default function Sidebar() {
         const newModel: LoadedModel = {
             id: crypto.randomUUID(),
             url: url,
-            format: 'gltf',
+            format: format,
             filename: filename
         };
 
@@ -271,13 +273,13 @@ export default function Sidebar() {
                             {/* Examples */}
                             <div className="grid grid-cols-2 gap-2 mb-2">
                                 <button
-                                    onClick={() => handleExampleLoad('Apartment', '/examples/apartment.glb')}
+                                    onClick={() => handleExampleLoad('Apartment', '/examples/apartment_optimized.glb')}
                                     className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
                                 >
                                     🏠 Apartment
                                 </button>
                                 <button
-                                    onClick={() => handleExampleLoad('Sword', '/examples/sword-volcano.glb')}
+                                    onClick={() => handleExampleLoad('Sword', '/examples/sword-volcano_optimized.glb')}
                                     className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
                                 >
                                     ⚔️ Sword

@@ -35,7 +35,7 @@ export default function EditorPage() {
     }, [settings]);
 
     return (
-        <div className="w-screen h-screen overflow-hidden flex relative font-sans text-neutral-100">
+        <div className="w-screen h-screen overflow-hidden flex relative font-sans bg-[#e0e1e5] dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
             {/* Sidebar Overlay */}
             <Sidebar />
 
@@ -45,9 +45,9 @@ export default function EditorPage() {
 
                 {modelsLength === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                        <div className="text-center p-8 bg-black/40 backdrop-blur-sm rounded-xl border border-white/10">
+                        <div className="text-center p-8 bg-white/40 dark:bg-black/40 backdrop-blur-sm rounded-xl border border-black/10 dark:border-white/10 shadow-lg">
                             <h1 className="text-2xl font-light mb-2">Ready to View</h1>
-                            <p className="text-neutral-400">Upload a 3D model from the sidebar to get started.</p>
+                            <p className="text-black/60 dark:text-white/60">Upload a 3D model from the sidebar to get started.</p>
                         </div>
                     </div>
                 )}
