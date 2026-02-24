@@ -428,6 +428,7 @@ export default function LandingPage() {
                             autoPlay
                             loop
                             muted
+                            preload="auto"
                             playsInline
                         />
                         {/* Linear Tint Overlay */}
