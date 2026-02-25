@@ -37,6 +37,7 @@ interface StoreState {
 
     selectedMeshId: string | null;
     pendingTexture: { meshId: string, url: string } | null;
+    pendingTextureOptions: { tiling?: [number, number], offset?: [number, number] } | null;
 
     setModels: (models: LoadedModel[]) => void;
     setSettings: (settings: Settings | ((prev: Settings) => Settings)) => void;
@@ -51,6 +52,7 @@ interface StoreState {
 
     setSelectedMesh: (id: string | null) => void;
     applyTexture: (meshId: string, url: string) => void;
+    applyTextureOptions: (options: { tiling?: [number, number], offset?: [number, number] }) => void;
     clearPendingTexture: () => void;
 
     reset: () => void;
@@ -78,6 +80,7 @@ export const useStore = create<StoreState>((set) => ({
     capturePending: false,
     selectedMeshId: null,
     pendingTexture: null,
+    pendingTextureOptions: null,
 
     setModels: (models) => set({ models }),
     setSettings: (settings) => set((state) => ({
@@ -96,7 +99,8 @@ export const useStore = create<StoreState>((set) => ({
 
     setSelectedMesh: (id) => set({ selectedMeshId: id }),
     applyTexture: (meshId, url) => set({ pendingTexture: { meshId, url } }),
-    clearPendingTexture: () => set({ pendingTexture: null }),
+    applyTextureOptions: (options) => set({ pendingTextureOptions: options }),
+    clearPendingTexture: () => set({ pendingTexture: null, pendingTextureOptions: null }),
 
     reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false, selectedMeshId: null, pendingTexture: null })
 }));

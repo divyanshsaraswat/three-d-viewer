@@ -159,24 +159,127 @@ export default function ViewerCanvas() {
             // We'll save the light reference on the app object to easily find it later
             (app as any)._dirLight = light;
 
+            let hoveredMeshInfo: {
+                instance: pc.MeshInstance,
+                originalMaterial: pc.Material,
+                highlightMaterial: pc.Material
+            } | null = null;
+
+            // Framebuffer Picker (hardware accelerated color-picking)
+            const picker = new pc.Picker(app, 1024, 1024);
+
+            const handlePicking = (x: number, y: number) => {
+                // Resize picker to match canvas scale just in case
+                const canvasW = canvasRef.current!.clientWidth;
+                const canvasH = canvasRef.current!.clientHeight;
+                if (picker.width !== canvasW || picker.height !== canvasH) {
+                    picker.resize(canvasW, canvasH);
+                }
+
+                picker.prepare(camera.camera!, app!.scene);
+                const selection = picker.getSelection(x, y);
+
+                if (selection.length > 0) {
+                    const pickedMeshInstance = selection[0] as pc.MeshInstance;
+
+                    // If we clicked the same mesh, do nothing
+                    if (hoveredMeshInfo && hoveredMeshInfo.instance === pickedMeshInstance) return;
+
+                    // Restore previous mesh
+                    if (hoveredMeshInfo) {
+                        hoveredMeshInfo.instance.material = hoveredMeshInfo.originalMaterial;
+                        // Clean up previous dynamically generated material to avoid memory leaks
+                        if (hoveredMeshInfo.highlightMaterial) {
+                            hoveredMeshInfo.highlightMaterial.destroy();
+                        }
+                    }
+
+                    // Dynamically clone the exact material to preserve its textures and colors
+                    const originalMaterial = pickedMeshInstance.material as pc.StandardMaterial;
+
+                    // Backup the true original state before we ever apply custom textures to it
+                    if (!(pickedMeshInstance as any)._hasBaseDiffuseMap) {
+                        (pickedMeshInstance as any)._hasBaseDiffuseMap = true;
+                        (pickedMeshInstance as any)._baseDiffuseMap = originalMaterial.diffuseMap;
+                        if (originalMaterial.diffuseMapTiling) {
+                            (pickedMeshInstance as any)._baseTiling = originalMaterial.diffuseMapTiling.clone();
+                        }
+                    }
+
+                    const highlightMaterial = originalMaterial.clone();
+
+                    // Boost the emissive property of the new clone to create a "glowing" overlay effect
+                    // without washing out the actual diffuse textures/colors
+                    highlightMaterial.emissive = new pc.Color(0.8, 1, 0); // Neon Yellow Glow
+                    highlightMaterial.emissiveIntensity = 0.6; // Subtle blending glow
+
+                    // If it has an emissive map already, we just tint it. If not, this adds a solid glow outline.
+                    highlightMaterial.update();
+
+                    // Highlight new mesh
+                    hoveredMeshInfo = {
+                        instance: pickedMeshInstance,
+                        originalMaterial: originalMaterial,
+                        highlightMaterial: highlightMaterial
+                    };
+                    pickedMeshInstance.material = highlightMaterial;
+                    // Expose selection to the React side so we can apply textures to it
+                    (app as any)._selectedMeshInstance = pickedMeshInstance;
+                    // Note: _activeHoverInfo directly refers to hoveredMeshInfo, so modifying its properties modifies hoveredMeshInfo.
+                    // If we set activeHover.highlightMaterial to null elsewhere, hoveredMeshInfo.highlightMaterial becomes null.
+                    (app as any)._activeHoverInfo = hoveredMeshInfo;
+
+                    // Trigger Zustand store so the Sidebar UI updates
+                    useStore.getState().setSelectedMesh(pickedMeshInstance.node?.name || 'Unnamed Mesh');
+
+                } else {
+                    // Clicked empty space
+                    if (hoveredMeshInfo) {
+                        hoveredMeshInfo.instance.material = hoveredMeshInfo.originalMaterial;
+                        if (hoveredMeshInfo.highlightMaterial) {
+                            hoveredMeshInfo.highlightMaterial.destroy();
+                        }
+                        hoveredMeshInfo = null;
+
+                        (app as any)._selectedMeshInstance = null;
+                        (app as any)._activeHoverInfo = null;
+
+                        useStore.getState().setSelectedMesh(null);
+                    }
+                }
+            };
+
             // Input handlers
             let isDragging = false;
             let lastMouseX = 0;
             let lastMouseY = 0;
+            let dragDistance = 0;
 
             app.mouse?.on(pc.EVENT_MOUSEDOWN, (e: pc.MouseEvent) => {
                 if (e.button === pc.MOUSEBUTTON_LEFT) {
                     isDragging = true;
                     lastMouseX = e.x;
                     lastMouseY = e.y;
+                    dragDistance = 0;
                 }
             });
 
-            app.mouse?.on(pc.EVENT_MOUSEUP, () => { isDragging = false; });
+            app.mouse?.on(pc.EVENT_MOUSEUP, (e: pc.MouseEvent) => {
+                isDragging = false;
+                // Ignore clicks that happened on the UI overlaid on top of the canvas
+                if (e.event.target !== canvasRef.current) return;
+
+                // If it was a click and not a drag, perform picking
+                if (dragDistance < 5) {
+                    handlePicking(e.x, e.y);
+                }
+            });
+
             app.mouse?.on(pc.EVENT_MOUSEMOVE, (e: pc.MouseEvent) => {
                 if (isDragging) {
                     const dx = e.x - lastMouseX;
                     const dy = e.y - lastMouseY;
+                    dragDistance += Math.abs(dx) + Math.abs(dy);
                     orbitYaw.current -= dx * 0.2;
                     orbitPitch.current -= dy * 0.2;
                     orbitPitch.current = pc.math.clamp(orbitPitch.current, -89, 89);
@@ -196,11 +299,13 @@ export default function ViewerCanvas() {
                 let lastTouchX = 0;
                 let lastTouchY = 0;
                 let lastPinchDist = 0;
+                let touchDragDistance = 0;
 
                 app.touch.on(pc.EVENT_TOUCHSTART, (e: pc.TouchEvent) => {
                     if (e.touches.length === 1) {
                         lastTouchX = e.touches[0].x;
                         lastTouchY = e.touches[0].y;
+                        touchDragDistance = 0;
                     } else if (e.touches.length === 2) {
                         const dx = e.touches[0].x - e.touches[1].x;
                         const dy = e.touches[0].y - e.touches[1].y;
@@ -209,10 +314,25 @@ export default function ViewerCanvas() {
                     e.event.preventDefault();
                 });
 
+                app.touch.on(pc.EVENT_TOUCHEND, (e: pc.TouchEvent) => {
+                    // Ignore clicks on UI elements
+                    if ((e.event as Event).target !== canvasRef.current) return;
+
+                    // Pick on tap
+                    if (e.changedTouches.length === 1 && touchDragDistance < 10) {
+                        const touch = e.changedTouches[0] as any;
+                        const rect = canvasRef.current!.getBoundingClientRect();
+                        const x = touch.x !== undefined ? touch.x : (touch.clientX - rect.left);
+                        const y = touch.y !== undefined ? touch.y : (touch.clientY - rect.top);
+                        handlePicking(x, y);
+                    }
+                });
+
                 app.touch.on(pc.EVENT_TOUCHMOVE, (e: pc.TouchEvent) => {
                     if (e.touches.length === 1) {
                         const dx = e.touches[0].x - lastTouchX;
                         const dy = e.touches[0].y - lastTouchY;
+                        touchDragDistance += Math.abs(dx) + Math.abs(dy);
                         orbitYaw.current -= dx * 0.3;
                         orbitPitch.current -= dy * 0.3;
                         orbitPitch.current = pc.math.clamp(orbitPitch.current, -89, 89);
@@ -322,9 +442,38 @@ export default function ViewerCanvas() {
                     if (loadedAsset.resource) {
                         const resource = loadedAsset.resource as any;
                         if (resource.instantiateRenderEntity) {
-                            const entity = resource.instantiateRenderEntity();
+                            const entity = resource.instantiateRenderEntity() as pc.Entity;
                             entity.name = model.id;
                             container.addChild(entity);
+
+                            // Calculate total bounding box to perfectly center the model
+                            // and auto-adjust the orbit camera distance.
+                            let aabb: pc.BoundingBox | null = null;
+                            const renders = entity.findComponents('render') as any[];
+                            renders.forEach(render => {
+                                if (render.meshInstances) {
+                                    render.meshInstances.forEach((mi: any) => {
+                                        if (mi.aabb) {
+                                            if (!aabb) {
+                                                aabb = new pc.BoundingBox();
+                                                aabb.copy(mi.aabb);
+                                            } else {
+                                                aabb.add(mi.aabb);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+
+                            if (aabb) {
+                                const box = aabb as pc.BoundingBox;
+                                // Move entity so that its geometric center becomes (0,0,0)
+                                entity.translate(-box.center.x, -box.center.y, -box.center.z);
+
+                                // Adjust camera distance based on model size
+                                const maxDim = Math.max(box.halfExtents.x, box.halfExtents.y, box.halfExtents.z);
+                                orbitDistance.current = Math.max(5, maxDim * 2.5);
+                            }
                         }
                     }
                 });
@@ -363,6 +512,133 @@ export default function ViewerCanvas() {
             dirLight.lookAt(0, 0, 0);
         }
     }, [lightIntensity, lightColor, lightX, lightY, lightZ]);
+
+    // Handle Texture Application
+    const pendingTexture = useStore(state => state.pendingTexture);
+    const clearPendingTexture = useStore(state => state.clearPendingTexture);
+
+    useEffect(() => {
+        if (!pendingTexture || !appRef.current) return;
+
+        const app = appRef.current;
+        const targetMesh = (app as any)._selectedMeshInstance as pc.MeshInstance;
+
+        if (!targetMesh) {
+            console.warn("No mesh selected to apply texture to.");
+            clearPendingTexture();
+            return;
+        }
+
+        if (pendingTexture.url === 'RESET') {
+            const baseMap = (targetMesh as any)._baseDiffuseMap;
+            const baseTiling = (targetMesh as any)._baseTiling;
+
+            const material = targetMesh.material as pc.StandardMaterial;
+            material.diffuseMap = baseMap || null;
+            if (baseTiling) {
+                material.diffuseMapTiling.copy(baseTiling);
+            } else {
+                material.diffuseMapTiling.set(1, 1);
+            }
+            material.update();
+
+            const activeHover = (app as any)._activeHoverInfo;
+            if (activeHover && activeHover.instance === targetMesh) {
+                activeHover.originalMaterial.diffuseMap = baseMap || null;
+                if (baseTiling) {
+                    activeHover.originalMaterial.diffuseMapTiling.copy(baseTiling);
+                } else {
+                    activeHover.originalMaterial.diffuseMapTiling.set(1, 1);
+                }
+                activeHover.originalMaterial.update();
+            }
+
+            clearPendingTexture();
+            return;
+        }
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+
+        img.onload = () => {
+            // Create a PlayCanvas Texture directly from the loaded HTMLImageElement
+            // This bypasses PlayCanvas's strict Asset loader which fails on extensionless blob:// URLs
+            const texture = new pc.Texture(app.graphicsDevice, {
+                width: img.width,
+                height: img.height,
+                format: pc.PIXELFORMAT_R8_G8_B8_A8
+            });
+            texture.setSource(img);
+
+            // Ensure tile repeating instead of stretching
+            texture.addressU = pc.ADDRESS_REPEAT;
+            texture.addressV = pc.ADDRESS_REPEAT;
+
+            // Adjust UV scale so the texture doesn't look gigantic
+            const material = targetMesh.material as pc.StandardMaterial;
+            material.diffuseMap = texture;
+            material.diffuseMapTiling.set(5, 5); // Tile 5x5 by default
+
+            // Also update the originalMaterial reference so the picker doesn't wipe it
+            const activeHover = (app as any)._activeHoverInfo;
+            if (activeHover && activeHover.instance === targetMesh) {
+                activeHover.originalMaterial.diffuseMap = texture;
+                activeHover.originalMaterial.diffuseMapTiling.set(5, 5);
+                activeHover.originalMaterial.update();
+
+                // User Request: Remove the yellow highlight glow immediately after applying texture
+                // but keep it technically "selected" in the UI.
+                activeHover.instance.material = activeHover.originalMaterial;
+                if (activeHover.highlightMaterial) {
+                    activeHover.highlightMaterial.destroy();
+                    activeHover.highlightMaterial = null;
+                }
+            }
+
+            material.update();
+            clearPendingTexture();
+        };
+
+        img.onerror = (err) => {
+            console.error("Failed to load local texture blob via Image tag:", err);
+            clearPendingTexture();
+        };
+
+        img.src = pendingTexture.url;
+
+    }, [pendingTexture, clearPendingTexture]);
+
+    const pendingTextureOptions = useStore(state => state.pendingTextureOptions);
+
+    useEffect(() => {
+        if (!pendingTextureOptions || !appRef.current) return;
+
+        const app = appRef.current;
+        const targetMesh = (app as any)._selectedMeshInstance as pc.MeshInstance;
+
+        if (targetMesh && targetMesh.material) {
+            const material = targetMesh.material as pc.StandardMaterial;
+
+            if (pendingTextureOptions.tiling) {
+                material.diffuseMapTiling.set(pendingTextureOptions.tiling[0], pendingTextureOptions.tiling[1]);
+            }
+            if (pendingTextureOptions.offset) {
+                material.diffuseMapOffset.set(pendingTextureOptions.offset[0], pendingTextureOptions.offset[1]);
+            }
+            material.update();
+
+            const activeHover = (app as any)._activeHoverInfo;
+            if (activeHover && activeHover.instance === targetMesh) {
+                if (pendingTextureOptions.tiling) {
+                    activeHover.originalMaterial.diffuseMapTiling.set(pendingTextureOptions.tiling[0], pendingTextureOptions.tiling[1]);
+                }
+                if (pendingTextureOptions.offset) {
+                    activeHover.originalMaterial.diffuseMapOffset.set(pendingTextureOptions.offset[0], pendingTextureOptions.offset[1]);
+                }
+                activeHover.originalMaterial.update();
+            }
+        }
+    }, [pendingTextureOptions]);
 
     return (
         <canvas ref={canvasRef} className="w-full h-full block" />

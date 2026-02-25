@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import SceneViewer from '@/components/SceneViewer';
 import Sidebar from '@/components/Sidebar';
 import CameraBookmarks from '@/components/CameraBookmarks';
+import TextureCarousel from '@/components/TextureCarousel';
 import { useStore, defaultSettings } from '@/store/useStore';
 
 export default function EditorPage() {
@@ -56,6 +57,9 @@ export default function EditorPage() {
                 <div className="absolute bottom-4 right-4 z-50">
                     <CameraBookmarks />
                 </div>
+
+                {/* Texture Carousel Overlay */}
+                <TextureCarousel />
             </div>
         </div>
     );

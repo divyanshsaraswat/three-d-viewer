@@ -65,10 +65,13 @@ export default function Sidebar() {
     const models = useStore(state => state.models);
     const setModels = useStore(state => state.setModels);
     const setFileMap = useStore(state => state.setFileMap);
+    const addBookmark = useStore(state => state.addBookmark);
+    const triggerCapture = useStore(state => state.triggerCapture);
 
     const fileLoaded = models.length > 0;
     const [collapsed, setCollapsed] = useState(false);
 
+    // Texture Replacement feature
     const selectedMeshId = useStore(state => state.selectedMeshId);
     const applyTexture = useStore(state => state.applyTexture);
 
