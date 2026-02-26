@@ -1,16 +1,29 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStore, CameraBookmark } from '@/store/useStore';
 import { ChevronUp, ChevronDown, Plus, Trash2, Camera, Eye, Download, Upload } from 'lucide-react';
 
 export default function CameraBookmarks() {
     const [expanded, setExpanded] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editName, setEditName] = useState("");
+
     const bookmarks = useStore(state => state.bookmarks);
     const triggerCapture = useStore(state => state.triggerCapture);
     const removeBookmark = useStore(state => state.removeBookmark);
+    const updateBookmark = useStore(state => state.updateBookmark);
     const setBookmarks = useStore(state => state.setBookmarks);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Auto-expand when bookmarks are loaded (e.g. from switching models)
+    useEffect(() => {
+        if (bookmarks.length > 0) {
+            setExpanded(true);
+        } else {
+            setExpanded(false);
+        }
+    }, [bookmarks.length]);
 
     const handleRestore = (bookmark: CameraBookmark) => {
         window.dispatchEvent(new CustomEvent('restore-bookmark', { detail: bookmark }));
@@ -89,13 +102,41 @@ export default function CameraBookmarks() {
                         ) : (
                             bookmarks.map(b => (
                                 <div key={b.id} className="group bg-neutral-800 p-2 rounded border border-neutral-700 hover:border-blue-500/50 transition-colors flex items-center justify-between">
-                                    <button
-                                        onClick={() => handleRestore(b)}
-                                        className="flex-1 text-left text-xs truncate hover:text-blue-300 flex items-center gap-2"
-                                    >
-                                        <Eye size={12} className="opacity-50" />
-                                        {b.name}
-                                    </button>
+                                    {editingId === b.id ? (
+                                        <input
+                                            type="text"
+                                            value={editName}
+                                            onChange={(e) => setEditName(e.target.value)}
+                                            onBlur={() => {
+                                                if (editName.trim()) updateBookmark(b.id, editName.trim());
+                                                setEditingId(null);
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    if (editName.trim()) updateBookmark(b.id, editName.trim());
+                                                    setEditingId(null);
+                                                }
+                                                if (e.key === 'Escape') {
+                                                    setEditingId(null);
+                                                }
+                                            }}
+                                            autoFocus
+                                            className="flex-1 bg-neutral-900 text-xs px-2 py-1 rounded border border-blue-500/50 outline-none text-white overflow-hidden min-w-0"
+                                        />
+                                    ) : (
+                                        <button
+                                            onClick={() => handleRestore(b)}
+                                            onDoubleClick={() => {
+                                                setEditingId(b.id);
+                                                setEditName(b.name);
+                                            }}
+                                            className="flex-1 text-left text-xs truncate hover:text-blue-300 flex items-center gap-2 overflow-hidden"
+                                            title="Double click to rename"
+                                        >
+                                            <Eye size={12} className="opacity-50 shrink-0" />
+                                            <span className="truncate">{b.name}</span>
+                                        </button>
+                                    )}
                                     <button
                                         onClick={() => removeBookmark(b.id)}
                                         className="text-neutral-500 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"

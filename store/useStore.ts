@@ -31,6 +31,8 @@ export interface CameraBookmark {
 interface StoreState {
     models: LoadedModel[];
     settings: Settings;
+    editorMode: 'dev' | 'prod';
+    isModelLoading: boolean;
     fileMap: Map<string, string> | null;
     bookmarks: CameraBookmark[];
     capturePending: boolean; // Signal to capture camera state
@@ -40,12 +42,15 @@ interface StoreState {
     pendingTextureOptions: { tiling?: [number, number], offset?: [number, number] } | null;
 
     setModels: (models: LoadedModel[]) => void;
+    setIsModelLoading: (loading: boolean) => void;
     setSettings: (settings: Settings | ((prev: Settings) => Settings)) => void;
     updateSetting: (key: keyof Settings, value: any) => void;
+    setEditorMode: (mode: 'dev' | 'prod') => void;
     setFileMap: (fileMap: Map<string, string> | null) => void;
 
     addBookmark: (bookmark: CameraBookmark) => void;
     removeBookmark: (id: string) => void;
+    updateBookmark: (id: string, name: string) => void;
     setBookmarks: (bookmarks: CameraBookmark[]) => void;
     triggerCapture: () => void;
     clearCapture: () => void;
@@ -75,6 +80,8 @@ export const defaultSettings: Settings = {
 export const useStore = create<StoreState>((set) => ({
     models: [],
     settings: defaultSettings,
+    editorMode: 'dev',
+    isModelLoading: false,
     fileMap: null,
     bookmarks: [],
     capturePending: false,
@@ -83,16 +90,57 @@ export const useStore = create<StoreState>((set) => ({
     pendingTextureOptions: null,
 
     setModels: (models) => set({ models }),
-    setSettings: (settings) => set((state) => ({
-        settings: typeof settings === 'function' ? settings(state.settings) : settings
-    })),
-    updateSetting: (key, value) => set((state) => ({
-        settings: { ...state.settings, [key]: value }
-    })),
+    setIsModelLoading: (loading) => set({ isModelLoading: loading }),
+    setSettings: (settings) => set((state) => {
+        const newSettings = typeof settings === 'function' ? settings(state.settings) : settings;
+        if (state.editorMode === 'prod') {
+            return {
+                settings: {
+                    ...newSettings,
+                    dynamicFocus: true,
+                    tourMode: true,
+                    tourHeight: 0.2,
+                    collisionEnabled: true
+                }
+            };
+        }
+        return { settings: newSettings };
+    }),
+    updateSetting: (key, value) => set((state) => {
+        const newSettings = { ...state.settings, [key]: value };
+        if (state.editorMode === 'prod') {
+            return {
+                settings: {
+                    ...newSettings,
+                    dynamicFocus: true,
+                    tourMode: true,
+                    tourHeight: 0.2,
+                    collisionEnabled: true
+                }
+            };
+        }
+        return { settings: newSettings };
+    }),
+    setEditorMode: (mode) => set((state) => {
+        if (mode === 'prod') {
+            return {
+                editorMode: mode,
+                settings: {
+                    ...state.settings,
+                    dynamicFocus: true,
+                    tourMode: true,
+                    tourHeight: 0.2,
+                    collisionEnabled: true
+                }
+            };
+        }
+        return { editorMode: mode };
+    }),
     setFileMap: (fileMap) => set({ fileMap }),
 
     addBookmark: (bookmark) => set((state) => ({ bookmarks: [...state.bookmarks, bookmark] })),
     removeBookmark: (id) => set((state) => ({ bookmarks: state.bookmarks.filter(b => b.id !== id) })),
+    updateBookmark: (id, name) => set((state) => ({ bookmarks: state.bookmarks.map(b => b.id === id ? { ...b, name } : b) })),
     setBookmarks: (bookmarks) => set({ bookmarks }),
     triggerCapture: () => set({ capturePending: true }),
     clearCapture: () => set({ capturePending: false }),

@@ -70,6 +70,7 @@ export default function Sidebar() {
 
     const fileLoaded = models.length > 0;
     const [collapsed, setCollapsed] = useState(false);
+    const setIsModelLoading = useStore(state => state.setIsModelLoading);
 
     // Texture Replacement feature
     const selectedMeshId = useStore(state => state.selectedMeshId);
@@ -93,6 +94,7 @@ export default function Sidebar() {
     };
 
     const handleFileUpload = (files: FileList) => {
+        setIsModelLoading(true);
         const map = new Map<string, string>();
         const newModels: LoadedModel[] = [];
 
@@ -131,6 +133,7 @@ export default function Sidebar() {
         } else {
             alert('No supported 3D model file found in selection.');
         }
+        setIsModelLoading(false);
     };
 
     const [downloading, setDownloading] = useState<{ name: string; progress: number } | null>(null);
@@ -149,7 +152,36 @@ export default function Sidebar() {
         };
         const format = determineFormat(url);
 
+        const loadAttachedBookmarks = async () => {
+            try {
+                let bookmarksUrl = '';
+                if (url.startsWith('http')) {
+                    const urlObj = new URL(url);
+                    const path = urlObj.pathname;
+                    const baseName = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'));
+                    bookmarksUrl = `/${baseName}.json`;
+                } else {
+                    const baseName = url.substring(0, url.lastIndexOf('.'));
+                    bookmarksUrl = `${baseName}.json`;
+                }
+
+                const res = await fetch(bookmarksUrl);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (Array.isArray(json) && json.every(b => b.id && b.position && b.rotation)) {
+                        useStore.getState().setBookmarks(json);
+                    }
+                } else {
+                    useStore.getState().setBookmarks([]);
+                }
+            } catch (e) {
+                console.warn('No bookmarks found for this model or invalid format.');
+                useStore.getState().setBookmarks([]);
+            }
+        };
+
         // Check if remote URL
+        setIsModelLoading(true);
         if (url.startsWith('http')) {
             setDownloading({ name: filename, progress: 0 });
 
@@ -223,12 +255,17 @@ export default function Sidebar() {
                         format: format,
                         filename: filename
                     };
+
+                    await loadAttachedBookmarks();
+
                     setModels([newModel]);
                     setDownloading(null);
+                    setIsModelLoading(false);
 
                 } catch (err) {
                     console.error('Failed to load example', err);
                     setDownloading(null);
+                    setIsModelLoading(false);
                     alert(`Failed to load example model: ${(err as Error).message}`);
                 }
             })();
@@ -242,7 +279,11 @@ export default function Sidebar() {
             filename: filename
         };
 
-        setModels([newModel]);
+        // Needs to run without blocking since return is immediate for the sync path
+        loadAttachedBookmarks().then(() => {
+            setModels([newModel]);
+            setIsModelLoading(false);
+        });
     };
 
     return (
