@@ -111,7 +111,7 @@ export default function EditorPage() {
                 )}
 
                 {/* Camera Bookmarks UI - Rendered here to be on top of Scene but inside the relative container */}
-                <div className={`absolute bottom-44 right-8 lg:bottom-4 lg:right-4 z-40 transition-transform ${editorMode === 'prod' ? 'translate-y-0' : ''}`}>
+                <div className={`absolute bottom-[120px] right-4 sm:bottom-[140px] sm:right-6 md:bottom-[160px] md:right-8 lg:bottom-4 lg:right-4 z-40 transition-transform ${editorMode === 'prod' ? 'translate-y-0' : ''}`}>
                     <CameraBookmarks />
                 </div>
 

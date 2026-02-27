@@ -9,12 +9,12 @@ export default function Joystick() {
     const setJoystickInput = useStore(state => state.setJoystickInput);
 
     const isDragging = useRef(false);
-    const maxRadius = 50; // Max pixels the stick can travel from center
 
     const updateStick = (clientX: number, clientY: number) => {
         if (!baseRef.current || !stickRef.current) return;
 
         const rect = baseRef.current.getBoundingClientRect();
+        const maxRadius = rect.width / 2 - 18; // Dynamically fit within the base circle
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
@@ -64,7 +64,7 @@ export default function Joystick() {
 
     return (
         <div
-            className="lg:hidden fixed bottom-8 right-8 z-40"
+            className="lg:hidden fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-40"
             // Prevent default touch actions like scrolling while interacting with the joystick
             style={{ touchAction: 'none' }}
         >
@@ -75,12 +75,12 @@ export default function Joystick() {
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
                 onPointerCancel={handlePointerUp}
-                className="w-32 h-32 rounded-full border border-white/10 flex items-center justify-center relative touch-none select-none" style={{ backgroundColor: 'rgba(18,18,18,0.8)', backdropFilter: 'blur(12px)' }}
+                className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border border-white/10 flex items-center justify-center relative touch-none select-none" style={{ backgroundColor: 'rgba(18,18,18,0.8)', backdropFilter: 'blur(12px)' }}
             >
                 {/* Joystick Nub */}
                 <div
                     ref={stickRef}
-                    className="w-12 h-12 rounded-full shadow-lg pointer-events-none" style={{ backgroundColor: 'rgba(204,255,0,0.5)' }}
+                    className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full shadow-lg pointer-events-none" style={{ backgroundColor: 'rgba(204,255,0,0.5)' }}
                 />
             </div>
         </div>
