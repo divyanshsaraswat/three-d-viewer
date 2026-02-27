@@ -243,7 +243,7 @@ export default function TextureCarousel() {
         <>
             {/* FLOATING BOTTOM TRAY (Quick Carousel) */}
             <div ref={trayRef} className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
-                <div className="bg-[#1f1f23] rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] p-3.5 flex items-center gap-2 border border-white/5 relative">
+                <div className="rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] p-3.5 flex items-center gap-2 border border-white/5 relative" style={{ backgroundColor: '#121212' }}>
 
                     {/* Left Scroll Button */}
                     <button
@@ -254,15 +254,14 @@ export default function TextureCarousel() {
                     </button>
 
                     {/* Pack Title Mini Badge */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#3f3f46] border border-white/10 text-white/80 text-[9px] md:text-[10px] uppercase font-bold tracking-wider px-2 md:px-3 py-0.5 rounded-full shadow-md whitespace-nowrap overflow-hidden z-10">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 border border-white/10 text-white/80 text-[9px] md:text-[10px] uppercase font-bold tracking-wider px-2 md:px-3 py-0.5 rounded-full shadow-md whitespace-nowrap overflow-hidden z-10" style={{ backgroundColor: '#1a1a1a' }}>
                         {activePack.title} Pack
                     </div>
 
                     {/* Global Options Popover (Dynamic horizontal position above tray) */}
                     {showOptionsId && (
                         <div
-                            className="absolute bottom-[calc(100%+8px)] -translate-x-1/2 bg-[#27272a] rounded-xl border border-white/10 shadow-xl p-1.5 flex flex-col gap-1 w-32 animate-in fade-in zoom-in-95 duration-200 z-50 transition-all"
-                            style={{ left: popoverLeft > 0 ? `${popoverLeft}px` : '50%' }}
+                            className="absolute bottom-[calc(100%+8px)] -translate-x-1/2 rounded-xl border border-white/10 shadow-xl p-1.5 flex flex-col gap-1 w-32 animate-in fade-in zoom-in-95 duration-200 z-50 transition-all" style={{ backgroundColor: '#1a1a1a', left: popoverLeft > 0 ? `${popoverLeft}px` : '50%' }}
                         >
                             <button
                                 onClick={() => { applyTextureOptions({ tiling: [5, 5] }); setShowOptionsId(null); }}
@@ -299,7 +298,7 @@ export default function TextureCarousel() {
                                 <button
                                     id={`thumb-${tex.id}`}
                                     onClick={(e) => handleApply(tex, false, e)}
-                                    className={`group relative w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl overflow-hidden shrink-0 transition-transform hover:scale-105 active:scale-95 ${activeTextureId === tex.id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#1f1f23]' : ''}`}
+                                    className={`group relative w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl overflow-hidden shrink-0 transition-transform hover:scale-105 active:scale-95 ${activeTextureId === tex.id ? 'ring-2 ring-[#ccff00] ring-offset-2 ring-offset-[#121212]' : ''}`}
                                 >
                                     <img src={tex.thumb} alt={tex.title} className="w-full h-full object-cover" />
 
@@ -322,9 +321,9 @@ export default function TextureCarousel() {
                     {/* "More" Packs Button */}
                     <button
                         onClick={() => setIsMenuOpen(true)}
-                        className="gsap-static-btn w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl bg-[#3f3f46] hover:bg-[#52525b] flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-white/5 text-white shadow-inner"
+                        className="gsap-static-btn w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-white/5 text-white shadow-inner hover:border-[#ccff00]/30" style={{ backgroundColor: '#1a1a1a' }}
                     >
-                        <Package size={20} className="text-blue-400 w-4 h-4 md:w-5 md:h-5" />
+                        <Package size={20} className="text-[#ccff00] w-4 h-4 md:w-5 md:h-5" />
                         <span className="text-[9px] md:text-[10px] font-semibold tracking-wide uppercase">Packs</span>
                     </button>
 
@@ -357,10 +356,10 @@ export default function TextureCarousel() {
             {/* FULL "MORE PACKS" MODAL DIALOG */}
             {isMenuOpen && (
                 <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div ref={modalRef} className="bg-[#1f1f23] w-full max-w-4xl max-h-[85vh] rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden">
+                    <div ref={modalRef} className="w-full max-w-4xl max-h-[85vh] rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden" style={{ backgroundColor: '#121212' }}>
 
                         {/* Header & Search */}
-                        <div className="p-4 border-b border-white/10 flex items-center gap-4 bg-[#18181b]">
+                        <div className="p-4 border-b border-white/10 flex items-center gap-4" style={{ backgroundColor: '#0a0a0a' }}>
                             <div className="relative flex-1">
                                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" size={18} />
                                 <input
@@ -368,7 +367,7 @@ export default function TextureCarousel() {
                                     placeholder="Search texture packs..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-[#27272a] text-white rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow placeholder:text-white/30"
+                                    className="w-full text-white rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-[#ccff00]/40 transition-shadow placeholder:text-white/30" style={{ backgroundColor: '#1a1a1a' }}
                                 />
                             </div>
                             <button
@@ -389,7 +388,7 @@ export default function TextureCarousel() {
                                         <button
                                             key={pack.id}
                                             onClick={() => handleSelectPack(pack.id)}
-                                            className={`gsap-pack-card relative group flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 border transition-all text-left overflow-hidden ${activePackId === pack.id ? 'border-blue-500/50 bg-blue-500/5 ring-1 ring-blue-500/50 hover:bg-blue-500/10' : 'border-white/5 hover:border-white/20'}`}
+                                            className={`gsap-pack-card relative group flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 border transition-all text-left overflow-hidden ${activePackId === pack.id ? 'border-[#ccff00]/40 bg-[#ccff00]/5 ring-1 ring-[#ccff00]/40 hover:bg-[#ccff00]/10' : 'border-white/5 hover:border-white/20'}`}
                                         >
                                             {/* Preview Grid inside Pack Card */}
                                             <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0 shadow-inner grid grid-cols-2 grid-rows-2 gap-[1px] bg-black/40">
@@ -399,9 +398,9 @@ export default function TextureCarousel() {
                                             </div>
                                             <div className="flex-1 py-1 z-10 relative">
                                                 <div className="flex items-center justify-between mb-1">
-                                                    <h4 className="text-base font-semibold text-white group-hover:text-blue-400 transition-colors">{pack.title}</h4>
+                                                    <h4 className="text-base font-semibold text-white group-hover:text-[#ccff00] transition-colors">{pack.title}</h4>
                                                     {activePackId === pack.id && (
-                                                        <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">Active</span>
+                                                        <span className="text-[10px] bg-[#ccff00]/10 text-[#ccff00] px-2 py-0.5 rounded-full border border-[#ccff00]/20">Active</span>
                                                     )}
                                                 </div>
                                                 <p className="text-sm text-white/50 line-clamp-2 leading-relaxed tracking-wide mb-3">{pack.description}</p>
@@ -412,7 +411,7 @@ export default function TextureCarousel() {
                                             </div>
 
                                             {/* Subtle gradient overlay to make text more readable */}
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#1f1f23]/50 to-[#1f1f23] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#121212]/50 to-[#121212] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                         </button>
                                     ))}
                                 </div>

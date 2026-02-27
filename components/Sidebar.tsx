@@ -132,8 +132,8 @@ export default function Sidebar() {
             setModels(newModels);
         } else {
             alert('No supported 3D model file found in selection.');
+            setIsModelLoading(false);
         }
-        setIsModelLoading(false);
     };
 
     const [downloading, setDownloading] = useState<{ name: string; progress: number } | null>(null);
@@ -260,7 +260,6 @@ export default function Sidebar() {
 
                     setModels([newModel]);
                     setDownloading(null);
-                    setIsModelLoading(false);
 
                 } catch (err) {
                     console.error('Failed to load example', err);
@@ -282,20 +281,20 @@ export default function Sidebar() {
         // Needs to run without blocking since return is immediate for the sync path
         loadAttachedBookmarks().then(() => {
             setModels([newModel]);
-            setIsModelLoading(false);
         });
     };
 
     return (
         <div
-            className={`absolute top-0 left-0 h-full bg-neutral-900/90 text-white transition-all duration-300 z-10 flex flex-col ${collapsed ? 'w-4' : 'w-80'}`}
+            className={`absolute top-0 left-0 h-full text-white transition-all duration-300 z-10 flex flex-col ${collapsed ? 'w-4' : 'w-80'}`}
+            style={{ backgroundColor: '#121212' }}
             onPointerDown={(e) => e.stopPropagation()}
             onPointerUp={(e) => e.stopPropagation()}
             onWheel={(e) => e.stopPropagation()}
         >
             <button
                 onClick={() => setCollapsed(!collapsed)}
-                className="absolute -right-3 top-4 bg-neutral-700 rounded-full p-1 hover:bg-neutral-600"
+                className="absolute -right-3 top-4 rounded-full p-1 hover:opacity-80 transition-opacity" style={{ backgroundColor: '#1a1a1a' }}
             >
                 {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
             </button>
@@ -318,13 +317,13 @@ export default function Sidebar() {
                             <div className="grid grid-cols-2 gap-2 mb-2">
                                 <button
                                     onClick={() => handleExampleLoad('Apartment', '/examples/apartment_optimized.glb')}
-                                    className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
+                                    className="px-3 py-2 rounded text-xs text-left transition-colors border hover:border-[#ccff00]/50" style={{ backgroundColor: '#1a1a1a', borderColor: '#2a2a2a' }}
                                 >
                                     🏠 Apartment
                                 </button>
                                 <button
                                     onClick={() => handleExampleLoad('Sword', '/examples/sword-volcano_optimized.glb')}
-                                    className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500"
+                                    className="px-3 py-2 rounded text-xs text-left transition-colors border hover:border-[#ccff00]/50" style={{ backgroundColor: '#1a1a1a', borderColor: '#2a2a2a' }}
                                 >
                                     ⚔️ Sword
                                 </button>
@@ -335,7 +334,7 @@ export default function Sidebar() {
                                         handleExampleLoad('Interior', url);
                                     }}
                                     disabled={!!downloading}
-                                    className="col-span-2 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500 flex flex-col justify-center disabled:opacity-50 disabled:cursor-wait relative overflow-hidden"
+                                    className="col-span-2 px-3 py-2 rounded text-xs text-left transition-colors border flex flex-col justify-center disabled:opacity-50 disabled:cursor-wait relative overflow-hidden hover:border-[#ccff00]/50" style={{ backgroundColor: '#1a1a1a', borderColor: '#2a2a2a' }}
                                 >
                                     <div className="flex items-center justify-between w-full z-10">
                                         <span>🛋️ Interior</span>
@@ -349,7 +348,7 @@ export default function Sidebar() {
                                     {/* Progress Bar Background */}
                                     {downloading?.name === 'Interior' && (
                                         <div
-                                            className="absolute bottom-0 left-0 h-0.5 bg-blue-500 transition-all duration-200"
+                                            className="absolute bottom-0 left-0 h-0.5 bg-[#ccff00] transition-all duration-200"
                                             style={{ width: downloading.progress > 0 ? `${downloading.progress}%` : '100%', opacity: downloading.progress > 0 ? 1 : 0.3 }}
                                         />
                                     )}
@@ -357,7 +356,7 @@ export default function Sidebar() {
                                 <button
                                     onClick={() => handleExampleLoad('Interior 2', '/examples/scene_optimized.glb')}
                                     disabled={!!downloading}
-                                    className="col-span-2 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded text-xs text-left transition-colors border border-neutral-700 hover:border-neutral-500 flex flex-col justify-center disabled:opacity-50 disabled:cursor-wait relative overflow-hidden"
+                                    className="col-span-2 px-3 py-2 rounded text-xs text-left transition-colors border flex flex-col justify-center disabled:opacity-50 disabled:cursor-wait relative overflow-hidden hover:border-[#ccff00]/50" style={{ backgroundColor: '#1a1a1a', borderColor: '#2a2a2a' }}
                                 >
                                     <div className="flex items-center justify-between w-full z-10">
                                         <span>🏙️ Interior 2</span>
@@ -378,7 +377,7 @@ export default function Sidebar() {
                                 </button>
                             </div>
 
-                            <div className="relative border-2 border-dashed border-neutral-600 rounded-lg p-4 hover:border-neutral-400 text-center cursor-pointer transition-colors">
+                            <div className="relative border-2 border-dashed border-white/10 rounded-lg p-4 hover:border-[#ccff00]/40 text-center cursor-pointer transition-colors">
                                 <input
                                     type="file"
                                     multiple
@@ -410,13 +409,13 @@ export default function Sidebar() {
 
                         {/* Texture Customization - Show when mesh selected */}
                         {selectedMeshId && (
-                            <div className="space-y-2 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg animate-in slide-in-from-left-4 fade-in">
-                                <h3 className="text-sm font-semibold text-blue-200">Selected Mesh</h3>
+                            <div className="space-y-2 p-3 border rounded-lg animate-in slide-in-from-left-4 fade-in" style={{ backgroundColor: 'rgba(204,255,0,0.05)', borderColor: 'rgba(204,255,0,0.2)' }}>
+                                <h3 className="text-sm font-semibold text-[#ccff00]">Selected Mesh</h3>
                                 <div className="text-[10px] font-mono text-neutral-400 break-all bg-black/30 p-1 rounded">
                                     {selectedMeshId}
                                 </div>
-                                <label className="block text-xs font-medium text-blue-300 mt-2 mb-1">Apply Texture</label>
-                                <div className="relative border border-dashed border-blue-500/50 rounded p-2 hover:bg-blue-500/10 cursor-pointer transition-colors text-center">
+                                <label className="block text-xs font-medium text-[#ccff00]/70 mt-2 mb-1">Apply Texture</label>
+                                <div className="relative border border-dashed border-[#ccff00]/30 rounded p-2 hover:bg-[#ccff00]/5 cursor-pointer transition-colors text-center">
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -425,12 +424,12 @@ export default function Sidebar() {
                                         }}
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                     />
-                                    <span className="text-xs text-blue-200">Upload Image</span>
+                                    <span className="text-xs text-[#ccff00]/80">Upload Image</span>
                                 </div>
                             </div>
                         )}
 
-                        <div className="border-t border-neutral-700 my-4"></div>
+                        <div className="border-t border-white/5 my-4"></div>
 
                         {/* Settings */}
                         <div className="space-y-4">
@@ -458,7 +457,7 @@ export default function Sidebar() {
                                     min="0" max="5" step="0.1"
                                     value={settings.lightIntensity}
                                     onChange={(e) => updateSetting('lightIntensity', parseFloat(e.target.value))}
-                                    className="w-full accent-blue-500 h-1 bg-neutral-700 rounded-lg appearance-none cursor-pointer"
+                                    className="w-full accent-[#ccff00] h-1 bg-neutral-700 rounded-lg appearance-none cursor-pointer"
                                 />
                             </div>
 
@@ -502,23 +501,23 @@ export default function Sidebar() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between mt-4 border-t border-neutral-700 pt-4">
+                            <div className="flex items-center justify-between mt-4 border-t border-white/5 pt-4">
                                 <label className="text-xs text-neutral-400">Dynamic Focus</label>
                                 <button
                                     onClick={() => updateSetting('dynamicFocus', !settings.dynamicFocus)}
-                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.dynamicFocus ? 'bg-blue-500' : 'bg-neutral-600'}`}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.dynamicFocus ? 'bg-[#ccff00]' : 'bg-neutral-600'}`}
                                 >
-                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.dynamicFocus ? 'translate-x-4' : 'translate-x-0'}`} />
+                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-black rounded-full transition-transform ${settings.dynamicFocus ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </button>
                             </div>
 
-                            <div className="flex items-center justify-between border-t border-neutral-700 pt-4">
+                            <div className="flex items-center justify-between border-t border-white/5 pt-4">
                                 <label className="text-xs text-neutral-400">Auto Rotate</label>
                                 <button
                                     onClick={() => updateSetting('autoRotate', !settings.autoRotate)}
-                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.autoRotate ? 'bg-blue-500' : 'bg-neutral-600'}`}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.autoRotate ? 'bg-[#ccff00]' : 'bg-neutral-600'}`}
                                 >
-                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.autoRotate ? 'translate-x-4' : 'translate-x-0'}`} />
+                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-black rounded-full transition-transform ${settings.autoRotate ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </button>
                             </div>
 
@@ -531,27 +530,27 @@ export default function Sidebar() {
                                 </label>
                                 <button
                                     onClick={() => updateSetting('tourMode', !settings.tourMode)}
-                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.tourMode ? 'bg-green-500' : 'bg-neutral-600'}`}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.tourMode ? 'bg-[#ccff00]' : 'bg-neutral-600'}`}
                                 >
-                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.tourMode ? 'translate-x-4' : 'translate-x-0'}`} />
+                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-black rounded-full transition-transform ${settings.tourMode ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </button>
                             </div>
 
-                            <div className={`flex items-center justify-between border-t border-neutral-700 pt-4 ${!settings.tourMode ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <div className={`flex items-center justify-between border-t border-white/5 pt-4 ${!settings.tourMode ? 'opacity-50 pointer-events-none' : ''}`}>
                                 <label className="text-xs text-neutral-400">
                                     Wall Collision
                                     <span className="block text-[10px] text-neutral-500">Requires Tour Mode</span>
                                 </label>
                                 <button
                                     onClick={() => updateSetting('collisionEnabled', !settings.collisionEnabled)}
-                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.collisionEnabled ? 'bg-blue-500' : 'bg-neutral-600'}`}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${settings.collisionEnabled ? 'bg-[#ccff00]' : 'bg-neutral-600'}`}
                                 >
-                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${settings.collisionEnabled ? 'translate-x-4' : 'translate-x-0'}`} />
+                                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-black rounded-full transition-transform ${settings.collisionEnabled ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </button>
                             </div>
 
                             {settings.tourMode && (
-                                <div className="mt-4 border-t border-neutral-700 pt-4">
+                                <div className="mt-4 border-t border-white/5 pt-4">
                                     <div className="flex items-center justify-between mb-2">
                                         <label className="text-xs text-neutral-400">Eye Level (Y-Axis)</label>
                                         <span className="text-xs text-neutral-500">{settings.tourHeight}m</span>
@@ -572,7 +571,7 @@ export default function Sidebar() {
 
             {/* Toolbox hint */}
             {!collapsed && (
-                <div className="p-4 border-t border-neutral-700 text-xs text-neutral-500">
+                <div className="p-4 border-t border-white/5 text-xs text-neutral-500">
                     <div className="flex items-center gap-2 mb-1"><Move size={12} /> Left Click: Rotate</div>
                     <div className="flex items-center gap-2 mb-1"><ZoomIn size={12} /> Scroll: Zoom</div>
                     <div className="flex items-center gap-2"><RotateCw size={12} /> Right Click: Pan</div>

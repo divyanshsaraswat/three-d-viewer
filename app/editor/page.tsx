@@ -61,7 +61,6 @@ export default function EditorPage() {
 
                 loadAttachedBookmarks().then(() => {
                     setModels([newModel]);
-                    useStore.getState().setIsModelLoading(false);
                 });
             }
         }
@@ -94,7 +93,7 @@ export default function EditorPage() {
     if (!isHydrated) return null;
 
     return (
-        <div className="w-screen h-screen overflow-hidden flex relative font-sans bg-[#e0e1e5] dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
+        <div className="w-screen h-screen overflow-hidden flex relative font-sans text-white transition-colors duration-500" style={{ backgroundColor: '#0a0a0a' }}>
             {/* Sidebar Overlay (Only shown in Dev Mode) */}
             {editorMode !== 'prod' && <Sidebar />}
 
@@ -104,9 +103,9 @@ export default function EditorPage() {
 
                 {modelsLength === 0 && editorMode !== 'prod' && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                        <div className="text-center p-8 bg-white/40 dark:bg-black/40 backdrop-blur-sm rounded-xl border border-black/10 dark:border-white/10 shadow-lg">
-                            <h1 className="text-2xl font-light mb-2">Ready to View</h1>
-                            <p className="text-black/60 dark:text-white/60">Upload a 3D model from the sidebar to get started.</p>
+                        <div className="text-center p-8 backdrop-blur-sm rounded-xl border border-white/10 shadow-lg" style={{ backgroundColor: 'rgba(18,18,18,0.8)' }}>
+                            <h1 className="text-2xl font-light mb-2 text-white">Ready to View</h1>
+                            <p className="text-white/40">Upload a 3D model from the sidebar to get started.</p>
                         </div>
                     </div>
                 )}
@@ -124,21 +123,25 @@ export default function EditorPage() {
 
                 {/* Global Loading Overlay */}
                 <div
-                    className={`absolute inset-0 z-50 bg-[#e0e1e5]/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500 pointer-events-none ${isModelLoading ? 'opacity-100' : 'opacity-0'}`}
+                    className={`absolute inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-700 ${isModelLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                    style={{ backgroundColor: '#0a0a0a' }}
                 >
-                    <div className={`flex flex-col items-center transition-transform duration-500 delay-100 ${isModelLoading ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
-                        {/* Elegant Spinner */}
-                        <div className="relative w-16 h-16 mb-6">
-                            <div className="absolute inset-0 border-2 border-black/10 dark:border-white/10 rounded-full"></div>
-                            <div className="absolute inset-0 border-2 border-black dark:border-white rounded-full border-t-transparent animate-spin"></div>
+                    <div className={`flex flex-col items-center transition-all duration-500 delay-100 ${isModelLoading ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'}`}>
+                        {/* Brand Spinner */}
+                        <div className="relative w-12 h-12 mb-8">
+                            <div className="absolute inset-0 rounded-full border-2 border-white/5"></div>
+                            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#ccff00] animate-spin"></div>
                         </div>
 
-                        <h2 className="text-xl font-light tracking-widest uppercase text-black dark:text-white mb-2">
-                            Loading Model
+                        {/* Brand Text */}
+                        <h2 className="text-white text-lg font-light tracking-[0.3em] uppercase mb-3" style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+                            Loading
                         </h2>
-                        <p className="text-sm text-black/50 dark:text-white/50 animate-pulse">
-                            Optimizing geometry and textures...
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '0ms' }}></span>
+                            <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '200ms' }}></span>
+                            <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '400ms' }}></span>
+                        </div>
                     </div>
                 </div>
             </div>

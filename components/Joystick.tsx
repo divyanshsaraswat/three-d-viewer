@@ -75,12 +75,12 @@ export default function Joystick() {
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
                 onPointerCancel={handlePointerUp}
-                className="w-32 h-32 rounded-full border border-white/20 bg-black/30 backdrop-blur-md flex items-center justify-center relative touch-none select-none"
+                className="w-32 h-32 rounded-full border border-white/10 flex items-center justify-center relative touch-none select-none" style={{ backgroundColor: 'rgba(18,18,18,0.8)', backdropFilter: 'blur(12px)' }}
             >
                 {/* Joystick Nub */}
                 <div
                     ref={stickRef}
-                    className="w-12 h-12 bg-white/50 rounded-full shadow-lg pointer-events-none"
+                    className="w-12 h-12 rounded-full shadow-lg pointer-events-none" style={{ backgroundColor: 'rgba(204,255,0,0.5)' }}
                 />
             </div>
         </div>

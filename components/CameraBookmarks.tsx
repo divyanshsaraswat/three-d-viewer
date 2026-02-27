@@ -72,7 +72,8 @@ export default function CameraBookmarks() {
 
     return (
         <div
-            className={`bg-neutral-900/90 text-white rounded-lg shadow-xl border border-neutral-700 transition-all duration-300 flex flex-col ${expanded ? 'h-96 w-64' : 'h-10 w-48'}`}
+            className={`text-white rounded-lg shadow-xl border border-white/10 transition-all duration-300 flex flex-col ${expanded ? 'h-96 w-64' : 'h-10 w-48'}`}
+            style={{ backgroundColor: '#121212' }}
             onPointerDown={(e) => e.stopPropagation()}
             onPointerUp={(e) => e.stopPropagation()}
             onWheel={(e) => e.stopPropagation()}
@@ -81,10 +82,10 @@ export default function CameraBookmarks() {
             {/* Header */}
             <button
                 onClick={() => setExpanded(!expanded)}
-                className="flex items-center justify-between px-3 py-2 w-full hover:bg-neutral-800 rounded-t-lg transition-colors"
+                className="flex items-center justify-between px-3 py-2 w-full hover:bg-white/5 rounded-t-lg transition-colors"
             >
                 <div className="flex items-center gap-2 text-sm font-medium">
-                    <Camera size={16} className="text-blue-400" />
+                    <Camera size={16} className="text-[#ccff00]" />
                     <span>Saved Views ({bookmarks.length})</span>
                 </div>
                 {expanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
@@ -101,7 +102,7 @@ export default function CameraBookmarks() {
                             </div>
                         ) : (
                             bookmarks.map(b => (
-                                <div key={b.id} className="group bg-neutral-800 p-2 rounded border border-neutral-700 hover:border-blue-500/50 transition-colors flex items-center justify-between">
+                                <div key={b.id} className="group p-2 rounded border border-white/5 hover:border-[#ccff00]/30 transition-colors flex items-center justify-between" style={{ backgroundColor: '#1a1a1a' }}>
                                     {editingId === b.id ? (
                                         <input
                                             type="text"
@@ -121,7 +122,7 @@ export default function CameraBookmarks() {
                                                 }
                                             }}
                                             autoFocus
-                                            className="flex-1 bg-neutral-900 text-xs px-2 py-1 rounded border border-blue-500/50 outline-none text-white overflow-hidden min-w-0"
+                                            className="flex-1 bg-black text-xs px-2 py-1 rounded border border-[#ccff00]/40 outline-none text-white overflow-hidden min-w-0"
                                         />
                                     ) : (
                                         <button
@@ -130,7 +131,7 @@ export default function CameraBookmarks() {
                                                 setEditingId(b.id);
                                                 setEditName(b.name);
                                             }}
-                                            className="flex-1 text-left text-xs truncate hover:text-blue-300 flex items-center gap-2 overflow-hidden"
+                                            className="flex-1 text-left text-xs truncate hover:text-[#ccff00] flex items-center gap-2 overflow-hidden"
                                             title="Double click to rename"
                                         >
                                             <Eye size={12} className="opacity-50 shrink-0" />
@@ -149,10 +150,10 @@ export default function CameraBookmarks() {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="p-2 border-t border-neutral-700 space-y-2">
+                    <div className="p-2 border-t border-white/5 space-y-2">
                         <button
                             onClick={triggerCapture}
-                            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white py-1.5 rounded text-xs transition-colors"
+                            className="w-full flex items-center justify-center gap-2 text-black py-1.5 rounded text-xs transition-colors font-medium hover:opacity-90" style={{ backgroundColor: '#ccff00' }}
                         >
                             <Plus size={14} /> Add Current View
                         </button>
@@ -160,14 +161,14 @@ export default function CameraBookmarks() {
                         <div className="flex gap-2">
                             <button
                                 onClick={handleExport}
-                                className="flex-1 flex items-center justify-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-neutral-600"
+                                className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30" style={{ backgroundColor: '#1a1a1a' }}
                                 title="Download JSON"
                             >
                                 <Download size={12} /> Save
                             </button>
                             <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex-1 flex items-center justify-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-neutral-600"
+                                className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30" style={{ backgroundColor: '#1a1a1a' }}
                                 title="Import JSON"
                             >
                                 <Upload size={12} /> Load

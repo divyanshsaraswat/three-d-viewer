@@ -485,12 +485,16 @@ export default function ViewerCanvas() {
                                 const maxDim = Math.max(box.halfExtents.x, box.halfExtents.y, box.halfExtents.z);
                                 orbitDistance.current = Math.max(5, maxDim * 2.5);
                             }
+
+                            // Model is now fully loaded and rendered — dismiss loading overlay
+                            useStore.getState().setIsModelLoading(false);
                         }
                     }
                 });
 
                 asset.on('error', (err: any) => {
                     console.error("Failed to load model asset:", err);
+                    useStore.getState().setIsModelLoading(false);
                 });
 
                 app.assets.add(asset);
