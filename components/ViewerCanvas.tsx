@@ -384,8 +384,8 @@ export default function ViewerCanvas() {
                     // Joy Y negative = pushed UP = forward (+1)
                     // Joy X positive = pushed RIGHT = right (+1)
                     const joy = useStore.getState().joystickInput;
-                    fwd -= joy.y * 0.7;
-                    right += joy.x * 0.7;
+                    fwd -= joy.y * 0.35;
+                    right += joy.x * 0.35;
 
                     if (fwd !== 0) pivot.translateLocal(0, 0, -fwd * speed * dt);
                     if (right !== 0) pivot.translateLocal(right * speed * dt, 0, 0);
