@@ -112,12 +112,12 @@ export default function EditorPage() {
                 )}
 
                 {/* Desktop: Camera Bookmarks positioned normally */}
-                <div className={`hidden lg:block absolute bottom-4 right-4 z-40 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} ${editorMode === 'prod' ? '' : ''}`}>
+                <div className={`hidden xl:block absolute bottom-4 right-4 z-40 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} ${editorMode === 'prod' ? '' : ''}`}>
                     <CameraBookmarks />
                 </div>
 
                 {/* Mobile/Tablet: Stack Bookmarks above Joystick in a single fixed container */}
-                <div className={`lg:hidden fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
+                <div className={`xl:hidden fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
                     <CameraBookmarks />
                     <Joystick />
                 </div>
