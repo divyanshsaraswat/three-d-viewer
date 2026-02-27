@@ -94,7 +94,7 @@ export default function EditorPage() {
     if (!isHydrated) return null;
 
     return (
-        <div className="w-screen h-screen overflow-hidden flex relative font-sans text-white transition-colors duration-500" style={{ backgroundColor: '#0a0a0a' }}>
+        <div className="w-screen h-screen overflow-hidden flex relative font-sans text-white transition-colors duration-500 select-none" style={{ backgroundColor: '#0a0a0a' }}>
             {/* Sidebar Overlay (Only shown in Dev Mode) */}
             {editorMode !== 'prod' && <Sidebar />}
 
