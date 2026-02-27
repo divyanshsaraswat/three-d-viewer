@@ -64,7 +64,7 @@ export default function Joystick() {
 
     return (
         <div
-            className="lg:hidden fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-40"
+            className="z-40"
             // Prevent default touch actions like scrolling while interacting with the joystick
             style={{ touchAction: 'none' }}
         >

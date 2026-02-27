@@ -110,13 +110,16 @@ export default function EditorPage() {
                     </div>
                 )}
 
-                {/* Camera Bookmarks UI - Rendered here to be on top of Scene but inside the relative container */}
-                <div className={`absolute bottom-[120px] right-4 sm:bottom-[140px] sm:right-6 md:bottom-[160px] md:right-8 lg:bottom-4 lg:right-4 z-40 transition-transform ${editorMode === 'prod' ? 'translate-y-0' : ''}`}>
+                {/* Desktop: Camera Bookmarks positioned normally */}
+                <div className={`hidden lg:block absolute bottom-4 right-4 z-40 transition-transform ${editorMode === 'prod' ? 'translate-y-0' : ''}`}>
                     <CameraBookmarks />
                 </div>
 
-                {/* Mobile Joystick (Only renders on touch/md:hidden) */}
-                <Joystick />
+                {/* Mobile/Tablet: Stack Bookmarks above Joystick in a single fixed container */}
+                <div className="lg:hidden fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3">
+                    <CameraBookmarks />
+                    <Joystick />
+                </div>
 
                 {/* Texture Carousel Overlay */}
                 <TextureCarousel />
