@@ -8,6 +8,7 @@ export default function CameraBookmarks() {
     const [expanded, setExpanded] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editName, setEditName] = useState("");
+    const [activeViewId, setActiveViewId] = useState<string | null>(null);
 
     const bookmarks = useStore(state => state.bookmarks);
     const triggerCapture = useStore(state => state.triggerCapture);
@@ -26,6 +27,7 @@ export default function CameraBookmarks() {
     }, [bookmarks.length]);
 
     const handleRestore = (bookmark: CameraBookmark) => {
+        setActiveViewId(bookmark.id);
         window.dispatchEvent(new CustomEvent('restore-bookmark', { detail: bookmark }));
     };
 
@@ -82,7 +84,7 @@ export default function CameraBookmarks() {
             {/* Header */}
             <button
                 onClick={() => setExpanded(!expanded)}
-                className="flex items-center justify-between px-3 py-2 w-full hover:bg-white/5 rounded-t-lg transition-colors"
+                className="flex items-center justify-between px-3 py-2 w-full hover:bg-white/5 rounded-t-lg transition-colors cursor-pointer"
             >
                 <div className="flex items-center gap-2 text-sm font-medium">
                     <Camera size={16} className="text-[#ccff00]" />
@@ -102,7 +104,14 @@ export default function CameraBookmarks() {
                             </div>
                         ) : (
                             bookmarks.map(b => (
-                                <div key={b.id} className="group p-2 rounded border border-white/5 hover:border-[#ccff00]/30 transition-colors flex items-center justify-between" style={{ backgroundColor: '#1a1a1a' }}>
+                                <div
+                                    key={b.id}
+                                    onClick={() => editingId !== b.id && handleRestore(b)}
+                                    onDoubleClick={() => { setEditingId(b.id); setEditName(b.name); }}
+                                    className={`group p-2 rounded border transition-all flex items-center justify-between cursor-pointer ${activeViewId === b.id ? 'border-[#ccff00]/40' : 'border-white/5 hover:border-[#ccff00]/30'}`}
+                                    style={{ backgroundColor: activeViewId === b.id ? 'rgba(204,255,0,0.05)' : '#1a1a1a' }}
+                                    title="Double click to rename"
+                                >
                                     {editingId === b.id ? (
                                         <input
                                             type="text"
@@ -121,25 +130,19 @@ export default function CameraBookmarks() {
                                                     setEditingId(null);
                                                 }
                                             }}
+                                            onClick={(e) => e.stopPropagation()}
+                                            onDoubleClick={(e) => e.stopPropagation()}
                                             autoFocus
                                             className="flex-1 bg-black text-xs px-2 py-1 rounded border border-[#ccff00]/40 outline-none text-white overflow-hidden min-w-0"
                                         />
                                     ) : (
-                                        <button
-                                            onClick={() => handleRestore(b)}
-                                            onDoubleClick={() => {
-                                                setEditingId(b.id);
-                                                setEditName(b.name);
-                                            }}
-                                            className="flex-1 text-left text-xs truncate hover:text-[#ccff00] flex items-center gap-2 overflow-hidden"
-                                            title="Double click to rename"
-                                        >
-                                            <Eye size={12} className="opacity-50 shrink-0" />
-                                            <span className="truncate">{b.name}</span>
-                                        </button>
+                                        <span className="flex-1 text-left text-xs truncate hover:text-[#ccff00] flex items-center gap-2 overflow-hidden">
+                                            <Eye size={12} className={`shrink-0 ${activeViewId === b.id ? 'text-[#ccff00] opacity-100' : 'opacity-50'}`} />
+                                            <span className={`truncate ${activeViewId === b.id ? 'text-[#ccff00]' : ''}`}>{b.name}</span>
+                                        </span>
                                     )}
                                     <button
-                                        onClick={() => removeBookmark(b.id)}
+                                        onClick={(e) => { e.stopPropagation(); removeBookmark(b.id); }}
                                         className="text-neutral-500 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                                     >
                                         <Trash2 size={12} />
@@ -153,7 +156,7 @@ export default function CameraBookmarks() {
                     <div className="p-2 border-t border-white/5 space-y-2">
                         <button
                             onClick={triggerCapture}
-                            className="w-full flex items-center justify-center gap-2 text-black py-1.5 rounded text-xs transition-colors font-medium hover:opacity-90" style={{ backgroundColor: '#ccff00' }}
+                            className="w-full flex items-center justify-center gap-2 text-black py-1.5 rounded text-xs transition-colors font-medium hover:opacity-90 cursor-pointer" style={{ backgroundColor: '#ccff00' }}
                         >
                             <Plus size={14} /> Add Current View
                         </button>
@@ -161,14 +164,14 @@ export default function CameraBookmarks() {
                         <div className="flex gap-2">
                             <button
                                 onClick={handleExport}
-                                className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30" style={{ backgroundColor: '#1a1a1a' }}
+                                className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
                                 title="Download JSON"
                             >
                                 <Download size={12} /> Save
                             </button>
                             <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30" style={{ backgroundColor: '#1a1a1a' }}
+                                className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
                                 title="Import JSON"
                             >
                                 <Upload size={12} /> Load

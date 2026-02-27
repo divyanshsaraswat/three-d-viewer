@@ -249,6 +249,20 @@ export default function ViewerCanvas() {
                 }
             };
 
+            // Listen for external deselect (e.g. TextureCarousel close button)
+            const handleDeselectMesh = () => {
+                if (hoveredMeshInfo) {
+                    hoveredMeshInfo.instance.material = hoveredMeshInfo.originalMaterial;
+                    if (hoveredMeshInfo.highlightMaterial) {
+                        hoveredMeshInfo.highlightMaterial.destroy();
+                    }
+                    hoveredMeshInfo = null;
+                    (app as any)._selectedMeshInstance = null;
+                    (app as any)._activeHoverInfo = null;
+                }
+            };
+            window.addEventListener('deselect-mesh', handleDeselectMesh);
+
             // Input handlers
             let isDragging = false;
             let lastMouseX = 0;

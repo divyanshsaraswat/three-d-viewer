@@ -340,8 +340,9 @@ export default function TextureCarousel() {
                     {/* Reset & Close */}
                     <button
                         onClick={() => {
-                            applyTexture(selectedMeshId, 'RESET');
                             setActiveTextureId(null);
+                            setShowOptionsId(null);
+                            window.dispatchEvent(new CustomEvent('deselect-mesh'));
                             useStore.getState().setSelectedMesh(null);
                         }}
                         className="gsap-static-btn w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl bg-red-500/10 hover:bg-red-500/20 flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-red-500/20 text-red-400"
