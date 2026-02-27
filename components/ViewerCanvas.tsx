@@ -339,15 +339,17 @@ export default function ViewerCanvas() {
                         lastTouchX = e.touches[0].x;
                         lastTouchY = e.touches[0].y;
                     } else if (e.touches.length === 2) {
-                        const dx = e.touches[0].x - e.touches[1].x;
-                        const dy = e.touches[0].y - e.touches[1].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (!isMobile()) {
+                            const dx = e.touches[0].x - e.touches[1].x;
+                            const dy = e.touches[0].y - e.touches[1].y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
 
-                        // Pinch to zoom logic
-                        const delta = lastPinchDist - dist;
-                        orbitDistance.current += delta * 0.05;
-                        orbitDistance.current = pc.math.clamp(orbitDistance.current, 0.5, 50);
-                        lastPinchDist = dist;
+                            // Pinch to zoom logic
+                            const delta = lastPinchDist - dist;
+                            orbitDistance.current += delta * 0.05;
+                            orbitDistance.current = pc.math.clamp(orbitDistance.current, 0.5, 50);
+                            lastPinchDist = dist;
+                        }
                     }
                     e.event.preventDefault();
                 });
@@ -370,11 +372,20 @@ export default function ViewerCanvas() {
                     orbitPitch.current = pc.math.lerp(ts.startPitch, ts.endPitch, ease);
                     orbitYaw.current = pc.math.lerp(ts.startYaw, ts.endYaw, ease);
                 }
-                // Handle WASD Walkover (Tour Mode)
+                // Handle WASD Walkover & Joystick (Tour Mode)
                 else if (useStore.getState().settings.tourMode) {
                     const speed = 10;
-                    const fwd = app!.keyboard?.isPressed(pc.KEY_W) ? 1 : (app!.keyboard?.isPressed(pc.KEY_S) ? -1 : 0);
-                    const right = app!.keyboard?.isPressed(pc.KEY_D) ? 1 : (app!.keyboard?.isPressed(pc.KEY_A) ? -1 : 0);
+
+                    // Keyboard input
+                    let fwd = app!.keyboard?.isPressed(pc.KEY_W) ? 1 : (app!.keyboard?.isPressed(pc.KEY_S) ? -1 : 0);
+                    let right = app!.keyboard?.isPressed(pc.KEY_D) ? 1 : (app!.keyboard?.isPressed(pc.KEY_A) ? -1 : 0);
+
+                    // Add joystick input
+                    // Joy Y negative = pushed UP = forward (+1)
+                    // Joy X positive = pushed RIGHT = right (+1)
+                    const joy = useStore.getState().joystickInput;
+                    fwd -= joy.y;
+                    right += joy.x;
 
                     if (fwd !== 0) pivot.translateLocal(0, 0, -fwd * speed * dt);
                     if (right !== 0) pivot.translateLocal(right * speed * dt, 0, 0);

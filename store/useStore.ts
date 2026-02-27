@@ -40,6 +40,7 @@ interface StoreState {
     selectedMeshId: string | null;
     pendingTexture: { meshId: string, url: string } | null;
     pendingTextureOptions: { tiling?: [number, number], offset?: [number, number] } | null;
+    joystickInput: { x: number, y: number };
 
     setModels: (models: LoadedModel[]) => void;
     setIsModelLoading: (loading: boolean) => void;
@@ -59,6 +60,8 @@ interface StoreState {
     applyTexture: (meshId: string, url: string) => void;
     applyTextureOptions: (options: { tiling?: [number, number], offset?: [number, number] }) => void;
     clearPendingTexture: () => void;
+
+    setJoystickInput: (x: number, y: number) => void;
 
     reset: () => void;
 }
@@ -88,6 +91,7 @@ export const useStore = create<StoreState>((set) => ({
     selectedMeshId: null,
     pendingTexture: null,
     pendingTextureOptions: null,
+    joystickInput: { x: 0, y: 0 },
 
     setModels: (models) => set({ models }),
     setIsModelLoading: (loading) => set({ isModelLoading: loading }),
@@ -150,5 +154,7 @@ export const useStore = create<StoreState>((set) => ({
     applyTextureOptions: (options) => set({ pendingTextureOptions: options }),
     clearPendingTexture: () => set({ pendingTexture: null, pendingTextureOptions: null }),
 
-    reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false, selectedMeshId: null, pendingTexture: null })
+    setJoystickInput: (x, y) => set({ joystickInput: { x, y } }),
+
+    reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false, selectedMeshId: null, pendingTexture: null, joystickInput: { x: 0, y: 0 } })
 }));

@@ -5,6 +5,7 @@ import SceneViewer from '@/components/SceneViewer';
 import Sidebar from '@/components/Sidebar';
 import CameraBookmarks from '@/components/CameraBookmarks';
 import TextureCarousel from '@/components/TextureCarousel';
+import Joystick from '@/components/Joystick';
 import { useStore, defaultSettings, LoadedModel } from '@/store/useStore';
 
 export default function EditorPage() {
@@ -111,9 +112,12 @@ export default function EditorPage() {
                 )}
 
                 {/* Camera Bookmarks UI - Rendered here to be on top of Scene but inside the relative container */}
-                <div className={`absolute bottom-4 right-4 z-40 transition-transform ${editorMode === 'prod' ? 'translate-y-0' : ''}`}>
+                <div className={`absolute bottom-44 right-8 lg:bottom-4 lg:right-4 z-40 transition-transform ${editorMode === 'prod' ? 'translate-y-0' : ''}`}>
                     <CameraBookmarks />
                 </div>
+
+                {/* Mobile Joystick (Only renders on touch/md:hidden) */}
+                <Joystick />
 
                 {/* Texture Carousel Overlay */}
                 <TextureCarousel />
