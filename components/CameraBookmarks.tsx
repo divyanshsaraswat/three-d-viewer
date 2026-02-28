@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useStore, CameraBookmark } from '@/store/useStore';
-import { ChevronUp, ChevronDown, Plus, Trash2, Camera, Eye, Download, Upload } from 'lucide-react';
+import { ChevronUp, ChevronDown, Plus, Trash2, Camera, Eye, Download, Upload, Image as ImageIcon } from 'lucide-react';
 
 export default function CameraBookmarks() {
     const [expanded, setExpanded] = useState(false);
@@ -82,7 +82,7 @@ export default function CameraBookmarks() {
         >
 
             {/* Header */}
-            <button
+            <div
                 onClick={() => setExpanded(!expanded)}
                 className="flex items-center justify-between px-3 py-2 w-full hover:bg-white/5 rounded-t-lg transition-colors cursor-pointer"
             >
@@ -90,8 +90,12 @@ export default function CameraBookmarks() {
                     <Camera size={16} className="text-[#ccff00]" />
                     <span>Saved Views ({bookmarks.length})</span>
                 </div>
-                {expanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-            </button>
+                <div className="flex items-center gap-1">
+                    <div className="text-neutral-400 p-1">
+                        {expanded ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                    </div>
+                </div>
+            </div>
 
             {/* Content (only when expanded) */}
             {expanded && (
@@ -161,22 +165,24 @@ export default function CameraBookmarks() {
                             <Plus size={14} /> Add Current View
                         </button>
 
-                        <div className="flex gap-2">
-                            <button
-                                onClick={handleExport}
-                                className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
-                                title="Download JSON"
-                            >
-                                <Download size={12} /> Save
-                            </button>
-                            <button
-                                onClick={() => fileInputRef.current?.click()}
-                                className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
-                                title="Import JSON"
-                            >
-                                <Upload size={12} /> Load
-                            </button>
-                        </div>
+                        {process.env.NEXT_PUBLIC_EDITOR_MODE !== 'prod' && (
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleExport}
+                                    className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
+                                    title="Download JSON"
+                                >
+                                    <Download size={12} /> Save
+                                </button>
+                                <button
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="flex-1 flex items-center justify-center gap-2 text-neutral-300 py-1.5 rounded text-xs transition-colors border border-white/10 hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
+                                    title="Import JSON"
+                                >
+                                    <Upload size={12} /> Load
+                                </button>
+                            </div>
+                        )}
                         <input
                             type="file"
                             ref={fileInputRef}

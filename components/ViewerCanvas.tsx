@@ -36,6 +36,9 @@ export default function ViewerCanvas() {
     const orbitPitch = useRef(0); // vertical
     const orbitYaw = useRef(0);   // horizontal
 
+    // Track the boundary limits of the model for collision bounds handling
+    const modelExtents = useRef<{ x: number, z: number } | null>(null);
+
     // Tween State
     const tweenState = useRef<{
         active: boolean; t: number;
@@ -388,11 +391,16 @@ export default function ViewerCanvas() {
                 }
                 // Handle WASD Walkover & Joystick (Tour Mode)
                 else if (useStore.getState().settings.tourMode) {
-                    const speed = 10;
+                    const speed = 5; // Reduced by 50% from 10
 
-                    // Keyboard input
-                    let fwd = app!.keyboard?.isPressed(pc.KEY_W) ? 1 : (app!.keyboard?.isPressed(pc.KEY_S) ? -1 : 0);
-                    let right = app!.keyboard?.isPressed(pc.KEY_D) ? 1 : (app!.keyboard?.isPressed(pc.KEY_A) ? -1 : 0);
+                    // Keyboard input (WASD + Arrows)
+                    let fwd = 0;
+                    if (app!.keyboard?.isPressed(pc.KEY_W) || app!.keyboard?.isPressed(pc.KEY_UP)) fwd = 1;
+                    else if (app!.keyboard?.isPressed(pc.KEY_S) || app!.keyboard?.isPressed(pc.KEY_DOWN)) fwd = -1;
+
+                    let right = 0;
+                    if (app!.keyboard?.isPressed(pc.KEY_D) || app!.keyboard?.isPressed(pc.KEY_RIGHT)) right = 1;
+                    else if (app!.keyboard?.isPressed(pc.KEY_A) || app!.keyboard?.isPressed(pc.KEY_LEFT)) right = -1;
 
                     // Add joystick input
                     // Joy Y negative = pushed UP = forward (+1)
@@ -405,6 +413,16 @@ export default function ViewerCanvas() {
                     if (right !== 0) pivot.translateLocal(right * speed * dt, 0, 0);
 
                     const p = pivot.getLocalPosition();
+
+                    // Simple Bounding Box Collision
+                    if (useStore.getState().settings.collisionEnabled && modelExtents.current) {
+                        const pad = 0.5; // keep camera safely inside limits
+                        const maxX = Math.max(0, modelExtents.current.x - pad);
+                        const maxZ = Math.max(0, modelExtents.current.z - pad);
+                        p.x = pc.math.clamp(p.x, -maxX, maxX);
+                        p.z = pc.math.clamp(p.z, -maxZ, maxZ);
+                    }
+
                     p.y = useStore.getState().settings.tourHeight;
                     pivot.setLocalPosition(p);
                 }
@@ -495,6 +513,9 @@ export default function ViewerCanvas() {
                                 // Move entity so that its geometric center becomes (0,0,0)
                                 entity.translate(-box.center.x, -box.center.y, -box.center.z);
 
+                                // Save bounds for collision handling
+                                modelExtents.current = { x: box.halfExtents.x, z: box.halfExtents.z };
+
                                 // Adjust camera distance based on model size
                                 const maxDim = Math.max(box.halfExtents.x, box.halfExtents.y, box.halfExtents.z);
                                 orbitDistance.current = Math.max(5, maxDim * 2.5);
@@ -541,6 +562,83 @@ export default function ViewerCanvas() {
             dirLight.lookAt(0, 0, 0);
         }
     }, [lightIntensity, lightColor, lightX, lightY, lightZ]);
+
+    // Handle Screenshot functionality
+    useEffect(() => {
+        const handleScreenshot = () => {
+            if (!appRef.current) return;
+            const app = appRef.current;
+            app.on('postrender', function takeScreenshot() {
+                app.off('postrender', takeScreenshot);
+
+                const webglCanvas = app.graphicsDevice.canvas;
+                const width = webglCanvas.width;
+                const height = webglCanvas.height;
+                const dpr = width / webglCanvas.clientWidth;
+
+                // Temporary 2D Canvas
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = width;
+                tempCanvas.height = height;
+                const ctx = tempCanvas.getContext('2d');
+                if (!ctx) return;
+
+                // Draw WebGL Output
+                ctx.drawImage(webglCanvas, 0, 0);
+
+                // Draw Watermark
+                const bottom = 32 * dpr;
+                const left = 32 * dpr;
+
+                const titleSize = 36 * dpr;
+                const subSize = 12 * dpr;
+                const gap = 4 * dpr;
+
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+
+                // Drop shadow to match UI
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                ctx.shadowBlur = 10 * dpr;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 4 * dpr;
+
+                const startY = height - bottom - titleSize - gap - subSize;
+
+                // "WEINIX"
+                ctx.font = `900 ${titleSize}px system-ui, -apple-system, sans-serif`;
+                if ('letterSpacing' in ctx) {
+                    (ctx as any).letterSpacing = '-2px';
+                }
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillText('WEINIX', left, startY);
+
+                // "A 3D EXPERIENCE"
+                ctx.font = `bold ${subSize}px system-ui, -apple-system, sans-serif`;
+                if ('letterSpacing' in ctx) {
+                    (ctx as any).letterSpacing = '0.3em';
+                }
+                ctx.fillStyle = '#ccff00';
+                ctx.fillText('A 3D EXPERIENCE', left, startY + titleSize + gap);
+
+                // Export and Download
+                const dataUrl = tempCanvas.toDataURL('image/png', 1.0);
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = `WEINIX_3D_Screenshot_${new Date().getTime()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Notify UI that the process is finished
+                window.dispatchEvent(new CustomEvent('screenshot-complete'));
+            });
+            app.renderNextFrame = true;
+        };
+
+        window.addEventListener('take-screenshot', handleScreenshot);
+        return () => window.removeEventListener('take-screenshot', handleScreenshot);
+    }, []);
 
     // Handle Texture Application
     const pendingTexture = useStore(state => state.pendingTexture);
@@ -603,28 +701,44 @@ export default function ViewerCanvas() {
             texture.addressU = pc.ADDRESS_REPEAT;
             texture.addressV = pc.ADDRESS_REPEAT;
 
-            // Adjust UV scale so the texture doesn't look gigantic
-            const material = targetMesh.material as pc.StandardMaterial;
-            material.diffuseMap = texture;
-            material.diffuseMapTiling.set(5, 5); // Tile 5x5 by default
-
-            // Also update the originalMaterial reference so the picker doesn't wipe it
+            // The currently active target mesh material is the yellow highlight glow.
+            // We want to clone the original unhighlighted material instead.
+            let sourceMaterial = targetMesh.material as pc.StandardMaterial;
             const activeHover = (app as any)._activeHoverInfo;
             if (activeHover && activeHover.instance === targetMesh) {
-                activeHover.originalMaterial.diffuseMap = texture;
-                activeHover.originalMaterial.diffuseMapTiling.set(5, 5);
-                activeHover.originalMaterial.update();
+                sourceMaterial = activeHover.originalMaterial;
+            }
+
+            if (!(targetMesh as any)._hasCustomMaterial) {
+                // Clone the base material, not the highlight
+                sourceMaterial = sourceMaterial.clone();
+                (targetMesh as any)._hasCustomMaterial = true;
+
+                // Update the original active hover material reference to our new isolated clone
+                if (activeHover && activeHover.instance === targetMesh) {
+                    activeHover.originalMaterial = sourceMaterial;
+                }
+            }
+
+            const material = sourceMaterial;
+            material.diffuseMap = texture;
+            material.diffuseMapTiling.set(5, 5); // Tile 5x5 by default
+            material.update();
+
+            // Also update the originalMaterial reference so the picker doesn't wipe it
+            if (activeHover && activeHover.instance === targetMesh) {
+                // If the hover state is holding the old shared material, we need to update its reference
+                activeHover.originalMaterial = material;
 
                 // User Request: Remove the yellow highlight glow immediately after applying texture
                 // but keep it technically "selected" in the UI.
-                activeHover.instance.material = activeHover.originalMaterial;
+                activeHover.instance.material = material;
                 if (activeHover.highlightMaterial) {
                     activeHover.highlightMaterial.destroy();
                     activeHover.highlightMaterial = null;
                 }
             }
 
-            material.update();
             clearPendingTexture();
         };
 
@@ -638,15 +752,31 @@ export default function ViewerCanvas() {
     }, [pendingTexture, clearPendingTexture]);
 
     const pendingTextureOptions = useStore(state => state.pendingTextureOptions);
+    const clearPendingTextureOptions = useStore(state => state.clearPendingTextureOptions);
 
     useEffect(() => {
         if (!pendingTextureOptions || !appRef.current) return;
-
         const app = appRef.current;
         const targetMesh = (app as any)._selectedMeshInstance as pc.MeshInstance;
 
         if (targetMesh && targetMesh.material) {
-            const material = targetMesh.material as pc.StandardMaterial;
+            let sourceMaterial = targetMesh.material as pc.StandardMaterial;
+            const currentActiveHover = (app as any)._activeHoverInfo;
+            if (currentActiveHover && currentActiveHover.instance === targetMesh) {
+                sourceMaterial = currentActiveHover.originalMaterial;
+            }
+
+            // Clone if not already custom so tiling changes don't affect shared instances
+            if (!(targetMesh as any)._hasCustomMaterial) {
+                sourceMaterial = sourceMaterial.clone();
+                (targetMesh as any)._hasCustomMaterial = true;
+
+                if (currentActiveHover && currentActiveHover.instance === targetMesh) {
+                    currentActiveHover.originalMaterial = sourceMaterial;
+                }
+            }
+
+            const material = sourceMaterial;
 
             if (pendingTextureOptions.tiling) {
                 material.diffuseMapTiling.set(pendingTextureOptions.tiling[0], pendingTextureOptions.tiling[1]);
@@ -656,18 +786,21 @@ export default function ViewerCanvas() {
             }
             material.update();
 
-            const activeHover = (app as any)._activeHoverInfo;
-            if (activeHover && activeHover.instance === targetMesh) {
-                if (pendingTextureOptions.tiling) {
-                    activeHover.originalMaterial.diffuseMapTiling.set(pendingTextureOptions.tiling[0], pendingTextureOptions.tiling[1]);
+            if (currentActiveHover && currentActiveHover.instance === targetMesh) {
+                // Update original material reference if the picking hover is active
+                currentActiveHover.originalMaterial = material;
+                currentActiveHover.instance.material = material; // Ensure the instance uses the updated material
+
+                if (currentActiveHover.highlightMaterial) {
+                    currentActiveHover.highlightMaterial.destroy();
+                    currentActiveHover.highlightMaterial = null;
                 }
-                if (pendingTextureOptions.offset) {
-                    activeHover.originalMaterial.diffuseMapOffset.set(pendingTextureOptions.offset[0], pendingTextureOptions.offset[1]);
-                }
-                activeHover.originalMaterial.update();
+            } else {
+                targetMesh.material = material;
             }
         }
-    }, [pendingTextureOptions]);
+        clearPendingTextureOptions();
+    }, [pendingTextureOptions, clearPendingTextureOptions]);
 
     return (
         <canvas ref={canvasRef} className="w-full h-full block" />

@@ -12,6 +12,7 @@ const mockTexturePacks = [
         id: 'pack_glass_ice',
         title: 'Glass & Ice',
         description: 'Shattered ice, frosted glass, and crystal patterns.',
+        tags: ['Glass', 'Cold', 'Modern', 'Pattern'],
         thumb: 'https://images.unsplash.com/photo-1549416878-b9ca95e26903?w=200&h=200&fit=crop',
         textures: [
             {
@@ -56,6 +57,7 @@ const mockTexturePacks = [
         id: 'pack_wood',
         title: 'Premium Woods',
         description: 'Dark walnut, oak, and rustic pine woodgrains.',
+        tags: ['Wood', 'Warm', 'Natural', 'Classic'],
         thumb: 'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=200&h=200&fit=crop',
         textures: [
             {
@@ -82,6 +84,7 @@ const mockTexturePacks = [
         id: 'pack_stone_concrete',
         title: 'Stone & Concrete',
         description: 'Classic Italian marble, concrete, and red brick walls.',
+        tags: ['Stone', 'Industrial', 'Raw', 'Concrete'],
         thumb: 'https://images.unsplash.com/photo-1596547609652-9fc5d8d428ce?w=200&h=200&fit=crop',
         textures: [
             {
@@ -112,6 +115,7 @@ export default function TextureCarousel() {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [activeTextureId, setActiveTextureId] = useState<string | null>(null);
     const [activePackId, setActivePackId] = useState<string>(mockTexturePacks[0].id);
     const [showOptionsId, setShowOptionsId] = useState<string | null>(null);
@@ -194,10 +198,35 @@ export default function TextureCarousel() {
     const activePack = mockTexturePacks.find(p => p.id === activePackId) || mockTexturePacks[0];
     const packTextures = activePack.textures;
 
-    const filteredPacks = mockTexturePacks.filter(p =>
+    const allTagsUnsorted = Array.from(new Set(mockTexturePacks.flatMap(p => p.tags || [])));
+    const allTags = [...allTagsUnsorted].sort((a, b) => {
+        const aIndex = selectedTags.indexOf(a);
+        const bIndex = selectedTags.indexOf(b);
+
+        // Both selected: sort by most recently selected first (higher index in selectedTags)
+        if (aIndex !== -1 && bIndex !== -1) return bIndex - aIndex;
+
+        // One selected, one not
+        if (aIndex !== -1) return -1;
+        if (bIndex !== -1) return 1;
+
+        // Neither selected: sort alphabetically
+        return a.localeCompare(b);
+    });
+
+    const baseFilteredPacks = mockTexturePacks.filter(p =>
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    // If categories are selected, hoist matching packs to the top
+    const filteredPacks = selectedTags.length === 0
+        ? baseFilteredPacks
+        : [...baseFilteredPacks].sort((a, b) => {
+            const aMatches = a.tags?.some(t => selectedTags.includes(t)) ? 1 : 0;
+            const bMatches = b.tags?.some(t => selectedTags.includes(t)) ? 1 : 0;
+            return bMatches - aMatches;
+        });
 
     const handleApply = async (tex: any, forceApply = false, event?: React.MouseEvent) => {
         // If clicking the currently active texture, toggle the options menu
@@ -208,7 +237,7 @@ export default function TextureCarousel() {
                 setShowOptionsId(tex.id);
                 if (event?.currentTarget) {
                     const btn = event.currentTarget as HTMLElement;
-                    const tray = btn.closest('.bg-\\[\\#1f1f23\\]') as HTMLElement;
+                    const tray = btn.closest('.rounded-2xl') as HTMLElement;
                     if (tray) {
                         const btnRect = btn.getBoundingClientRect();
                         const trayRect = tray.getBoundingClientRect();
@@ -248,7 +277,7 @@ export default function TextureCarousel() {
                     {/* Left Scroll Button */}
                     <button
                         onClick={() => navigateTexture('left')}
-                        className="gsap-static-btn w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors shrink-0"
+                        className="gsap-static-btn w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors shrink-0 cursor-pointer"
                     >
                         <ChevronLeft size={20} className="w-4 h-4 md:w-5 md:h-5" />
                     </button>
@@ -298,7 +327,7 @@ export default function TextureCarousel() {
                                 <button
                                     id={`thumb-${tex.id}`}
                                     onClick={(e) => handleApply(tex, false, e)}
-                                    className={`group relative w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl overflow-hidden shrink-0 transition-transform hover:scale-105 active:scale-95 ${activeTextureId === tex.id ? 'ring-2 ring-[#ccff00] ring-offset-2 ring-offset-[#121212]' : ''}`}
+                                    className={`group cursor-pointer relative w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl overflow-hidden shrink-0 transition-transform hover:scale-105 active:scale-95 ${activeTextureId === tex.id ? 'ring-2 ring-[#ccff00] ring-offset-2 ring-offset-[#121212]' : ''}`}
                                 >
                                     <img src={tex.thumb} alt={tex.title} className="w-full h-full object-cover" />
 
@@ -318,25 +347,25 @@ export default function TextureCarousel() {
                         ))}
                     </div>
 
-                    {/* "More" Packs Button */}
-                    <button
-                        onClick={() => setIsMenuOpen(true)}
-                        className="gsap-static-btn w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-white/5 text-white shadow-inner hover:border-[#ccff00]/30" style={{ backgroundColor: '#1a1a1a' }}
-                    >
-                        <Package size={20} className="text-[#ccff00] w-4 h-4 md:w-5 md:h-5" />
-                        <span className="text-[9px] md:text-[10px] font-semibold tracking-wide uppercase">Packs</span>
-                    </button>
+
 
                     {/* Right Scroll Button */}
                     <button
                         onClick={() => navigateTexture('right')}
-                        className="gsap-static-btn w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors shrink-0"
+                        className="gsap-static-btn cursor-pointer w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors shrink-0"
                     >
                         <ChevronRight size={20} className="w-4 h-4 md:w-5 md:h-5" />
                     </button>
 
                     <div className="gsap-static-btn w-px h-10 bg-white/10 mx-1"></div>
-
+                    {/* "More" Packs Button */}
+                    <button
+                        onClick={() => setIsMenuOpen(true)}
+                        className="gsap-static-btn cursor-pointer w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-white/5 text-white shadow-inner hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
+                    >
+                        <Package size={20} className="text-[#ccff00] w-4 h-4 md:w-5 md:h-5" />
+                        <span className="text-[9px] md:text-[10px] font-semibold tracking-wide uppercase">Packs</span>
+                    </button>
                     {/* Reset & Close */}
                     <button
                         onClick={() => {
@@ -345,7 +374,7 @@ export default function TextureCarousel() {
                             window.dispatchEvent(new CustomEvent('deselect-mesh'));
                             useStore.getState().setSelectedMesh(null);
                         }}
-                        className="gsap-static-btn w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl bg-red-500/10 hover:bg-red-500/20 flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-red-500/20 text-red-400"
+                        className="gsap-static-btn cursor-pointer w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl bg-red-500/10 hover:bg-red-500/20 flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-red-500/20 text-red-400 cursor-pointer"
                     >
                         <X size={20} className="w-4 h-4 md:w-5 md:h-5" />
                         <span className="text-[10px] md:text-[11px] font-medium tracking-wide">Close</span>
@@ -360,23 +389,45 @@ export default function TextureCarousel() {
                     <div ref={modalRef} className="w-full max-w-4xl max-h-[85vh] rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden" style={{ backgroundColor: '#121212' }}>
 
                         {/* Header & Search */}
-                        <div className="p-4 border-b border-white/10 flex items-center gap-4" style={{ backgroundColor: '#0a0a0a' }}>
-                            <div className="relative flex-1">
-                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" size={18} />
-                                <input
-                                    type="text"
-                                    placeholder="Search texture packs..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full text-white rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-[#ccff00]/40 transition-shadow placeholder:text-white/30" style={{ backgroundColor: '#1a1a1a' }}
-                                />
+                        <div className="p-4 border-b border-white/10 flex flex-col gap-3" style={{ backgroundColor: '#0a0a0a' }}>
+                            <div className="flex items-center gap-4">
+                                <div className="relative flex-1">
+                                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" size={18} />
+                                    <input
+                                        type="text"
+                                        placeholder="Search texture packs..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full text-white rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-[#ccff00]/40 transition-shadow placeholder:text-white/30" style={{ backgroundColor: '#1a1a1a' }}
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors shrink-0 cursor-pointer"
+                                >
+                                    <X size={20} />
+                                </button>
                             </div>
-                            <button
-                                onClick={() => setIsMenuOpen(false)}
-                                className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-colors"
-                            >
-                                <X size={20} />
-                            </button>
+
+                            {/* Categories Filter */}
+                            <div className="flex items-center gap-2 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1">
+                                {allTags.map(tag => {
+                                    const isSelected = selectedTags.includes(tag);
+                                    return (
+                                        <button
+                                            key={tag}
+                                            onClick={() => {
+                                                setSelectedTags(prev =>
+                                                    prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+                                                );
+                                            }}
+                                            className={`px-3 py-1.5 rounded-full text-[10px] md:text-xs font-medium whitespace-nowrap transition-colors border cursor-pointer ${isSelected ? 'bg-[#ccff00]/10 text-[#ccff00] border-[#ccff00]/30' : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white'}`}
+                                        >
+                                            {tag}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         {/* Texture Packs Grid */}
@@ -405,7 +456,17 @@ export default function TextureCarousel() {
                                                     )}
                                                 </div>
                                                 <p className="text-sm text-white/50 line-clamp-2 leading-relaxed tracking-wide mb-3">{pack.description}</p>
-                                                <div className="text-xs font-medium text-white/30 flex items-center gap-1.5">
+
+                                                {/* Tags Row */}
+                                                {pack.tags && pack.tags.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1.5 mb-3 relative z-20">
+                                                        {pack.tags.map(tag => (
+                                                            <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/60">{tag}</span>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                <div className="text-xs font-medium text-white/30 flex items-center gap-1.5 relative z-20">
                                                     <Package size={14} />
                                                     {pack.textures.length} Textures
                                                 </div>

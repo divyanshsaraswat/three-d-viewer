@@ -60,6 +60,7 @@ interface StoreState {
     applyTexture: (meshId: string, url: string) => void;
     applyTextureOptions: (options: { tiling?: [number, number], offset?: [number, number] }) => void;
     clearPendingTexture: () => void;
+    clearPendingTextureOptions: () => void;
 
     setJoystickInput: (x: number, y: number) => void;
 
@@ -153,6 +154,7 @@ export const useStore = create<StoreState>((set) => ({
     applyTexture: (meshId, url) => set({ pendingTexture: { meshId, url } }),
     applyTextureOptions: (options) => set({ pendingTextureOptions: options }),
     clearPendingTexture: () => set({ pendingTexture: null, pendingTextureOptions: null }),
+    clearPendingTextureOptions: () => set({ pendingTextureOptions: null }),
 
     setJoystickInput: (x, y) => set({ joystickInput: { x, y } }),
 

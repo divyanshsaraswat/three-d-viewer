@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Image as ImageIcon } from 'lucide-react';
 import SceneViewer from '@/components/SceneViewer';
 import Sidebar from '@/components/Sidebar';
 import CameraBookmarks from '@/components/CameraBookmarks';
@@ -19,6 +20,7 @@ export default function EditorPage() {
     const selectedMeshId = useStore(state => state.selectedMeshId);
 
     const [isHydrated, setIsHydrated] = useState(false);
+    const [isCapturing, setIsCapturing] = useState(false);
 
     // Handle initial hydration & Dev/Prod mode based on environment variable
     useEffect(() => {
@@ -90,6 +92,13 @@ export default function EditorPage() {
         }
     }, [settings]);
 
+    // Handle Capture Completion
+    useEffect(() => {
+        const handleComplete = () => setIsCapturing(false);
+        window.addEventListener('screenshot-complete', handleComplete);
+        return () => window.removeEventListener('screenshot-complete', handleComplete);
+    }, []);
+
     // Prevent hydration flicker
     if (!isHydrated) return null;
 
@@ -111,8 +120,30 @@ export default function EditorPage() {
                     </div>
                 )}
 
-                {/* Desktop: Camera Bookmarks positioned normally */}
-                <div className={`hidden xl:block absolute bottom-4 right-4 z-40 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} ${editorMode === 'prod' ? '' : ''}`}>
+                {/* Desktop: Camera Bookmarks & Floating Buttons */}
+                <div className={`hidden xl:flex flex-col items-end gap-3 absolute bottom-4 right-4 z-40 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} ${editorMode === 'prod' ? '' : ''}`}>
+                    {/* Floating Screenshot Button */}
+                    <button
+                        disabled={isCapturing}
+                        onClick={() => {
+                            if (isCapturing) return;
+                            setIsCapturing(true);
+                            // Yield rendering thread briefly before heavy WebGL readPixels blocks it
+                            setTimeout(() => {
+                                window.dispatchEvent(new CustomEvent('take-screenshot'));
+                            }, 50);
+                        }}
+                        className={`flex items-center gap-2 px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white/80 hover:text-white transition-all shadow-lg backdrop-blur-sm group ${isCapturing ? 'border-white/20 opacity-70 cursor-wait' : 'border-white/10 hover:border-[#ccff00]/40 cursor-pointer'}`}
+                        title="Take High-Quality Screenshot"
+                    >
+                        {isCapturing ? (
+                            <div className="w-4 h-4 border-2 border-white/20 border-t-[#ccff00] rounded-full animate-spin"></div>
+                        ) : (
+                            <ImageIcon size={16} className="text-[#ccff00] group-hover:scale-110 transition-transform" />
+                        )}
+                        <span className="text-xs font-medium">{isCapturing ? 'Capturing...' : 'Capture'}</span>
+                    </button>
+
                     <CameraBookmarks />
                 </div>
 
@@ -120,6 +151,16 @@ export default function EditorPage() {
                 <div className={`xl:hidden fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
                     <CameraBookmarks />
                     <Joystick />
+                </div>
+
+                {/* WEINIX Branding Watermark */}
+                <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-40 pointer-events-none flex flex-col items-start select-none drop-shadow-lg">
+                    <h1 className="text-2xl md:text-4xl font-black tracking-tighter text-white/90 leading-none">
+                        WEINIX
+                    </h1>
+                    <p className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase text-[#ccff00] mt-1 pl-0.5">
+                        A 3D Experience
+                    </p>
                 </div>
 
                 {/* Texture Carousel Overlay */}
