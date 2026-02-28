@@ -149,6 +149,27 @@ export default function EditorPage() {
 
                 {/* Mobile/Tablet: Stack Bookmarks above Joystick in a single fixed container */}
                 <div className={`xl:hidden fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
+                    {/* Floating Screenshot Button (Mobile/Tablet) */}
+                    <button
+                        disabled={isCapturing}
+                        onClick={() => {
+                            if (isCapturing) return;
+                            setIsCapturing(true);
+                            setTimeout(() => {
+                                window.dispatchEvent(new CustomEvent('take-screenshot'));
+                            }, 50);
+                        }}
+                        className={`flex items-center gap-2 px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white/80 hover:text-white transition-all shadow-lg backdrop-blur-sm group ${isCapturing ? 'border-white/20 opacity-70 cursor-wait' : 'border-white/10 hover:border-[#ccff00]/40 cursor-pointer'}`}
+                        title="Take High-Quality Screenshot"
+                    >
+                        {isCapturing ? (
+                            <div className="w-4 h-4 border-2 border-white/20 border-t-[#ccff00] rounded-full animate-spin"></div>
+                        ) : (
+                            <ImageIcon size={16} className="text-[#ccff00] group-hover:scale-110 transition-transform" />
+                        )}
+                        <span className="text-xs font-medium">{isCapturing ? 'Capturing...' : 'Capture'}</span>
+                    </button>
+
                     <CameraBookmarks />
                     <Joystick />
                 </div>
