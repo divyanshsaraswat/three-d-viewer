@@ -85,7 +85,7 @@ export const useStore = create<StoreState>((set) => ({
     models: [],
     settings: defaultSettings,
     editorMode: 'dev',
-    isModelLoading: false,
+    isModelLoading: true,
     fileMap: null,
     bookmarks: [],
     capturePending: false,

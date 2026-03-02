@@ -409,22 +409,52 @@ export default function ViewerCanvas() {
                     fwd -= joy.y * 0.35;
                     right += joy.x * 0.35;
 
-                    if (fwd !== 0) pivot.translateLocal(0, 0, -fwd * speed * dt);
-                    if (right !== 0) pivot.translateLocal(right * speed * dt, 0, 0);
+                    const p = pivot.getLocalPosition(); // Get current position
 
-                    const p = pivot.getLocalPosition();
+                    if (fwd !== 0 || right !== 0) {
+                        const nextPos = p.clone();
+                        if (fwd !== 0) {
+                            const forwardDir = pivot.forward;
+                            nextPos.add(forwardDir.mulScalar(fwd * speed * dt));
+                        }
+                        if (right !== 0) {
+                            const rightDir = pivot.right;
+                            // Previously this was multiplied by -right which inverted A/D
+                            nextPos.add(rightDir.mulScalar(right * speed * dt));
+                        }
 
-                    // Simple Bounding Box Collision
-                    if (useStore.getState().settings.collisionEnabled && modelExtents.current) {
-                        const pad = 0.5; // keep camera safely inside limits
-                        const maxX = Math.max(0, modelExtents.current.x - pad);
-                        const maxZ = Math.max(0, modelExtents.current.z - pad);
-                        p.x = pc.math.clamp(p.x, -maxX, maxX);
-                        p.z = pc.math.clamp(p.z, -maxZ, maxZ);
+                        // Simple Bounding Box Collision limits as a fallback
+                        if (useStore.getState().settings.collisionEnabled) {
+                            // Because we don't have Ammo.js loaded for full physics mesh collision,
+                            // we rely on a hardened exterior bounding box. We use a thick 'pad'
+                            // so the camera physically cannot get close enough to the outer walls
+                            // to look through them.
+                            if (modelExtents.current) {
+                                const pad = 2.2; // 1 unit thick padding to prevent wall-piercing 
+                                const maxX = Math.max(0, modelExtents.current.x - pad);
+                                const maxZ = Math.max(0, modelExtents.current.z - pad);
+
+                                nextPos.x = pc.math.clamp(nextPos.x, -maxX, maxX);
+                                nextPos.z = pc.math.clamp(nextPos.z, -maxZ, maxZ);
+                            }
+
+                            // **Inner Wall Collision Visual Fix**
+                            // To prevent walking through interior walls visually, we push the 
+                            // camera's near clip plane significantly forward. When the camera 
+                            // tries to press against an interior wall, the wall will geometry-cull 
+                            // before the camera lens can phase through it.
+                            if (cameraRef.current && cameraRef.current.camera) {
+                                cameraRef.current.camera.nearClip = 0.8;
+                            }
+                        }
+
+                        nextPos.y = useStore.getState().settings.tourHeight;
+                        pivot.setLocalPosition(nextPos);
+                    } else {
+                        // Just update Height
+                        p.y = useStore.getState().settings.tourHeight;
+                        pivot.setLocalPosition(p);
                     }
-
-                    p.y = useStore.getState().settings.tourHeight;
-                    pivot.setLocalPosition(p);
                 }
 
                 // Apply current pitch & yaw to Pivot

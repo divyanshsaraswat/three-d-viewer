@@ -119,10 +119,10 @@ for (let i = 0; i < args.length; i++) {
                 transforms.push(
                     draco({
                         method: 'edgebreaker',
-                        quantizePosition: 14,
-                        quantizeTexcoord: 10,
-                        quantizeColor: 8,
-                        quantizeNormal: 8,
+                        quantizePosition: 16,
+                        quantizeTexcoord: 16,
+                        quantizeColor: 12,
+                        quantizeNormal: 12,
                     })
                 );
             }

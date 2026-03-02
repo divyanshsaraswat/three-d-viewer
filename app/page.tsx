@@ -1,8 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import { ArrowRight, Linkedin } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
+import ModelSelectDialog from '@/components/ModelSelectDialog';
 
 export default function LandingPage() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   return (
     <div className="h-screen w-screen bg-[#e0e1e5] dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500 flex flex-col items-center justify-center relative overflow-hidden">
       {/* Background Gradients */}
@@ -17,13 +23,13 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-8">
-          <Link
-            href="/editor"
+          <button
+            onClick={() => setIsDialogOpen(true)}
             className="group px-8 py-3 bg-[#ccff00] text-black font-semibold rounded-full shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-all active:scale-95 flex items-center gap-2 border border-[#ccff00]"
           >
             Launch Editor
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+          </button>
 
           <Link
             href="/landing"
@@ -37,6 +43,11 @@ export default function LandingPage() {
       <div className="absolute bottom-8 text-black/40 dark:text-white/40 text-sm">
         Built with React Three Fiber
       </div>
+
+      <ModelSelectDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </div>
   );
 }

@@ -8,8 +8,10 @@ import CameraBookmarks from '@/components/CameraBookmarks';
 import TextureCarousel from '@/components/TextureCarousel';
 import Joystick from '@/components/Joystick';
 import { useStore, defaultSettings, LoadedModel } from '@/store/useStore';
+import { MODEL_OPTIONS } from '@/components/ModelSelectDialog';
+import { use } from 'react';
 
-export default function EditorPage() {
+export default function EditorPage({ params }: { params: Promise<{ modelId: string }> }) {
     const modelsLength = useStore(state => state.models.length);
     const settings = useStore(state => state.settings);
     const setSettings = useStore(state => state.setSettings);
@@ -22,52 +24,60 @@ export default function EditorPage() {
     const [isHydrated, setIsHydrated] = useState(false);
     const [isCapturing, setIsCapturing] = useState(false);
 
-    // Handle initial hydration & Dev/Prod mode based on environment variable
+    // Handle initial hydration & Model Loading based on URL parmeters
     useEffect(() => {
         setIsHydrated(true); // Always hydrate
 
+        // Ensure dev/prod settings sync
         const isProdMode = process.env.NEXT_PUBLIC_EDITOR_MODE === 'prod';
         if (isProdMode) {
             setEditorMode('prod');
-
-            // Auto-load Interior 2 if empty
-            if (modelsLength === 0) {
-                // Instantly trigger loader so the UI knows we are fetching
-                useStore.getState().setIsModelLoading(true);
-
-                const url = '/examples/scene_optimized.glb';
-                const format = 'gltf';
-                const filename = 'Interior 2';
-
-                const newModel: LoadedModel = {
-                    id: crypto.randomUUID(),
-                    url: url,
-                    format: format,
-                    filename: filename
-                };
-
-                const loadAttachedBookmarks = async () => {
-                    try {
-                        const baseName = url.substring(0, url.lastIndexOf('.'));
-                        const bookmarksUrl = `${baseName}.json`;
-                        const res = await fetch(bookmarksUrl);
-                        if (res.ok) {
-                            const json = await res.json();
-                            if (Array.isArray(json) && json.every(b => b.id && b.position && b.rotation)) {
-                                useStore.getState().setBookmarks(json);
-                            }
-                        }
-                    } catch (e) {
-                        // ignore
-                    }
-                };
-
-                loadAttachedBookmarks().then(() => {
-                    setModels([newModel]);
-                });
-            }
         }
-    }, [setEditorMode, modelsLength, setModels]);
+
+        // Auto-load dynamically requested model
+        if (modelsLength === 0) {
+            // Unwrapping params Promise (Next.js 15+)
+            params.then((unwrappedParams) => {
+                const targetModel = MODEL_OPTIONS.find(m => m.id === unwrappedParams.modelId);
+
+                if (targetModel) {
+                    useStore.getState().setIsModelLoading(true);
+
+                    const url = targetModel.url;
+                    // Extract format safely
+                    const formatMatch = url.match(/\.([a-z0-9]+)$/i);
+                    const format = (formatMatch ? formatMatch[1] : 'glb') as LoadedModel['format'];
+
+                    const newModel: LoadedModel = {
+                        id: targetModel.id,
+                        url: url,
+                        format: format,
+                        filename: targetModel.title
+                    };
+
+                    const loadAttachedBookmarks = async () => {
+                        try {
+                            const baseName = url.substring(0, url.lastIndexOf('.'));
+                            const bookmarksUrl = `${baseName}.json`;
+                            const res = await fetch(bookmarksUrl);
+                            if (res.ok) {
+                                const json = await res.json();
+                                if (Array.isArray(json) && json.every(b => b.id && b.position && b.rotation)) {
+                                    useStore.getState().setBookmarks(json);
+                                }
+                            }
+                        } catch (e) {
+                            // ignore
+                        }
+                    };
+
+                    loadAttachedBookmarks().then(() => {
+                        setModels([newModel]);
+                    });
+                }
+            });
+        }
+    }, [setEditorMode, modelsLength, setModels, params]);
 
     // Load settings from LocalStorage on mount
     useEffect(() => {
