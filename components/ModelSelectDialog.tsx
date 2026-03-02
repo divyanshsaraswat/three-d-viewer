@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Box, Image as ImageIcon, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export interface ModelOption {
     id: string;
@@ -17,15 +18,8 @@ export const MODEL_OPTIONS: ModelOption[] = [
         id: 'interior-2',
         title: 'Interior 2',
         description: 'Modern residential interior space.',
-        thumbnail: '/placeholder-interior.jpg', // You can replace this with an actual screenshot
+        thumbnail: 'interior-2.webp', // You can replace this with an actual screenshot
         url: '/examples/scene_optimized.glb'
-    },
-    {
-        id: 'modern-mansion',
-        title: 'Modern Mansion',
-        description: 'SHC Modern Mansion Assets Complete Pack.',
-        thumbnail: '/examples/SHC Modern Mansion Assets Complete Pack/background.jpeg',
-        url: '/examples/SHC Modern Mansion Assets Complete Pack/SHC Modern Mansion Assets Complete Pack_optimized.glb'
     }
 ];
 
@@ -70,11 +64,14 @@ export default function ModelSelectDialog({ isOpen, onClose }: { isOpen: boolean
                             <button
                                 key={model.id}
                                 onClick={() => handleSelect(model.id)}
-                                className="group relative flex flex-col items-start p-4 bg-white/5 border border-white/10 hover:border-[#ccff00]/50 rounded-xl transition-all hover:bg-white/10 text-left"
+                                className="group relative flex flex-col items-start p-4 bg-white/5 border border-white/10 hover:border-[#ccff00]/50 rounded-xl transition-all hover:bg-white/10 text-left cursor-pointer"
                             >
                                 <div className="w-full h-40 bg-black/40 rounded-lg mb-4 flex items-center justify-center overflow-hidden relative">
                                     {/* Fallback Icon */}
-                                    <Box size={32} className="text-white/20" />
+                                    {model.thumbnail?
+                                        <Image src={`/${model.thumbnail}`} width={100} height={100} alt={model.title} className="w-full h-full object-cover" />
+                                        : <ImageIcon size={32} className="text-white/20" />
+                                    }
                                 </div>
                                 <h3 className="text-white font-medium group-hover:text-[#ccff00] transition-colors">{model.title}</h3>
                                 <p className="text-xs text-neutral-400 mt-1 line-clamp-2">{model.description}</p>
