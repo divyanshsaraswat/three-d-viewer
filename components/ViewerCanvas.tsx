@@ -273,6 +273,7 @@ export default function ViewerCanvas() {
             let dragDistance = 0;
 
             app.mouse?.on(pc.EVENT_MOUSEDOWN, (e: pc.MouseEvent) => {
+                if ((e.event as Event).target !== canvasRef.current) return;
                 if (e.button === pc.MOUSEBUTTON_LEFT) {
                     isDragging = true;
                     lastMouseX = e.x;
@@ -319,6 +320,7 @@ export default function ViewerCanvas() {
                 let touchDragDistance = 0;
 
                 app.touch.on(pc.EVENT_TOUCHSTART, (e: pc.TouchEvent) => {
+                    if ((e.event as Event).target !== canvasRef.current) return;
                     if (e.touches.length === 1) {
                         lastTouchX = e.touches[0].x;
                         lastTouchY = e.touches[0].y;
@@ -396,19 +398,19 @@ export default function ViewerCanvas() {
 
                     // Keyboard input (WASD + Arrows)
                     let fwd = 0;
-                    if (app!.keyboard?.isPressed(pc.KEY_W) || app!.keyboard?.isPressed(pc.KEY_UP)) fwd = 1.8;
-                    else if (app!.keyboard?.isPressed(pc.KEY_S) || app!.keyboard?.isPressed(pc.KEY_DOWN)) fwd = -1.8;
+                    if (app!.keyboard?.isPressed(pc.KEY_W) || app!.keyboard?.isPressed(pc.KEY_UP)) fwd = 4.0;
+                    else if (app!.keyboard?.isPressed(pc.KEY_S) || app!.keyboard?.isPressed(pc.KEY_DOWN)) fwd = -4.0;
 
                     let right = 0;
-                    if (app!.keyboard?.isPressed(pc.KEY_D) || app!.keyboard?.isPressed(pc.KEY_RIGHT)) right = 1.8;
-                    else if (app!.keyboard?.isPressed(pc.KEY_A) || app!.keyboard?.isPressed(pc.KEY_LEFT)) right = -1.8;
+                    if (app!.keyboard?.isPressed(pc.KEY_D) || app!.keyboard?.isPressed(pc.KEY_RIGHT)) right = 4.0;
+                    else if (app!.keyboard?.isPressed(pc.KEY_A) || app!.keyboard?.isPressed(pc.KEY_LEFT)) right = -4.0;
 
                     // Add joystick input
                     // Joy Y negative = pushed UP = forward (+1)
                     // Joy X positive = pushed RIGHT = right (+1)
                     const joy = useStore.getState().joystickInput;
-                    fwd -= joy.y * 0.63; // 0.35 * 1.8
-                    right += joy.x * 0.63; // 0.35 * 1.8
+                    fwd -= joy.y * 4.0;
+                    right += joy.x * 4.0;
 
                     const p = pivot.getLocalPosition(); // Get current position
 
@@ -439,22 +441,14 @@ export default function ViewerCanvas() {
                                 nextPos.z = pc.math.clamp(nextPos.z, -maxZ, maxZ);
                             }
 
-                            // **Inner Wall Collision Visual Fix**
-                            // To prevent walking through interior walls visually, we push the 
-                            // camera's near clip plane significantly forward. When the camera 
-                            // tries to press against an interior wall, the wall will geometry-cull 
-                            // before the camera lens can phase through it.
+                            // Inner Wall Collision Visual Fix
                             if (cameraRef.current && cameraRef.current.camera) {
                                 cameraRef.current.camera.nearClip = 0.8;
                             }
                         }
 
-                        nextPos.y = useStore.getState().settings.tourHeight;
+                        // Apply the computed X/Z movement
                         pivot.setLocalPosition(nextPos);
-                    } else {
-                        // Just update Height
-                        p.y = useStore.getState().settings.tourHeight;
-                        pivot.setLocalPosition(p);
                     }
                 }
 
@@ -462,8 +456,17 @@ export default function ViewerCanvas() {
                 pivot.setLocalEulerAngles(orbitPitch.current, orbitYaw.current, 0);
 
                 // Keep camera locked to distance 
-                // (if TourMode active, orbitDistance implicitly becomes 0 to simulate walking)
-                camera.setLocalPosition(0, 0, useStore.getState().settings.tourMode ? 0 : orbitDistance.current);
+                // In TourMode, orbitDistance becomes 0 to simulate walking.
+                // The slider acts as an explicit Y-Axis override for the final physical camera lens.
+                const userYOffset = useStore.getState().settings.tourHeight;
+                camera.setLocalPosition(0, userYOffset, useStore.getState().settings.tourMode ? 0 : orbitDistance.current);
+
+                // --- Diagnostic Log (Throttled to run only ~once per second) ---
+                const ts = Date.now();
+                if (!(window as any)._lastLogTime || ts - (window as any)._lastLogTime > 1000) {
+                    console.log(`[Camera Engine] Zustand Height: ${userYOffset.toFixed(2)} | Actual Lens Y: ${camera.getLocalPosition().y.toFixed(2)} | Pivot Y: ${pivot.getLocalPosition().y.toFixed(2)}`);
+                    (window as any)._lastLogTime = ts;
+                }
             });
         }
 

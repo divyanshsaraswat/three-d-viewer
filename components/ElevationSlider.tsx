@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useStore } from '@/store/useStore';
 
 export default function ElevationSlider() {
@@ -15,68 +15,71 @@ export default function ElevationSlider() {
         return null; // Do not render for other models
     }
 
-    const MIN = 0.2;
+    const MIN = -100.0;
     const MAX = 100.0;
 
-    const percentage = Math.max(0, Math.min(100, ((tourHeight - MIN) / (MAX - MIN)) * 100));
-
-    const handleMove = (clientY: number) => {
-        if (!trackRef.current) return;
-        const rect = trackRef.current.getBoundingClientRect();
-        // For vertical, 0% is at the bottom, 100% is at the top.
-        let topPer = (clientY - rect.top) / rect.height;
-        topPer = Math.max(0, Math.min(1, topPer));
-        const val = MIN + (1 - topPer) * (MAX - MIN);
-        updateSetting('tourHeight', val);
-    };
-
-    const onPointerDown = (e: React.PointerEvent) => {
-        setIsDragging(true);
-        handleMove(e.clientY);
-        (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    };
-
-    const onPointerMove = (e: React.PointerEvent) => {
-        if (isDragging) {
-            handleMove(e.clientY);
-        }
-    };
-
-    const onPointerUp = (e: React.PointerEvent) => {
-        setIsDragging(false);
-        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-    };
+    // Protect against NaN
+    const safeHeight = typeof tourHeight === 'number' && !isNaN(tourHeight) ? tourHeight : 1.6;
+    const percentage = Math.max(0, Math.min(100, ((safeHeight - MIN) / (MAX - MIN)) * 100));
 
     return (
-        <div className="absolute bottom-24 left-6 md:bottom-28 md:left-8 z-50 flex flex-col items-center h-48 pointer-events-auto">
-            {/* Track */}
-            <div
-                ref={trackRef}
-                className="w-1.5 h-full bg-[#333] rounded-full cursor-pointer relative touch-none shadow-inner"
-                onPointerDown={onPointerDown}
-                onPointerMove={onPointerMove}
-                onPointerUp={onPointerUp}
-                onPointerCancel={onPointerUp}
-            >
-                {/* Fill */}
+        <div
+            className="absolute bottom-[6rem] left-6 md:bottom-[7rem] md:left-8 z-[9000] flex flex-col items-center justify-center pointer-events-auto"
+            style={{ height: '200px', width: '60px' }}
+        >
+            <div className="relative w-full h-full flex justify-center py-4 select-none">
+
+                {/* Visual Background Track */}
+                <div className="absolute top-4 bottom-4 w-1.5 bg-[#dbe0e5] rounded-full shadow-inner pointer-events-none overflow-hidden" />
+
+                {/* Visual Active Fill */}
                 <div
-                    className="absolute bottom-0 w-full bg-[#6b4ca6] rounded-full pointer-events-none"
-                    style={{ height: `${percentage}%` }}
+                    className="absolute bottom-4 w-1.5 bg-[#673ab7] rounded-b-full pointer-events-none transition-all duration-75"
+                    style={{ height: `calc(${percentage}% * (168/200))` }} // 168 = 200 - 32 padding
                 />
 
-                {/* Thumb & Tooltip Container */}
+                {/* Center marker */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-[2px] bg-white rounded-full shadow-sm pointer-events-none z-10" />
+
+                {/* Map-Pin Thumb Component */}
                 <div
-                    className="absolute w-[18px] h-[18px] bg-[#6b4ca6] rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.5)] left-1/2 -translate-x-1/2 translate-y-1/2 pointer-events-none"
-                    style={{ bottom: `${percentage}%` }}
+                    className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center z-20 transition-all duration-75"
+                    style={{
+                        // Map 0-100% to the 168px internal track height, offset by base padding
+                        bottom: `calc(${percentage}% * (168/200) + 16px - 10px)`
+                    }}
                 >
-                    {/* Tooltip Map Pin */}
-                    <div className="absolute bottom-[22px] left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none drop-shadow-md">
-                        <div className="bg-[#6b4ca6] text-white text-[12px] font-bold py-1 px-2.5 rounded-full whitespace-nowrap flex items-center justify-center min-w-[32px] min-h-[26px]">
-                            {Math.round(tourHeight)}
+                    {/* Tooltip Envelope */}
+                    <div className="relative flex flex-col items-center drop-shadow-md pb-[6px]">
+                        <div className="bg-[#673ab7] text-white text-[13px] font-bold py-1 px-3 rounded-full whitespace-nowrap flex items-center justify-center shadow-lg">
+                            {Math.round(safeHeight)}
                         </div>
-                        <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#6b4ca6] -mt-[1px]"></div>
+                        {/* Downward triangle tip */}
+                        <div className="absolute bottom-0 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-[#673ab7]" />
                     </div>
+                    {/* Thumb Center Origin Dot */}
+                    <div className="w-[20px] h-[20px] bg-[#673ab7] rounded-full shadow-md border-2 border-white -mt-[4px]" />
                 </div>
+
+                {/* 
+                  Native Range Input: INVISIBLE OMNI-CAPTURE LAYER
+                  We use native browser vertical configurations so it actually sits over the Track.
+                */}
+                <input
+                    type="range"
+                    min={MIN}
+                    max={MAX}
+                    step="0.5"
+                    value={safeHeight}
+                    key={`elevation-slider-${MIN}-${MAX}`} // Prevent stale DOM references
+                    onChange={(e) => updateSetting('tourHeight', parseFloat(e.target.value))}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer m-0 appearance-none z-[100]"
+                    style={{
+                        writingMode: 'vertical-rl',
+                        direction: 'rtl',
+                        WebkitAppearance: 'slider-vertical'
+                    }}
+                />
             </div>
         </div>
     );

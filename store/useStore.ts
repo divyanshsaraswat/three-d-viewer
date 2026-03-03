@@ -116,17 +116,6 @@ export const useStore = create<StoreState>((set) => ({
     }),
     updateSetting: (key, value) => set((state) => {
         const newSettings = { ...state.settings, [key]: value };
-        if (state.editorMode === 'prod') {
-            return {
-                settings: {
-                    ...newSettings,
-                    dynamicFocus: true,
-                    tourMode: true,
-                    tourHeight: 0.2,
-                    collisionEnabled: true
-                }
-            };
-        }
         return { settings: newSettings };
     }),
     setEditorMode: (mode) => set((state) => {
