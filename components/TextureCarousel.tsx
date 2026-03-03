@@ -35,6 +35,7 @@ export default function TextureCarousel() {
     const [activePackId, setActivePackId] = useState<string>('');
     const [showOptionsId, setShowOptionsId] = useState<string | null>(null);
     const [popoverLeft, setPopoverLeft] = useState<number>(0);
+    const [stickyTiling, setStickyTiling] = useState<[number, number]>([5, 5]);
     const applyTextureOptions = useStore(state => state.applyTextureOptions);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const trayRef = useRef<HTMLDivElement>(null);
@@ -188,6 +189,8 @@ export default function TextureCarousel() {
             const blob = await res.blob();
             const objectUrl = URL.createObjectURL(blob);
             applyTexture(selectedMeshId, objectUrl);
+            // Re-apply the sticky tiling option to the new texture
+            applyTextureOptions({ tiling: stickyTiling });
         } catch (e) {
             console.error("Failed to load Texture from URL", e);
         }
@@ -196,6 +199,12 @@ export default function TextureCarousel() {
     const handleSelectPack = (packId: string) => {
         setActivePackId(packId);
         setIsMenuOpen(false); // Close dialog to reveal the new quick picks
+
+        // Auto-apply the first texture of the newly selected pack
+        const pack = texturePacks.find(p => p.id === packId);
+        if (pack && pack.textures.length > 0) {
+            handleApply(pack.textures[0], true);
+        }
     };
 
     return (
@@ -223,21 +232,21 @@ export default function TextureCarousel() {
                             className="absolute bottom-[calc(100%+8px)] -translate-x-1/2 rounded-xl border border-white/10 shadow-xl p-1.5 flex flex-col gap-1 w-32 animate-in fade-in zoom-in-95 duration-200 z-50 transition-all" style={{ backgroundColor: '#1a1a1a', left: popoverLeft > 0 ? `${popoverLeft}px` : '50%' }}
                         >
                             <button
-                                onClick={() => { applyTextureOptions({ tiling: [5, 5] }); setShowOptionsId(null); }}
+                                onClick={() => { setStickyTiling([5, 5]); applyTextureOptions({ tiling: [5, 5] }); setShowOptionsId(null); }}
                                 className="text-xs text-left text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-colors cursor-pointer"
                             >
                                 <span className="font-semibold block">Tiled</span>
                                 <span className="text-[10px] text-white/40 font-normal">Default (5x5)</span>
                             </button>
                             <button
-                                onClick={() => { applyTextureOptions({ tiling: [10, 10] }); setShowOptionsId(null); }}
+                                onClick={() => { setStickyTiling([10, 10]); applyTextureOptions({ tiling: [10, 10] }); setShowOptionsId(null); }}
                                 className="text-xs text-left text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-colors cursor-pointer"
                             >
                                 <span className="font-semibold block">Fine</span>
                                 <span className="text-[10px] text-white/40 font-normal">Dense (10x10)</span>
                             </button>
                             <button
-                                onClick={() => { applyTextureOptions({ tiling: [1, 1] }); setShowOptionsId(null); }}
+                                onClick={() => { setStickyTiling([1, 1]); applyTextureOptions({ tiling: [1, 1] }); setShowOptionsId(null); }}
                                 className="text-xs text-left text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-colors cursor-pointer"
                             >
                                 <span className="font-semibold block">Fit / Fill</span>

@@ -689,6 +689,11 @@ export default function ViewerCanvas() {
         const app = appRef.current;
         const targetMesh = (app as any)._selectedMeshInstance as pc.MeshInstance;
 
+        // Capture tiling preference NOW (synchronously) before async image load,
+        // because the pendingTextureOptions effect will clear it before img.onload fires
+        const snapshotOptions = useStore.getState().pendingTextureOptions;
+        const snapshotTiling: [number, number] = snapshotOptions?.tiling || [5, 5];
+
         if (!targetMesh) {
             console.warn("No mesh selected to apply texture to.");
             clearPendingTexture();
@@ -761,7 +766,8 @@ export default function ViewerCanvas() {
 
             const material = sourceMaterial;
             material.diffuseMap = texture;
-            material.diffuseMapTiling.set(5, 5); // Tile 5x5 by default
+            // Apply tiling: use the snapshot captured before async load
+            material.diffuseMapTiling.set(snapshotTiling[0], snapshotTiling[1]);
             material.update();
 
             // Also update the originalMaterial reference so the picker doesn't wipe it
@@ -845,3 +851,4 @@ export default function ViewerCanvas() {
         <canvas ref={canvasRef} className="w-full h-full block" />
     );
 }
+

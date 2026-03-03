@@ -145,7 +145,7 @@ export const useStore = create<StoreState>((set) => ({
     setSelectedMesh: (id) => set({ selectedMeshId: id }),
     applyTexture: (meshId, url) => set({ pendingTexture: { meshId, url } }),
     applyTextureOptions: (options) => set({ pendingTextureOptions: options }),
-    clearPendingTexture: () => set({ pendingTexture: null, pendingTextureOptions: null }),
+    clearPendingTexture: () => set({ pendingTexture: null }),
     clearPendingTextureOptions: () => set({ pendingTextureOptions: null }),
 
     setJoystickInput: (x, y) => set({ joystickInput: { x, y } }),
