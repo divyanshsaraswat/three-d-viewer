@@ -1,129 +1,59 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Search, Plus, X, ChevronLeft, ChevronRight, MoreHorizontal, Package } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
-// Mock texture packs library
-const mockTexturePacks = [
-    {
-        id: 'pack_glass_ice',
-        title: 'Glass & Ice',
-        description: 'Shattered ice, frosted glass, and crystal patterns.',
-        tags: ['Glass', 'Cold', 'Modern', 'Pattern'],
-        thumb: 'https://images.unsplash.com/photo-1549416878-b9ca95e26903?w=200&h=200&fit=crop',
-        textures: [
-            {
-                id: 'tex_glass_1',
-                title: 'Shattered Ice',
-                thumb: 'https://images.unsplash.com/photo-1549416878-b9ca95e26903?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1549416878-b9ca95e26903?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_glass_2',
-                title: 'Frost Texture',
-                thumb: 'https://images.unsplash.com/photo-1488812690757-9ece99f7d455?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1488812690757-9ece99f7d455?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_glass_3',
-                title: 'Water Droplets',
-                thumb: 'https://images.unsplash.com/photo-1518428882575-bcf234c9caba?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1518428882575-bcf234c9caba?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_glass_4',
-                title: 'Frozen Lake',
-                thumb: 'https://images.unsplash.com/photo-1517436073-3b1b1115b93d?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1517436073-3b1b1115b93d?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_glass_5',
-                title: 'Cracked Mirror',
-                thumb: 'https://images.unsplash.com/photo-1502444330042-d1a1df2da1f9?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1502444330042-d1a1df2da1f9?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_glass_6',
-                title: 'Ice Crystals',
-                thumb: 'https://images.unsplash.com/photo-1548344933-2895fbebeea1?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1548344933-2895fbebeea1?w=1024&h=1024&fit=crop'
-            }
-        ]
-    },
-    {
-        id: 'pack_wood',
-        title: 'Premium Woods',
-        description: 'Dark walnut, oak, and rustic pine woodgrains.',
-        tags: ['Wood', 'Warm', 'Natural', 'Classic'],
-        thumb: 'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=200&h=200&fit=crop',
-        textures: [
-            {
-                id: 'tex_wood_1',
-                title: 'Dark Walnut',
-                thumb: 'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_wood_2',
-                title: 'Light Oak',
-                thumb: 'https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_wood_3',
-                title: 'Rustic Pine',
-                thumb: 'https://images.unsplash.com/photo-1574311145802-120de80eebbc?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1574311145802-120de80eebbc?w=1024&h=1024&fit=crop'
-            }
-        ]
-    },
-    {
-        id: 'pack_stone_concrete',
-        title: 'Stone & Concrete',
-        description: 'Classic Italian marble, concrete, and red brick walls.',
-        tags: ['Stone', 'Industrial', 'Raw', 'Concrete'],
-        thumb: 'https://images.unsplash.com/photo-1596547609652-9fc5d8d428ce?w=200&h=200&fit=crop',
-        textures: [
-            {
-                id: 'tex_marble_1',
-                title: 'Carrara Marble',
-                thumb: 'https://images.unsplash.com/photo-1596547609652-9fc5d8d428ce?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1596547609652-9fc5d8d428ce?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_concrete_1',
-                title: 'Polished Concrete',
-                thumb: 'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=1024&h=1024&fit=crop'
-            },
-            {
-                id: 'tex_brick_1',
-                title: 'Exposed Red Brick',
-                thumb: 'https://images.unsplash.com/photo-1511649475669-e288648b233a?w=200&h=200&fit=crop',
-                full: 'https://images.unsplash.com/photo-1511649475669-e288648b233a?w=1024&h=1024&fit=crop'
-            }
-        ]
-    }
-];
+interface TextureEntry {
+    id: string;
+    title: string;
+    thumb: string;
+    full: string;
+}
+
+interface TexturePack {
+    id: string;
+    title: string;
+    description: string;
+    tags: string[];
+    thumb: string;
+    textures: TextureEntry[];
+}
 
 export default function TextureCarousel() {
     const selectedMeshId = useStore(state => state.selectedMeshId);
     const applyTexture = useStore(state => state.applyTexture);
 
+    const [texturePacks, setTexturePacks] = useState<TexturePack[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [activeTextureId, setActiveTextureId] = useState<string | null>(null);
-    const [activePackId, setActivePackId] = useState<string>(mockTexturePacks[0].id);
+    const [activePackId, setActivePackId] = useState<string>('');
     const [showOptionsId, setShowOptionsId] = useState<string | null>(null);
     const [popoverLeft, setPopoverLeft] = useState<number>(0);
     const applyTextureOptions = useStore(state => state.applyTextureOptions);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const trayRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
+
+    // Fetch texture packs from JSON manifest
+    useEffect(() => {
+        fetch('/textures/packs.json')
+            .then(res => res.json())
+            .then((data: TexturePack[]) => {
+                setTexturePacks(data);
+                if (data.length > 0) setActivePackId(data[0].id);
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error('Failed to load texture packs:', err);
+                setIsLoading(false);
+            });
+    }, []);
 
     // Animate the main bottom tray entering
     useGSAP(() => {
@@ -192,13 +122,13 @@ export default function TextureCarousel() {
         }, 50);
     };
 
-    // If no mesh is selected, we completely hide the UI
-    if (!selectedMeshId) return null;
+    // If no mesh is selected or packs haven't loaded yet, hide the UI
+    if (!selectedMeshId || isLoading || texturePacks.length === 0) return null;
 
-    const activePack = mockTexturePacks.find(p => p.id === activePackId) || mockTexturePacks[0];
+    const activePack = texturePacks.find(p => p.id === activePackId) || texturePacks[0];
     const packTextures = activePack.textures;
 
-    const allTagsUnsorted = Array.from(new Set(mockTexturePacks.flatMap(p => p.tags || [])));
+    const allTagsUnsorted = Array.from(new Set(texturePacks.flatMap(p => p.tags || [])));
     const allTags = [...allTagsUnsorted].sort((a, b) => {
         const aIndex = selectedTags.indexOf(a);
         const bIndex = selectedTags.indexOf(b);
@@ -214,7 +144,7 @@ export default function TextureCarousel() {
         return a.localeCompare(b);
     });
 
-    const baseFilteredPacks = mockTexturePacks.filter(p =>
+    const baseFilteredPacks = texturePacks.filter(p =>
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -228,7 +158,7 @@ export default function TextureCarousel() {
             return bMatches - aMatches;
         });
 
-    const handleApply = async (tex: any, forceApply = false, event?: React.MouseEvent) => {
+    const handleApply = async (tex: TextureEntry, forceApply = false, event?: React.MouseEvent) => {
         // If clicking the currently active texture, toggle the options menu
         if (!forceApply && activeTextureId === tex.id) {
             if (showOptionsId === tex.id) {

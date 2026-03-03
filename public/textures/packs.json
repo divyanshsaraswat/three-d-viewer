@@ -1,0 +1,300 @@
+[
+    {
+        "id": "pack_wall_base",
+        "title": "Wall Base",
+        "description": "Plaster, painted walls, and interior surfaces.",
+        "tags": [
+            "Wall",
+            "Plaster",
+            "Interior",
+            "Grunge"
+        ],
+        "thumb": "/textures/wall/7.png",
+        "textures": [
+            {
+                "id": "tex_wall_7",
+                "title": "Light Gray Tiled Wall",
+                "thumb": "/textures/wall/7.png",
+                "full": "/textures/wall/7.png"
+            },
+            {
+                "id": "tex_wall_9",
+                "title": "Dark Rough Wall",
+                "thumb": "/textures/wall/9.png",
+                "full": "/textures/wall/9.png"
+            },
+            {
+                "id": "tex_wall_12",
+                "title": "Brown Grunge Wall",
+                "thumb": "/textures/wall/12.png",
+                "full": "/textures/wall/12.png"
+            },
+            {
+                "id": "tex_wall_15",
+                "title": "Cream Block Wall",
+                "thumb": "/textures/wall/15.png",
+                "full": "/textures/wall/15.png"
+            },
+            {
+                "id": "tex_wall_21",
+                "title": "Pink Cracked Plaster",
+                "thumb": "/textures/wall/21.png",
+                "full": "/textures/wall/21.png"
+            },
+            {
+                "id": "tex_wall_24",
+                "title": "Red Rough Plaster",
+                "thumb": "/textures/wall/24.png",
+                "full": "/textures/wall/24.png"
+            }
+        ]
+    },
+    {
+        "id": "pack_brick_masonry",
+        "title": "Brick & Masonry",
+        "description": "Structured masonry and classic brick patterns.",
+        "tags": [
+            "Brick",
+            "Exterior",
+            "Urban",
+            "Industrial"
+        ],
+        "thumb": "/textures/brick/4.png",
+        "textures": [
+            {
+                "id": "tex_brick_4",
+                "title": "Yellow Brick Wall",
+                "thumb": "/textures/brick/4.png",
+                "full": "/textures/brick/4.png"
+            },
+            {
+                "id": "tex_brick_19",
+                "title": "Red Brick Wall",
+                "thumb": "/textures/brick/19.png",
+                "full": "/textures/brick/19.png"
+            }
+        ]
+    },
+    {
+        "id": "pack_stone_mineral",
+        "title": "Stone & Marble",
+        "description": "Hard surfaces and premium architectural materials.",
+        "tags": [
+            "Stone",
+            "Marble",
+            "Concrete",
+            "Architectural"
+        ],
+        "thumb": "/textures/stone/22.png",
+        "textures": [
+            {
+                "id": "tex_stone_22",
+                "title": "White Marble",
+                "thumb": "/textures/stone/22.png",
+                "full": "/textures/stone/22.png"
+            },
+            {
+                "id": "tex_stone_13",
+                "title": "Concrete Stone",
+                "thumb": "/textures/stone/13.png",
+                "full": "/textures/stone/13.png"
+            },
+            {
+                "id": "tex_stone_5",
+                "title": "Black Cracked Stone",
+                "thumb": "/textures/stone/5.png",
+                "full": "/textures/stone/5.png"
+            },
+            {
+                "id": "tex_stone_6",
+                "title": "Glowing Cracked Stone",
+                "thumb": "/textures/stone/6.png",
+                "full": "/textures/stone/6.png"
+            }
+        ]
+    },
+    {
+        "id": "pack_fabric_cloth",
+        "title": "Fabric & Cloth",
+        "description": "Grain, fiber, and woven fabric textures.",
+        "tags": [
+            "Fabric",
+            "Cloth",
+            "Canvas",
+            "Textile"
+        ],
+        "thumb": "/textures/fabric/10.png",
+        "textures": [
+            {
+                "id": "tex_fabric_10",
+                "title": "Green Fabric Grain",
+                "thumb": "/textures/fabric/10.png",
+                "full": "/textures/fabric/10.png"
+            },
+            {
+                "id": "tex_fabric_11",
+                "title": "Light Fabric Grain",
+                "thumb": "/textures/fabric/11.png",
+                "full": "/textures/fabric/11.png"
+            },
+            {
+                "id": "tex_fabric_14",
+                "title": "Beige Canvas Surface",
+                "thumb": "/textures/fabric/14.png",
+                "full": "/textures/fabric/14.png"
+            },
+            {
+                "id": "tex_fabric_17",
+                "title": "Dark Textile Rough",
+                "thumb": "/textures/fabric/17.png",
+                "full": "/textures/fabric/17.png"
+            },
+            {
+                "id": "tex_fabric_18",
+                "title": "Wood-Fabric Hybrid",
+                "thumb": "/textures/fabric/18.png",
+                "full": "/textures/fabric/18.png"
+            }
+        ]
+    },
+    {
+        "id": "pack_lava_fire",
+        "title": "Lava & Fire",
+        "description": "Stylized lava, molten, and fire VFX textures.",
+        "tags": [
+            "Lava",
+            "Fire",
+            "Energy",
+            "Fantasy"
+        ],
+        "thumb": "/textures/lava/3.png",
+        "textures": [
+            {
+                "id": "tex_lava_3",
+                "title": "Lava Cracks",
+                "thumb": "/textures/lava/3.png",
+                "full": "/textures/lava/3.png"
+            },
+            {
+                "id": "tex_lava_16",
+                "title": "Bright Lava Veins",
+                "thumb": "/textures/lava/16.png",
+                "full": "/textures/lava/16.png"
+            },
+            {
+                "id": "tex_lava_20",
+                "title": "Molten Surface",
+                "thumb": "/textures/lava/20.png",
+                "full": "/textures/lava/20.png"
+            },
+            {
+                "id": "tex_lava_23",
+                "title": "Intense Fire",
+                "thumb": "/textures/lava/23.png",
+                "full": "/textures/lava/23.png"
+            }
+        ]
+    },
+    {
+        "id": "pack_scifi_energy",
+        "title": "Sci-Fi & Energy",
+        "description": "Cool-toned electric and cyberpunk tech textures.",
+        "tags": [
+            "Sci-Fi",
+            "Electric",
+            "Cyberpunk",
+            "Tech"
+        ],
+        "thumb": "/textures/scifi/2.png",
+        "textures": [
+            {
+                "id": "tex_scifi_2",
+                "title": "Blue Electric Cracks",
+                "thumb": "/textures/scifi/2.png",
+                "full": "/textures/scifi/2.png"
+            },
+            {
+                "id": "tex_scifi_8",
+                "title": "Blue Glowing Tiles",
+                "thumb": "/textures/scifi/8.png",
+                "full": "/textures/scifi/8.png"
+            },
+            {
+                "id": "tex_scifi_1",
+                "title": "Orange Energy Lines",
+                "thumb": "/textures/scifi/1.png",
+                "full": "/textures/scifi/1.png"
+            }
+        ]
+    },
+    {
+        "id": "pack_organic_surface",
+        "title": "Organic & Natural",
+        "description": "Natural, earthy, and organic surface textures.",
+        "tags": [
+            "Organic",
+            "Natural",
+            "Earthy",
+            "Raw"
+        ],
+        "thumb": "/textures/wall/24.png",
+        "textures": [
+            {
+                "id": "tex_organic_24",
+                "title": "Red Organic Surface",
+                "thumb": "/textures/wall/24.png",
+                "full": "/textures/wall/24.png"
+            },
+            {
+                "id": "tex_organic_12",
+                "title": "Brown Dusty Surface",
+                "thumb": "/textures/wall/12.png",
+                "full": "/textures/wall/12.png"
+            },
+            {
+                "id": "tex_organic_10",
+                "title": "Moss-like Green",
+                "thumb": "/textures/fabric/10.png",
+                "full": "/textures/fabric/10.png"
+            }
+        ]
+    },
+    {
+        "id": "pack_neutral_background",
+        "title": "Neutral Background",
+        "description": "Subtle backgrounds for UI cards, thumbnails, and overlays.",
+        "tags": [
+            "Neutral",
+            "Background",
+            "Utility",
+            "Subtle"
+        ],
+        "thumb": "/textures/wall/9.png",
+        "textures": [
+            {
+                "id": "tex_neutral_9",
+                "title": "Dark Neutral",
+                "thumb": "/textures/wall/9.png",
+                "full": "/textures/wall/9.png"
+            },
+            {
+                "id": "tex_neutral_11",
+                "title": "Soft Grain",
+                "thumb": "/textures/fabric/11.png",
+                "full": "/textures/fabric/11.png"
+            },
+            {
+                "id": "tex_neutral_14",
+                "title": "Flat Beige",
+                "thumb": "/textures/fabric/14.png",
+                "full": "/textures/fabric/14.png"
+            },
+            {
+                "id": "tex_neutral_17",
+                "title": "Deep Dark Texture",
+                "thumb": "/textures/fabric/17.png",
+                "full": "/textures/fabric/17.png"
+            }
+        ]
+    }
+]
