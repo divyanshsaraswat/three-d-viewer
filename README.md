@@ -43,9 +43,11 @@ This project includes a fully automated 3D model compression pipeline script pow
 `node scripts/optimize-models.js [options]`
 
 **Options:**
-- `-i`, `--input <path>`    Path to a specific `.glb`, `.gltf`, or `.obj` file, OR a directory containing models. (Defaults to `public/examples/`)
-- `-o`, `--output <path>`   Path to a directory where the optimized `_optimized.glb` files will be saved. (Defaults to the input file's directory)
-- `--no-draco`              Disables Draco geometry compression. Useful if you only want to convert OBJ -> GLB and compress textures without altering vertex data.
+- `-i`, `--input <path>`            Path to a specific `.glb`, `.gltf`, or `.obj` file, OR a directory containing models. (Defaults to `public/examples/`)
+- `-o`, `--output <path>`           Path to a directory where the optimized `_optimized.glb` files will be saved. (Defaults to the input file's directory)
+- `--no-draco`                      Disables Draco geometry compression. Useful if you only want to convert OBJ -> GLB and compress textures without altering vertex data.
+- `--weld`                          Merges overlapping/duplicate vertices. Essential for reducing draw calls in poorly exported CAD/BIM models.
+- `--max-texture-size <pixels>`     Aggressively downscales textures to a specific square dimension (e.g. `512` or `1024`) to conserve GPU memory. Default is 1024.
 
 **Example Usages:**
 1. Process all supported models in the default `public/examples` directory:

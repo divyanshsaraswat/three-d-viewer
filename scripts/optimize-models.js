@@ -7,12 +7,19 @@ const obj2gltf = require('obj2gltf');
 let inputTarget = path.resolve(__dirname, '../public/examples');
 let outputDir = null; // Defaults to the same directory as the input
 let useDraco = true;
+let maxTextureSize = 1024;
+let useWeld = false;
 
 // Parse CLI Arguments
 const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
     if (args[i] === '--no-draco') {
         useDraco = false;
+    } else if (args[i] === '--max-texture-size') {
+        maxTextureSize = parseInt(args[i + 1], 10) || 1024;
+        i++;
+    } else if (args[i] === '--weld') {
+        useWeld = true;
     } else if (args[i] === '-i' || args[i] === '--input') {
         let pathParts = [];
         i++;
@@ -42,7 +49,7 @@ for (let i = 0; i < args.length; i++) {
         // Dynamic imports for ESM ONLY packages
         const { NodeIO } = await import('@gltf-transform/core');
         const { ALL_EXTENSIONS } = await import('@gltf-transform/extensions');
-        const { draco, prune, dedup, resample, textureCompress } = await import('@gltf-transform/functions');
+        const { draco, prune, dedup, resample, textureCompress, weld } = await import('@gltf-transform/functions');
         const draco3d = await import('draco3dgltf');
         const sharp = (await import('sharp')).default;
 
@@ -110,9 +117,13 @@ for (let i = 0; i < args.length; i++) {
                 textureCompress({
                     encoder: sharp,
                     targetFormat: 'webp',
-                    resize: [1024, 1024],
+                    resize: [maxTextureSize, maxTextureSize],
                 })
             ];
+
+            if (useWeld) {
+                transforms.push(weld({ tolerance: 0.0001 }));
+            }
 
             // Conditionally add Draco
             if (useDraco) {

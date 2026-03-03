@@ -391,23 +391,24 @@ export default function ViewerCanvas() {
                 }
                 // Handle WASD Walkover & Joystick (Tour Mode)
                 else if (useStore.getState().settings.tourMode) {
-                    const speed = 5; // Reduced by 50% from 10
+                    const customSettings = useStore.getState().modelCameraSettings;
+                    const speed = customSettings?.speed || 5; // Default to 5
 
                     // Keyboard input (WASD + Arrows)
                     let fwd = 0;
-                    if (app!.keyboard?.isPressed(pc.KEY_W) || app!.keyboard?.isPressed(pc.KEY_UP)) fwd = 1;
-                    else if (app!.keyboard?.isPressed(pc.KEY_S) || app!.keyboard?.isPressed(pc.KEY_DOWN)) fwd = -1;
+                    if (app!.keyboard?.isPressed(pc.KEY_W) || app!.keyboard?.isPressed(pc.KEY_UP)) fwd = 1.8;
+                    else if (app!.keyboard?.isPressed(pc.KEY_S) || app!.keyboard?.isPressed(pc.KEY_DOWN)) fwd = -1.8;
 
                     let right = 0;
-                    if (app!.keyboard?.isPressed(pc.KEY_D) || app!.keyboard?.isPressed(pc.KEY_RIGHT)) right = 1;
-                    else if (app!.keyboard?.isPressed(pc.KEY_A) || app!.keyboard?.isPressed(pc.KEY_LEFT)) right = -1;
+                    if (app!.keyboard?.isPressed(pc.KEY_D) || app!.keyboard?.isPressed(pc.KEY_RIGHT)) right = 1.8;
+                    else if (app!.keyboard?.isPressed(pc.KEY_A) || app!.keyboard?.isPressed(pc.KEY_LEFT)) right = -1.8;
 
                     // Add joystick input
                     // Joy Y negative = pushed UP = forward (+1)
                     // Joy X positive = pushed RIGHT = right (+1)
                     const joy = useStore.getState().joystickInput;
-                    fwd -= joy.y * 0.35;
-                    right += joy.x * 0.35;
+                    fwd -= joy.y * 0.63; // 0.35 * 1.8
+                    right += joy.x * 0.63; // 0.35 * 1.8
 
                     const p = pivot.getLocalPosition(); // Get current position
 
@@ -430,7 +431,7 @@ export default function ViewerCanvas() {
                             // so the camera physically cannot get close enough to the outer walls
                             // to look through them.
                             if (modelExtents.current) {
-                                const pad = 2.2; // 1 unit thick padding to prevent wall-piercing 
+                                const pad = customSettings?.collisionPadding ?? 1.5; // 1.5 unit thick padding default
                                 const maxX = Math.max(0, modelExtents.current.x - pad);
                                 const maxZ = Math.max(0, modelExtents.current.z - pad);
 

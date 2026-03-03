@@ -41,6 +41,7 @@ interface StoreState {
     pendingTexture: { meshId: string, url: string } | null;
     pendingTextureOptions: { tiling?: [number, number], offset?: [number, number] } | null;
     joystickInput: { x: number, y: number };
+    modelCameraSettings: { speed?: number; collisionPadding?: number } | null;
 
     setModels: (models: LoadedModel[]) => void;
     setIsModelLoading: (loading: boolean) => void;
@@ -63,6 +64,7 @@ interface StoreState {
     clearPendingTextureOptions: () => void;
 
     setJoystickInput: (x: number, y: number) => void;
+    setModelCameraSettings: (settings: { speed?: number; collisionPadding?: number } | null) => void;
 
     reset: () => void;
 }
@@ -93,6 +95,7 @@ export const useStore = create<StoreState>((set) => ({
     pendingTexture: null,
     pendingTextureOptions: null,
     joystickInput: { x: 0, y: 0 },
+    modelCameraSettings: null,
 
     setModels: (models) => set({ models }),
     setIsModelLoading: (loading) => set({ isModelLoading: loading }),
@@ -157,6 +160,7 @@ export const useStore = create<StoreState>((set) => ({
     clearPendingTextureOptions: () => set({ pendingTextureOptions: null }),
 
     setJoystickInput: (x, y) => set({ joystickInput: { x, y } }),
+    setModelCameraSettings: (settings) => set({ modelCameraSettings: settings }),
 
-    reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false, selectedMeshId: null, pendingTexture: null, joystickInput: { x: 0, y: 0 } })
+    reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false, selectedMeshId: null, pendingTexture: null, joystickInput: { x: 0, y: 0 }, modelCameraSettings: null })
 }));

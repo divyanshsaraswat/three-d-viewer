@@ -7,6 +7,7 @@ import Sidebar from '@/components/Sidebar';
 import CameraBookmarks from '@/components/CameraBookmarks';
 import TextureCarousel from '@/components/TextureCarousel';
 import Joystick from '@/components/Joystick';
+import ElevationSlider from '@/components/ElevationSlider';
 import { useStore, defaultSettings, LoadedModel } from '@/store/useStore';
 import { MODEL_OPTIONS } from '@/components/ModelSelectDialog';
 import { use } from 'react';
@@ -73,6 +74,11 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
 
                     loadAttachedBookmarks().then(() => {
                         setModels([newModel]);
+                        if (targetModel.cameraSettings) {
+                            useStore.getState().setModelCameraSettings(targetModel.cameraSettings);
+                        } else {
+                            useStore.getState().setModelCameraSettings(null); // Explicit clear
+                        }
                     });
                 }
             });
@@ -183,6 +189,8 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
                     <CameraBookmarks />
                     <Joystick />
                 </div>
+
+                <ElevationSlider />
 
                 {/* WEINIX Branding Watermark */}
                 <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-40 pointer-events-none flex flex-col items-start select-none drop-shadow-lg">

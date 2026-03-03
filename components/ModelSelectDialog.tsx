@@ -11,6 +11,10 @@ export interface ModelOption {
     description: string;
     thumbnail: string;
     url: string;
+    cameraSettings?: {
+        speed?: number;
+        collisionPadding?: number;
+    };
 }
 
 export const MODEL_OPTIONS: ModelOption[] = [
@@ -19,7 +23,22 @@ export const MODEL_OPTIONS: ModelOption[] = [
         title: 'Interior 2',
         description: 'Modern residential interior space.',
         thumbnail: 'interior-2.webp', // You can replace this with an actual screenshot
-        url: '/examples/scene_optimized.glb'
+        url: '/examples/scene_optimized.glb',
+        cameraSettings: {
+            speed: 5.0,
+            collisionPadding: 1.0
+        }
+    },
+    {
+        id: 'modern-villa',
+        title: 'Modern Villa with Pool',
+        description: 'A large, expansive architecture scene with a pool.',
+        thumbnail: 'villa.webp', // Fallback thumbnail since the folder was moved
+        url: '/examples/Villa_optimized.glb',
+        cameraSettings: {
+            speed: 21.0, // Scale up speed for larger environment (+40%)
+            collisionPadding: 2.0
+        }
     }
 ];
 
@@ -68,7 +87,7 @@ export default function ModelSelectDialog({ isOpen, onClose }: { isOpen: boolean
                             >
                                 <div className="w-full h-40 bg-black/40 rounded-lg mb-4 flex items-center justify-center overflow-hidden relative">
                                     {/* Fallback Icon */}
-                                    {model.thumbnail?
+                                    {model.thumbnail ?
                                         <Image src={`/${model.thumbnail}`} width={100} height={100} alt={model.title} className="w-full h-full object-cover" />
                                         : <ImageIcon size={32} className="text-white/20" />
                                     }
