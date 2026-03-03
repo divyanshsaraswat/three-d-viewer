@@ -455,11 +455,16 @@ export default function ViewerCanvas() {
                 // Apply current pitch & yaw to Pivot
                 pivot.setLocalEulerAngles(orbitPitch.current, orbitYaw.current, 0);
 
+                // Apply the slider's explicit Y-Axis override to the Orbit Pivot, NOT the camera lens.
+                // This ensures the camera elevates straight up in world-space instead of sliding diagonally along its tilted pitch vector.
+                const userYOffset = useStore.getState().settings.tourHeight;
+                const currentPivotPos = pivot.getLocalPosition();
+                currentPivotPos.y = userYOffset;
+                pivot.setLocalPosition(currentPivotPos);
+
                 // Keep camera locked to distance 
                 // In TourMode, orbitDistance becomes 0 to simulate walking.
-                // The slider acts as an explicit Y-Axis override for the final physical camera lens.
-                const userYOffset = useStore.getState().settings.tourHeight;
-                camera.setLocalPosition(0, userYOffset, useStore.getState().settings.tourMode ? 0 : orbitDistance.current);
+                camera.setLocalPosition(0, 0, useStore.getState().settings.tourMode ? 0 : orbitDistance.current);
 
                 // --- Diagnostic Log (Throttled to run only ~once per second) ---
                 const ts = Date.now();

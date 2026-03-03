@@ -25,8 +25,8 @@ export const MODEL_OPTIONS: ModelOption[] = [
         thumbnail: 'interior-2.webp', // You can replace this with an actual screenshot
         url: '/examples/scene_optimized.glb',
         cameraSettings: {
-            speed: 5.0,
-            collisionPadding: 1.0
+            speed: 1.0,
+            collisionPadding: 2.35
         }
     },
     {
