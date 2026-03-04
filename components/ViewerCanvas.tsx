@@ -612,9 +612,28 @@ export default function ViewerCanvas() {
 
     // Handle Screenshot functionality
     useEffect(() => {
-        const handleScreenshot = () => {
+        const handleScreenshot = async () => {
             if (!appRef.current) return;
             const app = appRef.current;
+
+            // 1. Pre-load background image if it exists
+            const state = useStore.getState();
+            const bgImage = state.backgroundImage;
+            const bgColor = state.settings.bgColor;
+
+            let loadedImg: HTMLImageElement | null = null;
+            if (bgImage) {
+                loadedImg = new Image();
+                loadedImg.crossOrigin = 'anonymous';
+                loadedImg.src = bgImage;
+                // Wait for image to load or fail
+                await new Promise((resolve) => {
+                    loadedImg!.onload = resolve;
+                    loadedImg!.onerror = resolve;
+                });
+            }
+
+            // 2. Wait for next frame to ensure WebGL buffer is ready
             app.on('postrender', function takeScreenshot() {
                 app.off('postrender', takeScreenshot);
 
@@ -630,10 +649,35 @@ export default function ViewerCanvas() {
                 const ctx = tempCanvas.getContext('2d');
                 if (!ctx) return;
 
-                // Draw WebGL Output
+                // 3. Draw Background Color
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, width, height);
+
+                // 4. Draw Background Image (with "cover" logic)
+                if (loadedImg && loadedImg.complete && loadedImg.width > 0) {
+                    const imgRatio = loadedImg.width / loadedImg.height;
+                    const canvasRatio = width / height;
+                    let sx, sy, sw, sh;
+
+                    if (imgRatio > canvasRatio) {
+                        sh = loadedImg.height;
+                        sw = loadedImg.height * canvasRatio;
+                        sx = (loadedImg.width - sw) / 2;
+                        sy = 0;
+                    } else {
+                        sw = loadedImg.width;
+                        sh = loadedImg.width / canvasRatio;
+                        sx = 0;
+                        sy = (loadedImg.height - sh) / 2;
+                    }
+
+                    ctx.drawImage(loadedImg, sx, sy, sw, sh, 0, 0, width, height);
+                }
+
+                // 5. Draw WebGL Output
                 ctx.drawImage(webglCanvas, 0, 0);
 
-                // Draw Watermark
+                // 6. Draw Watermark
                 const bottom = 32 * dpr;
                 const left = 32 * dpr;
 
@@ -668,7 +712,7 @@ export default function ViewerCanvas() {
                 ctx.fillStyle = '#ccff00';
                 ctx.fillText('A 3D EXPERIENCE', left, startY + titleSize + gap);
 
-                // Export and Download
+                // 7. Export and Download
                 const dataUrl = tempCanvas.toDataURL('image/png', 1.0);
                 const link = document.createElement('a');
                 link.href = dataUrl;
