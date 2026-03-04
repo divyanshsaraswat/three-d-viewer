@@ -64,3 +64,24 @@ This project includes a fully automated 3D model compression pipeline script pow
    ```bash
    node scripts/optimize-models.js -i ./raw_renders/car.obj -o ./public/models/
    ```
+
+## GLB Texture Swap Utility
+
+A Python utility to replace a named texture inside a `.glb` file with an external image.
+
+**Requires:** `pip install pygltflib`
+
+**Command:**
+`python scripts/swap-texture.py <glb_file> <texture_name> <replacement_image>`
+
+**Arguments:**
+- `glb_file` — Path to the `.glb` file to modify (file is edited in-place).
+- `texture_name` — Name (or substring) of the embedded texture to replace (e.g. `Painting2_baseColor`).
+- `replacement_image` — Path to the replacement image (`.png`, `.jpg`, `.webp`, etc.).
+
+**Example:**
+```bash
+python scripts/swap-texture.py public/examples/scene_optimized.glb Painting2_baseColor "public/examples/weinix poster.png"
+```
+
+Running the script with no arguments prints the help text. All embedded textures are listed during execution so you can identify the correct name to target.
