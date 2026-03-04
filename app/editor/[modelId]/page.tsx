@@ -79,6 +79,8 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
                         } else {
                             useStore.getState().setModelCameraSettings(null); // Explicit clear
                         }
+                        // Set background image if the model defines one
+                        useStore.getState().setBackgroundImage(targetModel.backgroundImage ? `/${targetModel.backgroundImage}` : null);
                     });
                 }
             });

@@ -10,6 +10,7 @@ export default function ViewerCanvas() {
     const appRef = useRef<pc.Application | null>(null);
     const models = useStore(state => state.models);
     const bgColor = useStore(state => state.settings.bgColor);
+    const backgroundImage = useStore(state => state.backgroundImage);
     const autoRotate = useStore(state => state.settings.autoRotate);
     const tourMode = useStore(state => state.settings.tourMode);
     const tourHeight = useStore(state => state.settings.tourHeight);
@@ -100,7 +101,8 @@ export default function ViewerCanvas() {
                 keyboard: new pc.Keyboard(window),
                 graphicsDeviceOptions: {
                     antialias: !isMobile(),
-                    alpha: false,
+                    alpha: true,
+                    premultipliedAlpha: false,
                     preserveDrawingBuffer: false,
                     powerPreference: 'high-performance',
                     preferWebGl2: true,
@@ -126,7 +128,7 @@ export default function ViewerCanvas() {
             // 2. Camera
             const camera = new pc.Entity('camera');
             camera.addComponent('camera', {
-                clearColor: new pc.Color(0.1, 0.1, 0.1, 1),
+                clearColor: new pc.Color(0.1, 0.1, 0.1, 0),
                 fov: 50,
                 nearClip: 0.1,
                 farClip: 1000
@@ -469,7 +471,6 @@ export default function ViewerCanvas() {
                 // --- Diagnostic Log (Throttled to run only ~once per second) ---
                 const ts = Date.now();
                 if (!(window as any)._lastLogTime || ts - (window as any)._lastLogTime > 1000) {
-                    console.log(`[Camera Engine] Zustand Height: ${userYOffset.toFixed(2)} | Actual Lens Y: ${camera.getLocalPosition().y.toFixed(2)} | Pivot Y: ${pivot.getLocalPosition().y.toFixed(2)}`);
                     (window as any)._lastLogTime = ts;
                 }
             });
@@ -486,6 +487,13 @@ export default function ViewerCanvas() {
     // Sync Background Color
     useEffect(() => {
         if (!appRef.current || !cameraRef.current) return;
+
+        // If there's a background image, make the canvas fully transparent
+        if (backgroundImage) {
+            cameraRef.current.camera!.clearColor = new pc.Color(0, 0, 0, 0);
+            return;
+        }
+
         const temp = document.createElement('div');
         temp.style.color = bgColor;
         document.body.appendChild(temp);
@@ -496,7 +504,7 @@ export default function ViewerCanvas() {
         if (m) {
             cameraRef.current.camera!.clearColor = new pc.Color(parseInt(m[1]) / 255, parseInt(m[2]) / 255, parseInt(m[3]) / 255, 1);
         }
-    }, [bgColor]);
+    }, [bgColor, backgroundImage]);
 
     // Handle Model Loading
     useEffect(() => {

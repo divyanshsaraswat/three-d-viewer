@@ -5,6 +5,7 @@ import { Search, Plus, X, ChevronLeft, ChevronRight, MoreHorizontal, Package } f
 import { useStore } from '@/store/useStore';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import BlurImage from './BlurImage';
 
 interface TextureEntry {
     id: string;
@@ -268,7 +269,7 @@ export default function TextureCarousel() {
                                     onClick={(e) => handleApply(tex, false, e)}
                                     className={`group cursor-pointer relative w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl overflow-hidden shrink-0 transition-transform hover:scale-105 active:scale-95 ${activeTextureId === tex.id ? 'ring-2 ring-[#ccff00] ring-offset-2 ring-offset-[#121212]' : ''}`}
                                 >
-                                    <img src={tex.thumb} alt={tex.title} className="w-full h-full object-cover" />
+                                    <BlurImage src={tex.thumb} alt={tex.title} className="w-full h-full object-cover" />
 
                                     {/* Overlay icon on hover/active */}
                                     <div className={`absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity flex-col gap-1 ${activeTextureId === tex.id ? '!opacity-100' : ''}`}>
@@ -384,7 +385,7 @@ export default function TextureCarousel() {
                                             {/* Preview Grid inside Pack Card */}
                                             <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0 shadow-inner grid grid-cols-2 grid-rows-2 gap-[1px] bg-black/40">
                                                 {pack.textures.slice(0, 4).map((t, i) => (
-                                                    <img key={i} src={t.thumb} className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${i === 0 ? 'col-span-2 row-span-1' : ''}`} />
+                                                    <BlurImage key={i} src={t.thumb} className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${i === 0 ? 'col-span-2 row-span-1' : ''}`} />
                                                 ))}
                                             </div>
                                             <div className="flex-1 py-1 z-10 relative">

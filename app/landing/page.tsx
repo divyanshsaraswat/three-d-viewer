@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react';
 import { Search, Menu, ArrowRight, ArrowUpRight, Play, Star, ArrowDown, ShoppingCart, Monitor, Sun, Moon } from 'lucide-react';
 
 import ProductCarousel from '@/components/ProductCarousel';
+import BlurImage from '@/components/BlurImage';
 import { useRouter } from 'next/navigation';
 import FullScreenMenu from '@/components/FullScreenMenu';
 import ScrollRevealText from '@/components/ScrollRevealText';
@@ -361,7 +362,7 @@ export default function LandingPage() {
                             disabled={!isVideoLoaded}
                             className={`text-white border border-white/30 px-8 py-3 rounded-full uppercase tracking-widest text-sm font-bold text-center transition-all duration-300 ${isVideoLoaded ? 'hover:bg-white hover:text-black cursor-pointer animate-pulse' : 'opacity-50 cursor-wait'}`}
                         >
-                            {isVideoLoaded ? 'Enter Experience' : 'Loading Experience...'}  
+                            {isVideoLoaded ? 'Enter Experience' : 'Loading Experience...'}
                         </button>
                     </div>
                 ) : (
@@ -545,7 +546,7 @@ export default function LandingPage() {
 
                         {/* Stage 3 pt2 (Top Mid-R) */}
                         <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-end items-end text-right group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500 relative overflow-hidden">
-                            <img src="mesh.png" alt="" className="w-48 h-48 object-cover absolute -top-8 -left-8 opacity-40 group-hover:opacity-60 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 pointer-events-none" />
+                            <BlurImage src="mesh.png" alt="" className="w-48 h-48 object-cover absolute -top-8 -left-8 opacity-40 group-hover:opacity-60 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 pointer-events-none" />
                             <div className="relative z-10 w-full flex flex-col items-end justify-end">
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 transition-colors">No Chemicals</p>
                                 <h3 className="text-5xl font-bold text-black dark:text-white mb-1 group-hover:scale-105 transition-transform origin-right">0%</h3>
@@ -558,9 +559,9 @@ export default function LandingPage() {
                             <div>
                                 <h3 className="text-lg font-bold text-black dark:text-white mb-6 leading-snug transition-colors">Every piece is sorted by hand. Quality matters, even in waste.</h3>
                                 <div className="flex -space-x-3 mb-8">
-                                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
-                                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
-                                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
+                                    <BlurImage src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
+                                    <BlurImage src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
+                                    <BlurImage src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] grayscale group-hover:grayscale-0 transition-all object-cover" />
                                     <button
                                         className="w-10 h-10 rounded-full border-2 border-white dark:border-[#222222] bg-[#ccff00] text-black flex items-center justify-center text-xl font-bold transition-transform hover:scale-110 active:scale-95 cursor-pointer z-10 relative"
                                         onClick={(e) => {
@@ -608,7 +609,7 @@ export default function LandingPage() {
 
                         {/* Stage 1 (Center Big) */}
                         <div className="md:col-span-2 md:row-span-2 rounded-[2rem] relative flex items-center justify-center p-0 overflow-hidden group cursor-pointer">
-                            <img src="collection.jpeg" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Collection" />
+                            <BlurImage src="collection.jpeg" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Collection" />
                             <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#171717] dark:via-[#171717]/40 to-transparent transition-colors duration-500"></div>
 
                             <div className="absolute left-6 bottom-1/3 bg-white/50 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 p-3 rounded-2xl flex items-center gap-3 group-hover:-translate-y-2 transition-all duration-500 delay-100">
@@ -642,8 +643,8 @@ export default function LandingPage() {
                                 Ancient Craft <br /> + Sustainability
                             </div>
                             <div className="relative w-full h-40 mb-6 flex justify-center items-center">
-                                <img src="weaving-1.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute -rotate-12 group-hover:rotate-0 transition-transform duration-500" alt="Weaving 1" />
-                                <img src="weaving-2.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute rotate-12 mt-8 ml-8 group-hover:rotate-0 transition-transform duration-500 delay-100 border-2 border-white dark:border-[#1a1a1a] transition-colors" alt="Weaving 2" />
+                                <BlurImage src="weaving-1.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute -rotate-12 group-hover:rotate-0 transition-transform duration-500" alt="Weaving 1" />
+                                <BlurImage src="weaving-2.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute rotate-12 mt-8 ml-8 group-hover:rotate-0 transition-transform duration-500 delay-100 border-2 border-white dark:border-[#1a1a1a] transition-colors" alt="Weaving 2" />
                             </div>
                             <p className="text-black dark:text-white text-center text-sm font-medium leading-relaxed mt-4 transition-colors">
                                 Traditional looms weave rescued fibers into premium sheets. Each takes 4 hours, touching 12 pairs of skilled hands.
@@ -683,7 +684,7 @@ export default function LandingPage() {
                                 <p className="text-black/80 text-sm font-semibold max-w-[200px] mt-4">Every sheet passes 7 quality checks before reaching you.</p>
                             </div>
                             <div className="absolute -right-10 -top-10 text-black/10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
-                                <img src="spring.png" alt="Interactive placeholder" className="w-[240px] h-[240px] rounded-[3rem] object-cover opacity-100" />
+                                <BlurImage src="spring.png" alt="Interactive placeholder" className="w-[240px] h-[240px] rounded-[3rem] object-cover opacity-100" />
                             </div>
                         </div>
 
@@ -711,7 +712,7 @@ export default function LandingPage() {
 
                         <div className="md:w-2/3 w-full flex gap-6">
                             <div className="w-[60%] h-[400px] rounded-3xl overflow-hidden relative cursor-pointer group">
-                                <img src="https://images.unsplash.com/photo-1574519659052-780c7a523aee?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Building Video" />
+                                <BlurImage src="https://images.unsplash.com/photo-1574519659052-780c7a523aee?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Building Video" />
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <div className="w-16 h-16 bg-white/50 dark:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center group-hover:bg-[#ccff00] group-hover:text-black transition-colors pl-1">
                                         <Play size={24} fill="currentColor" />
@@ -719,7 +720,7 @@ export default function LandingPage() {
                                 </div>
                             </div>
                             <div className="w-[40%] h-[400px] rounded-3xl overflow-hidden relative">
-                                <img src="https://images.unsplash.com/photo-1481026469463-66327c86e544?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="Building Detail" />
+                                <BlurImage src="https://images.unsplash.com/photo-1481026469463-66327c86e544?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="Building Detail" />
                             </div>
                         </div>
                     </div>
@@ -729,11 +730,11 @@ export default function LandingPage() {
                 <section className="py-32 px-4 md:px-8 max-w-[1200px] mx-auto relative animate-section text-black dark:text-white transition-colors duration-500">
                     <div className="flex flex-col md:flex-row h-[600px] gap-8 relative z-0">
                         <div className="w-full md:w-1/2 h-full rounded-3xl overflow-hidden bg-[#007090]">
-                            <img src="https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover mix-blend-overlay opacity-80" alt="White Architecture" />
+                            <BlurImage src="https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover mix-blend-overlay opacity-80" alt="White Architecture" />
                         </div>
                         <div className="w-full md:w-1/2 h-full pt-32">
                             <div className="w-full h-[80%] rounded-3xl overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover" alt="Steel Architecture" />
+                                <BlurImage src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover" alt="Steel Architecture" />
                             </div>
                         </div>
                     </div>
@@ -890,7 +891,7 @@ export default function LandingPage() {
                             <div key={i} className="bg-white dark:bg-[#1a1a1a] p-8 rounded-3xl shadow-sm border border-gray-200 dark:border-white/5 transition-colors duration-500">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-12 h-12 bg-gray-200 dark:bg-[#222222] rounded-full overflow-hidden transition-colors">
-                                        <img src={`https://i.pravatar.cc/150?img=${i + 10}`} alt="Avatar" />
+                                        <BlurImage src={`https://i.pravatar.cc/150?img=${i + 10}`} alt="Avatar" />
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-sm text-black dark:text-white transition-colors">Client Name {i + 1}</h4>

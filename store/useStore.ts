@@ -42,6 +42,7 @@ interface StoreState {
     pendingTextureOptions: { tiling?: [number, number], offset?: [number, number] } | null;
     joystickInput: { x: number, y: number };
     modelCameraSettings: { speed?: number; collisionPadding?: number } | null;
+    backgroundImage: string | null;
 
     setModels: (models: LoadedModel[]) => void;
     setIsModelLoading: (loading: boolean) => void;
@@ -65,6 +66,7 @@ interface StoreState {
 
     setJoystickInput: (x: number, y: number) => void;
     setModelCameraSettings: (settings: { speed?: number; collisionPadding?: number } | null) => void;
+    setBackgroundImage: (image: string | null) => void;
 
     reset: () => void;
 }
@@ -96,6 +98,7 @@ export const useStore = create<StoreState>((set) => ({
     pendingTextureOptions: null,
     joystickInput: { x: 0, y: 0 },
     modelCameraSettings: null,
+    backgroundImage: null,
 
     setModels: (models) => set({ models }),
     setIsModelLoading: (loading) => set({ isModelLoading: loading }),
@@ -150,6 +153,7 @@ export const useStore = create<StoreState>((set) => ({
 
     setJoystickInput: (x, y) => set({ joystickInput: { x, y } }),
     setModelCameraSettings: (settings) => set({ modelCameraSettings: settings }),
+    setBackgroundImage: (image) => set({ backgroundImage: image }),
 
     reset: () => set({ models: [], fileMap: null, bookmarks: [], capturePending: false, selectedMeshId: null, pendingTexture: null, joystickInput: { x: 0, y: 0 }, modelCameraSettings: null })
 }));

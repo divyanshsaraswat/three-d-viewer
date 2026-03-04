@@ -194,11 +194,11 @@ export default function Sidebar() {
                     let response = null;
 
                     if (response) {
-                        console.log('Serving from cache:', filename);
+
                         setDownloading({ name: filename, progress: 100 });
                     } else {
                         // Not in cache, fetch from proxy
-                        console.log('Downloading:', filename);
+
                         const proxyUrl = `/api/proxy-model?url=${encodeURIComponent(url)}`;
                         const fetchResponse = await fetch(proxyUrl);
 

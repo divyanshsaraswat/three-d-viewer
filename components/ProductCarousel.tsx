@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import BlurImage from '@/components/BlurImage';
 
 const products = [
     {
@@ -149,7 +150,7 @@ export default function ProductCarousel() {
                                 }}
                             >
                                 <div className="relative w-full h-[220px] rounded-2xl overflow-hidden mb-6">
-                                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                    <BlurImage src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                     {product.badge && (
                                         <div className="absolute top-3 right-3 bg-[#ccff00] text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
                                             {product.badge}
