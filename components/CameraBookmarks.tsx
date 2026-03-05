@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useStore, CameraBookmark } from '@/store/useStore';
 import { ChevronUp, ChevronDown, Plus, Trash2, Camera, Eye, Download, Upload, Image as ImageIcon } from 'lucide-react';
 
-export default function CameraBookmarks() {
+export default function CameraBookmarks({ containerId = "tour-saved-views" }: { containerId?: string }) {
     const [expanded, setExpanded] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editName, setEditName] = useState("");
@@ -74,6 +74,7 @@ export default function CameraBookmarks() {
 
     return (
         <div
+            id={containerId}
             className={`text-white rounded-lg shadow-xl border border-white/10 transition-all duration-300 flex flex-col ${expanded ? 'h-96 w-64' : 'h-10 w-48'}`}
             style={{ backgroundColor: '#121212' }}
             onPointerDown={(e) => e.stopPropagation()}

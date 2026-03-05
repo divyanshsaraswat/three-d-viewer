@@ -50,11 +50,36 @@ export default function TextureCarousel() {
                 setTexturePacks(data);
                 if (data.length > 0) setActivePackId(data[0].id);
                 setIsLoading(false);
+
+                // Preload texture thumbnails in the background
+                setTimeout(() => {
+                    data.forEach(pack => {
+                        pack.textures?.forEach(tex => {
+                            if (tex.thumb) {
+                                const img = new window.Image();
+                                img.src = tex.thumb;
+                            }
+                        });
+                    });
+                }, 500); // Slight delay to ensure it doesn't block initial render
             })
             .catch(err => {
                 console.error('Failed to load texture packs:', err);
                 setIsLoading(false);
             });
+    }, []);
+
+    // Listen for Tour instructions to forcefully close the carousel (by deselecting mesh)
+    useEffect(() => {
+        const handleTourClose = () => {
+            setActiveTextureId(null);
+            setShowOptionsId(null);
+            setIsMenuOpen(false);
+            window.dispatchEvent(new CustomEvent('deselect-mesh'));
+            useStore.getState().setSelectedMesh(null);
+        };
+        window.addEventListener('tour-force-close-carousel', handleTourClose);
+        return () => window.removeEventListener('tour-force-close-carousel', handleTourClose);
     }, []);
 
     // Animate the main bottom tray entering
@@ -124,8 +149,11 @@ export default function TextureCarousel() {
         }, 50);
     };
 
+    // The texture carousel requires a selected mesh to be useful, but during the tour it should be forced visible
+    const isTourActive = !!document.getElementById('tour-overlay-active');
+
     // If no mesh is selected or packs haven't loaded yet, hide the UI
-    if (!selectedMeshId || isLoading || texturePacks.length === 0) return null;
+    if ((!selectedMeshId && !isTourActive) || isLoading || texturePacks.length === 0) return null;
 
     const activePack = texturePacks.find(p => p.id === activePackId) || texturePacks[0];
     const packTextures = activePack.textures;
@@ -189,9 +217,11 @@ export default function TextureCarousel() {
             const res = await fetch(tex.full);
             const blob = await res.blob();
             const objectUrl = URL.createObjectURL(blob);
-            applyTexture(selectedMeshId, objectUrl);
-            // Re-apply the sticky tiling option to the new texture
-            applyTextureOptions({ tiling: stickyTiling });
+            if (selectedMeshId) {
+                applyTexture(selectedMeshId, objectUrl);
+                // Re-apply the sticky tiling option to the new texture
+                applyTextureOptions({ tiling: stickyTiling });
+            }
         } catch (e) {
             console.error("Failed to load Texture from URL", e);
         }
@@ -258,6 +288,7 @@ export default function TextureCarousel() {
 
                     {/* Quick Pick Thumbnails from Active Pack */}
                     <div
+                        id="tour-texture-carousel"
                         ref={scrollContainerRef}
                         onScroll={() => setShowOptionsId(null)}
                         className="flex items-center gap-2 px-1 py-1 md:p-2.5 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth max-w-[130px] sm:max-w-[200px] md:max-w-[240px]"
@@ -300,6 +331,7 @@ export default function TextureCarousel() {
                     <div className="gsap-static-btn w-px h-10 bg-white/10 mx-1"></div>
                     {/* "More" Packs Button */}
                     <button
+                        id="tour-packs-btn"
                         onClick={() => setIsMenuOpen(true)}
                         className="gsap-static-btn cursor-pointer w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-white/5 text-white shadow-inner hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
                     >

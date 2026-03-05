@@ -11,6 +11,10 @@ import VerticalBipolarSlider from '@/components/VerticalBipolarSlider';
 import { useStore, defaultSettings, LoadedModel } from '@/store/useStore';
 import { MODEL_OPTIONS } from '@/components/ModelSelectDialog';
 import { use } from 'react';
+import LoadingGestures from '@/components/LoadingGestures';
+import { OnboardingProvider } from '@onboardjs/react';
+import { tourSteps, tourRegistry } from '@/config/tour';
+import TourOverlay from '@/components/TourOverlay';
 
 export default function EditorPage({ params }: { params: Promise<{ modelId: string }> }) {
     const modelsLength = useStore(state => state.models.length);
@@ -24,6 +28,7 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
 
     const [isHydrated, setIsHydrated] = useState(false);
     const [isCapturing, setIsCapturing] = useState(false);
+    const [hasSeenTour, setHasSeenTour] = useState(true); // Default to true to prevent flash
 
     // Handle initial hydration & Model Loading based on URL parmeters
     useEffect(() => {
@@ -87,7 +92,7 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
         }
     }, [setEditorMode, modelsLength, setModels, params]);
 
-    // Load settings from LocalStorage on mount
+    // Load settings and tour status from LocalStorage on mount
     useEffect(() => {
         try {
             const saved = localStorage.getItem('3d-viewer-settings');
@@ -95,6 +100,13 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
                 // Merge with default settings to ensure new keys exist
                 const parsed = JSON.parse(saved);
                 setSettings({ ...defaultSettings, ...parsed });
+            }
+
+            const tourStatus = localStorage.getItem('tour-completed-v1');
+            if (tourStatus !== 'true') {
+                setHasSeenTour(false);
+                // Immediately set it to true so that a page refresh never shows it again
+                localStorage.setItem('tour-completed-v1', 'true');
             }
         } catch (e) {
             console.warn('Failed to access localStorage:', e);
@@ -117,121 +129,147 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
         return () => window.removeEventListener('screenshot-complete', handleComplete);
     }, []);
 
+    // Destroy the Onboard JS tracking by hiding the overlay when finished
+    useEffect(() => {
+        const handleTourFinish = () => setHasSeenTour(true);
+        window.addEventListener('tour-fully-completed', handleTourFinish);
+        return () => window.removeEventListener('tour-fully-completed', handleTourFinish);
+    }, []);
+
     // Prevent hydration flicker
     if (!isHydrated) return null;
 
     return (
-        <div className="w-screen h-screen overflow-hidden flex relative font-sans text-white transition-colors duration-500 select-none" style={{ backgroundColor: '#0a0a0a' }}>
-            {/* Sidebar Overlay (Only shown in Dev Mode) */}
-            {editorMode !== 'prod' && <Sidebar />}
+        <OnboardingProvider
+            steps={tourSteps}
+            componentRegistry={tourRegistry}
+        >
+            <div className="w-screen h-screen overflow-hidden flex relative font-sans text-white transition-colors duration-500 select-none" style={{ backgroundColor: '#0a0a0a' }}>
+                {/* Sidebar Overlay (Only shown in Dev Mode) */}
+                {editorMode !== 'prod' && <Sidebar />}
 
-            {/* Main Scene Area */}
-            <div className="flex-1 relative z-0">
-                <SceneViewer />
+                {/* Main Scene Area */}
+                <div className="flex-1 relative z-0" id="tour-canvas-area">
+                    <SceneViewer />
 
-                {modelsLength === 0 && editorMode !== 'prod' && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                        <div className="text-center p-8 backdrop-blur-sm rounded-xl border border-white/10 shadow-lg" style={{ backgroundColor: 'rgba(18,18,18,0.8)' }}>
-                            <h1 className="text-2xl font-light mb-2 text-white">Ready to View</h1>
-                            <p className="text-white/40">Upload a 3D model from the sidebar to get started.</p>
+                    {modelsLength === 0 && editorMode !== 'prod' && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                            <div className="text-center p-8 backdrop-blur-sm rounded-xl border border-white/10 shadow-lg" style={{ backgroundColor: 'rgba(18,18,18,0.8)' }}>
+                                <h1 className="text-2xl font-light mb-2 text-white">Ready to View</h1>
+                                <p className="text-white/40">Upload a 3D model from the sidebar to get started.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Desktop: Camera Bookmarks & Floating Buttons */}
+                    <div className={`hidden xl:flex flex-col items-end gap-3 absolute bottom-4 right-4 z-40 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} ${editorMode === 'prod' ? '' : ''}`}>
+                        {/* Floating Screenshot Button */}
+                        <button
+                            id="tour-capture-btn-desktop"
+                            disabled={isCapturing}
+                            onClick={() => {
+                                if (isCapturing) return;
+                                setIsCapturing(true);
+                                // Yield rendering thread briefly before heavy WebGL readPixels blocks it
+                                setTimeout(() => {
+                                    window.dispatchEvent(new CustomEvent('take-screenshot'));
+                                }, 50);
+                            }}
+                            className={`flex items-center gap-2 px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white/80 hover:text-white transition-all shadow-lg backdrop-blur-sm group ${isCapturing ? 'border-white/20 opacity-70 cursor-wait' : 'border-white/10 hover:border-[#ccff00]/40 cursor-pointer'}`}
+                            title="Take High-Quality Screenshot"
+                        >
+                            {isCapturing ? (
+                                <div className="w-4 h-4 border-2 border-white/20 border-t-[#ccff00] rounded-full animate-spin"></div>
+                            ) : (
+                                <ImageIcon size={16} className="text-[#ccff00] group-hover:scale-110 transition-transform" />
+                            )}
+                            <span className="text-xs font-medium">{isCapturing ? 'Capturing...' : 'Capture'}</span>
+                        </button>
+
+                        <CameraBookmarks containerId="tour-saved-views-desktop" />
+                    </div>
+
+                    {/* Mobile/Tablet: Stack Bookmarks above Joystick in a single fixed container */}
+                    <div className={`xl:hidden fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
+                        {/* Floating Screenshot Button (Mobile/Tablet) */}
+                        <button
+                            id="tour-capture-btn-mobile"
+                            disabled={isCapturing}
+                            onClick={() => {
+                                if (isCapturing) return;
+                                setIsCapturing(true);
+                                setTimeout(() => {
+                                    window.dispatchEvent(new CustomEvent('take-screenshot'));
+                                }, 50);
+                            }}
+                            className={`flex items-center gap-2 px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white/80 hover:text-white transition-all shadow-lg backdrop-blur-sm group ${isCapturing ? 'border-white/20 opacity-70 cursor-wait' : 'border-white/10 hover:border-[#ccff00]/40 cursor-pointer'}`}
+                            title="Take High-Quality Screenshot"
+                        >
+                            {isCapturing ? (
+                                <div className="w-4 h-4 border-2 border-white/20 border-t-[#ccff00] rounded-full animate-spin"></div>
+                            ) : (
+                                <ImageIcon size={16} className="text-[#ccff00] group-hover:scale-110 transition-transform" />
+                            )}
+                            <span className="text-xs font-medium">{isCapturing ? 'Capturing...' : 'Capture'}</span>
+                        </button>
+
+                        <CameraBookmarks containerId="tour-saved-views-mobile" />
+                        <Joystick />
+                    </div>
+
+                    {/* Vertical Elevation Slider (Bottom Left, above text) */}
+                    <VerticalBipolarSlider />
+
+                    {/* WEINIX Branding Watermark */}
+                    <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-40 pointer-events-none flex flex-col items-start select-none drop-shadow-lg">
+                        <h1 className="text-2xl md:text-4xl font-black tracking-tighter text-white/90 leading-none">
+                            WEINIX
+                        </h1>
+                        <p className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase text-[#ccff00] mt-1 pl-0.5">
+                            A 3D Experience
+                        </p>
+                    </div>
+
+                    {/* Texture Carousel Overlay */}
+                    <TextureCarousel />
+
+                    {/* Global Loading Overlay */}
+                    <div
+                        className={`absolute inset-0 z-50 flex flex-col justify-between items-center pb-8 pt-0 transition-opacity duration-700 ${isModelLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        style={{ backgroundColor: '#0a0a0a' }}
+                    >
+                        {/* Top Spacer to push center down exactly halfway */}
+                        <div className="flex-1"></div>
+
+                        {/* Center Box */}
+                        <div className={`shrink-0 flex flex-col items-center transition-all duration-500 delay-100 ${isModelLoading ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'}`}>
+                            {/* Brand Spinner */}
+                            <div className="relative w-12 h-12 mb-8">
+                                <div className="absolute inset-0 rounded-full border-2 border-white/5"></div>
+                                <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#ccff00] animate-spin"></div>
+                            </div>
+
+                            {/* Brand Text */}
+                            <h2 className="text-white text-lg font-light tracking-[0.3em] uppercase mb-3" style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
+                                Loading
+                            </h2>
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '0ms' }}></span>
+                                <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '200ms' }}></span>
+                                <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '400ms' }}></span>
+                            </div>
+                        </div>
+
+                        {/* Bottom Gestures */}
+                        <div className="flex-1 flex items-end justify-center w-full">
+                            <div className={`transition-all duration-1000 w-full delay-300 ${isModelLoading ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                                <LoadingGestures />
+                            </div>
                         </div>
                     </div>
-                )}
-
-                {/* Desktop: Camera Bookmarks & Floating Buttons */}
-                <div className={`hidden xl:flex flex-col items-end gap-3 absolute bottom-4 right-4 z-40 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} ${editorMode === 'prod' ? '' : ''}`}>
-                    {/* Floating Screenshot Button */}
-                    <button
-                        disabled={isCapturing}
-                        onClick={() => {
-                            if (isCapturing) return;
-                            setIsCapturing(true);
-                            // Yield rendering thread briefly before heavy WebGL readPixels blocks it
-                            setTimeout(() => {
-                                window.dispatchEvent(new CustomEvent('take-screenshot'));
-                            }, 50);
-                        }}
-                        className={`flex items-center gap-2 px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white/80 hover:text-white transition-all shadow-lg backdrop-blur-sm group ${isCapturing ? 'border-white/20 opacity-70 cursor-wait' : 'border-white/10 hover:border-[#ccff00]/40 cursor-pointer'}`}
-                        title="Take High-Quality Screenshot"
-                    >
-                        {isCapturing ? (
-                            <div className="w-4 h-4 border-2 border-white/20 border-t-[#ccff00] rounded-full animate-spin"></div>
-                        ) : (
-                            <ImageIcon size={16} className="text-[#ccff00] group-hover:scale-110 transition-transform" />
-                        )}
-                        <span className="text-xs font-medium">{isCapturing ? 'Capturing...' : 'Capture'}</span>
-                    </button>
-
-                    <CameraBookmarks />
-                </div>
-
-                {/* Mobile/Tablet: Stack Bookmarks above Joystick in a single fixed container */}
-                <div className={`xl:hidden fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 transition-all duration-500 ease-in-out ${selectedMeshId ? 'opacity-0 translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
-                    {/* Floating Screenshot Button (Mobile/Tablet) */}
-                    <button
-                        disabled={isCapturing}
-                        onClick={() => {
-                            if (isCapturing) return;
-                            setIsCapturing(true);
-                            setTimeout(() => {
-                                window.dispatchEvent(new CustomEvent('take-screenshot'));
-                            }, 50);
-                        }}
-                        className={`flex items-center gap-2 px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white/80 hover:text-white transition-all shadow-lg backdrop-blur-sm group ${isCapturing ? 'border-white/20 opacity-70 cursor-wait' : 'border-white/10 hover:border-[#ccff00]/40 cursor-pointer'}`}
-                        title="Take High-Quality Screenshot"
-                    >
-                        {isCapturing ? (
-                            <div className="w-4 h-4 border-2 border-white/20 border-t-[#ccff00] rounded-full animate-spin"></div>
-                        ) : (
-                            <ImageIcon size={16} className="text-[#ccff00] group-hover:scale-110 transition-transform" />
-                        )}
-                        <span className="text-xs font-medium">{isCapturing ? 'Capturing...' : 'Capture'}</span>
-                    </button>
-
-                    <CameraBookmarks />
-                    <Joystick />
-                </div>
-
-                {/* Vertical Elevation Slider (Bottom Left, above text) */}
-                <VerticalBipolarSlider />
-
-                {/* WEINIX Branding Watermark */}
-                <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-40 pointer-events-none flex flex-col items-start select-none drop-shadow-lg">
-                    <h1 className="text-2xl md:text-4xl font-black tracking-tighter text-white/90 leading-none">
-                        WEINIX
-                    </h1>
-                    <p className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase text-[#ccff00] mt-1 pl-0.5">
-                        A 3D Experience
-                    </p>
-                </div>
-
-                {/* Texture Carousel Overlay */}
-                <TextureCarousel />
-
-                {/* Global Loading Overlay */}
-                <div
-                    className={`absolute inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-700 ${isModelLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-                    style={{ backgroundColor: '#0a0a0a' }}
-                >
-                    <div className={`flex flex-col items-center transition-all duration-500 delay-100 ${isModelLoading ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'}`}>
-                        {/* Brand Spinner */}
-                        <div className="relative w-12 h-12 mb-8">
-                            <div className="absolute inset-0 rounded-full border-2 border-white/5"></div>
-                            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#ccff00] animate-spin"></div>
-                        </div>
-
-                        {/* Brand Text */}
-                        <h2 className="text-white text-lg font-light tracking-[0.3em] uppercase mb-3" style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}>
-                            Loading
-                        </h2>
-                        <div className="flex items-center gap-1.5">
-                            <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '0ms' }}></span>
-                            <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '200ms' }}></span>
-                            <span className="w-1 h-1 rounded-full bg-[#ccff00] animate-pulse" style={{ animationDelay: '400ms' }}></span>
-                        </div>
-                    </div>
+                    {!hasSeenTour && <TourOverlay />}
                 </div>
             </div>
-        </div>
+        </OnboardingProvider>
     );
 }

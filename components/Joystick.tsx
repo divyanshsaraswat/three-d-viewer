@@ -64,6 +64,7 @@ export default function Joystick() {
 
     return (
         <div
+            id="tour-joystick"
             className="z-40"
             // Prevent default touch actions like scrolling while interacting with the joystick
             style={{ touchAction: 'none' }}

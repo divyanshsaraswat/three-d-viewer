@@ -3,11 +3,21 @@
 import Link from 'next/link';
 import { ArrowRight, Linkedin } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
-import ModelSelectDialog from '@/components/ModelSelectDialog';
+import { useEffect, useState } from 'react';
+import ModelSelectDialog, { MODEL_OPTIONS } from '@/components/ModelSelectDialog';
 
 export default function LandingPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    // Preload thumbnails for model options in the background
+    MODEL_OPTIONS.forEach(option => {
+      if (option.thumbnail) {
+        const img = new window.Image();
+        img.src = `/${option.thumbnail}`;
+      }
+    });
+  }, []);
 
   return (
     <div className="h-screen w-screen bg-[#e0e1e5] dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500 flex flex-col items-center justify-center relative overflow-hidden">

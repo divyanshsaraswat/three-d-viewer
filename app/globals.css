@@ -87,4 +87,31 @@ body.custom-cursor-active .cursor-pointer {
       transform: translateY(200%);
     }
   }
+
+  @keyframes slideLeftRight {
+    0%, 100% {
+      transform: translateX(-4px);
+    }
+    50% {
+      transform: translateX(4px);
+    }
+  }
+
+  @keyframes slideUpDown {
+    0%, 100% {
+      transform: translateY(-4px);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  @keyframes scaleInOut {
+    0%, 100% {
+      transform: scale(0.85);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+  }
 }
