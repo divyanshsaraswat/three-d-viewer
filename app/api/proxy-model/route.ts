@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge'; // Use Edge Runtime for better streaming performance
+export const dynamic = 'force-dynamic'; // Prevent Next.js from aggressively caching the proxy response
 
 export async function GET(request: NextRequest) {
     const url = request.nextUrl.searchParams.get('url');

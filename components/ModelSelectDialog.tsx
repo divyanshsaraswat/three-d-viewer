@@ -51,7 +51,8 @@ export default function ModelSelectDialog({ isOpen, onClose }: { isOpen: boolean
 
     const handleSelect = (id: string) => {
         onClose();
-        router.push(`/editor/${id}`);
+        // Force a hard reload to ensure a pristine memory and canvas state
+        window.location.assign(`/editor/${id}`);
     };
 
     return (

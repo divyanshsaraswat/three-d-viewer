@@ -470,7 +470,7 @@ export default function LandingPage() {
                                 Shop Sustainable Bricks
                             </button>
                             <button
-                                onClick={() => router.push('/editor')}
+                                onClick={() => window.location.assign('/editor')}
                                 className="bg-[#ccff00] text-black font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto border border-[#ccff00]">
                                 Experience in 3D
                             </button>

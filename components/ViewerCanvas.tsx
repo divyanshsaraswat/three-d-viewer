@@ -512,23 +512,42 @@ export default function ViewerCanvas() {
         const container = modelContainerRef.current;
         if (!app || !container) return;
 
+        // Stash the current rendering id string to compare against closures
+        const activeModelId = models.length > 0 ? models[0].id : null;
+
         // Cleanup removed models
         const currentModelIds = new Set(models.map(m => m.id));
-        // copy the children array with .slice() to safely iterate while removing
         const childrenToRemove = container.children.slice().filter(child => !currentModelIds.has(child.name));
-        childrenToRemove.forEach(child => child.destroy());
+
+        childrenToRemove.forEach(child => {
+            // First destroy the scene graph entity so the engine isn't trying to render it
+            child.destroy();
+
+            // Then cleanly remove the raw binary asset from the PlayCanvas registry
+            const assetToRemove = app.assets.find(child.name);
+            if (assetToRemove) {
+                app.assets.remove(assetToRemove);
+                assetToRemove.unload();
+            }
+        });
 
         models.forEach(model => {
             const existing = container.findByName(model.id);
             if (!existing) {
-                // Explicitly define the asset with its original filename 
-                // so PlayCanvas can correctly deduce the parser (e.g. .glb parser) from Blob URLs
-                const asset = new pc.Asset(model.filename, "container", {
+                // Deduce parser from format mapping manually as fallback
+                const asset = new pc.Asset(model.id, "container", {
                     url: model.url,
                     filename: model.filename
                 });
 
                 asset.ready((loadedAsset: pc.Asset) => {
+                    // Critical: if the user quickly routed away before this finished loading, Abort!
+                    const currentStoreModelId = useStore.getState().models[0]?.id;
+                    if (currentStoreModelId !== model.id) {
+                        loadedAsset.unload();
+                        return;
+                    }
+
                     if (loadedAsset.resource) {
                         const resource = loadedAsset.resource as any;
                         if (resource.instantiateRenderEntity) {
@@ -568,8 +587,19 @@ export default function ViewerCanvas() {
                                 orbitDistance.current = Math.max(5, maxDim * 2.5);
                             }
 
-                            // Model is now fully loaded and rendered — dismiss loading overlay
-                            useStore.getState().setIsModelLoading(false);
+                            // Model is fully parsed and added to the scene.
+                            // Wait for the next frame render before dismissing the loading overlay
+                            // to ensure shaders and textures have actually hit the GPU.
+                            const onFrameEnd = () => {
+                                useStore.getState().setIsModelLoading(false);
+                                app.off('frameend', onFrameEnd);
+                            };
+
+                            // Sometimes PlayCanvas takes a few extra frames to compile large shaders (like the Villa).
+                            // A quick minimal timeout fallback ensures we don't drop the loader during a CPU stall.
+                            setTimeout(() => {
+                                app.on('frameend', onFrameEnd);
+                            }, 500);
                         }
                     }
                 });
