@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { X, Twitter, Instagram, Linkedin } from 'lucide-react';
+import Link from 'next/link';
 
 interface FullScreenMenuProps {
     isOpen: boolean;
@@ -105,39 +106,44 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                     </button>
 
                     <div className="flex-1 flex flex-col justify-center mt-16 md:mt-12 w-full max-w-md mx-auto">
-                        {navLinks.map((link, idx) => (
-                            <a
-                                key={idx}
-                                href={`#${link.title.toLowerCase().replace(' ', '-')}`}
-                                ref={el => { if (el) linksRef.current[idx] = el }}
-                                className="relative group w-max cursor-pointer py-4 px-6 -ml-6 rounded-2xl mb-2 flex items-start overflow-hidden"
-                                onClick={onClose}
-                            >
-                                {/* Background block sliding from bottom to top on hover */}
-                                <div className="absolute inset-0 w-full h-full bg-[#ccff00] rounded-2xl transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] z-0" />
+                        {navLinks.map((link, idx) => {
+                            const isAboutUs = link.title === "ABOUT US";
+                            const href = isAboutUs ? "/about-us" : `/#${link.title.toLowerCase().replace(' ', '-')}`;
 
-                                <div className="relative z-10 overflow-hidden pointer-events-none flex items-start shadow-none">
-                                    {/* Primary Text */}
-                                    <h2 className="text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-black dark:text-white transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
-                                        {link.title}
-                                    </h2>
-                                    {/* Secondary Text absolutely positioned under the first */}
-                                    <h2 className="absolute top-0 left-0 text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-black dark:text-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
-                                        {link.title}
-                                    </h2>
-                                </div>
+                            return (
+                                <Link
+                                    key={idx}
+                                    href={href}
+                                    ref={el => { if (el) linksRef.current[idx] = el as any }}
+                                    className="relative group w-max cursor-pointer py-4 px-6 -ml-6 rounded-2xl mb-2 flex items-start overflow-hidden"
+                                    onClick={onClose}
+                                >
+                                    {/* Background block sliding from bottom to top on hover */}
+                                    <div className="absolute inset-0 w-full h-full bg-[#ccff00] rounded-2xl transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] z-0" />
 
-                                {/* Numbers container */}
-                                <div className="relative z-10 overflow-hidden ml-3 md:ml-4 mt-1 md:mt-2 pointer-events-none">
-                                    <span className="block text-[#ccff00] dark:text-[#ccff00] text-xs font-bold transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
-                                        {link.num}
-                                    </span>
-                                    <span className="absolute top-0 left-0 block text-black dark:text-black text-xs font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
-                                        {link.num}
-                                    </span>
-                                </div>
-                            </a>
-                        ))}
+                                    <div className="relative z-10 overflow-hidden pointer-events-none flex items-start shadow-none">
+                                        {/* Primary Text */}
+                                        <h2 className="text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-black dark:text-white transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                            {link.title}
+                                        </h2>
+                                        {/* Secondary Text absolutely positioned under the first */}
+                                        <h2 className="absolute top-0 left-0 text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-black dark:text-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                            {link.title}
+                                        </h2>
+                                    </div>
+
+                                    {/* Numbers container */}
+                                    <div className="relative z-10 overflow-hidden ml-3 md:ml-4 mt-1 md:mt-2 pointer-events-none">
+                                        <span className="block text-[#ccff00] dark:text-[#ccff00] text-xs font-bold transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                            {link.num}
+                                        </span>
+                                        <span className="absolute top-0 left-0 block text-black dark:text-black text-xs font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                            {link.num}
+                                        </span>
+                                    </div>
+                                </Link>
+                            )
+                        })}
                     </div>
 
                     {/* Socials Bottom Row */}

@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import AnimatedRibbons from './AnimatedRibbons';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -155,17 +156,20 @@ export default function ScrollRevealText() {
                 }
             }
         });
-
     }, { scope: containerRef });
-
     return (
-        <section ref={containerRef} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden py-32 pointer-events-none">
-            <div ref={textWrapperRef} className="max-w-[1000px] px-4 md:px-8 mx-auto flex flex-wrap justify-center items-center text-center gap-y-3 md:gap-y-4">
+        <section ref={containerRef} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden py-32 pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500">
+            {/* Background Ribbons */}
+            <div className="absolute inset-0 z-10 w-full h-full pointer-events-none">
+                <AnimatedRibbons />
+            </div>
+
+            <div ref={textWrapperRef} className="relative z-20 max-w-[1000px] px-4 md:px-8 mx-auto flex flex-wrap justify-center items-center text-center gap-y-3 md:gap-y-4">
                 {words.map((w, i) => {
                     const isIcon = w.type === 'icon';
                     const isHighlight = w.type === 'highlight';
 
-                    const typography = "text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight";
+                    const typography = "text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight [text-shadow:0_4px_24px_rgba(255,255,255,1),_0_0_12px_rgba(255,255,255,1)] dark:[text-shadow:0_4px_24px_rgba(0,0,0,1),_0_0_12px_rgba(0,0,0,1)]";
                     const padding = "px-1 md:px-1.5";
 
                     if (!isHighlight) {
@@ -203,8 +207,8 @@ export default function ScrollRevealText() {
                             </span>
 
                             {/* Animated Active State overlay (colored box + colored text) */}
-                            <span className={`highlight-overlay absolute -inset-y-1.5 inset-x-0 md:-inset-y-2 flex items-center justify-center border-[3px] border-dotted rounded-[2rem] opacity-0 scale-95 z-20 ${highlightColors} drop-shadow-sm pointer-events-none`}>
-                                <span className={`${typography}`}>
+                            <span className={`highlight-overlay absolute -inset-y-1.5 inset-x-0 md:-inset-y-2 flex items-center justify-center border-[2px]  border-dotted rounded-[1.5rem] opacity-0 scale-95 z-20 ${highlightColors} drop-shadow-lg pointer-events-none`}>
+                                <span className={`${typography} px-[1.5px]`}>
                                     {w.text}
                                 </span>
                             </span>

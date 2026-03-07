@@ -39,7 +39,7 @@ export default function BlurImage({
             className={className}
             style={{
                 filter: isLoaded ? 'blur(0px)' : 'blur(20px)',
-                transition: `filter ${transitionDuration}ms ease-out`,
+                transition: `filter ${transitionDuration}ms ease-out, transform 500ms cubic-bezier(0.87,0,0.13,1), opacity 500ms cubic-bezier(0.87,0,0.13,1)`,
                 ...style,
             }}
             {...rest}

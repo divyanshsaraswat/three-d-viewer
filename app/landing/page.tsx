@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { Search, Menu, ArrowRight, ArrowUpRight, Play, Star, ArrowDown, ShoppingCart, Monitor, Sun, Moon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Play, Star, ArrowDown } from 'lucide-react';
 
 import ProductCarousel from '@/components/ProductCarousel';
 import BlurImage from '@/components/BlurImage';
 import { useRouter } from 'next/navigation';
-import FullScreenMenu from '@/components/FullScreenMenu';
 import ScrollRevealText from '@/components/ScrollRevealText';
 import SpecializationCarousel from '@/components/SpecializationCarousel';
 import TestimonialVideo from '@/components/TestimonialVideo';
-import CustomCursor from '@/components/CustomCursor';
+import { useGlobalContext } from '@/context/GlobalContext';
 
 const AnimatedWord = ({ text, highlight }: { text: string; highlight?: boolean }) => (
     <span className={`inline-block whitespace-nowrap px-1 ${highlight ? 'font-light italic font-serif tracking-normal' : ''}`}>
@@ -50,7 +49,7 @@ const AnimatedNumber = ({ target, suffix = "" }: { target: number, suffix?: stri
     }, [target]);
 
     return (
-        <h2 ref={numRef} className="text-6xl font-bold text-black dark:text-white group-hover:-translate-y-2 transition-transform transition-colors drop-shadow-sm leading-none m-0">
+        <h2 ref={numRef} className="text-6xl font-bold text-black dark:text-white transition-transform transition-colors drop-shadow-sm leading-none m-0">
             0
         </h2>
     );
@@ -218,49 +217,12 @@ if (typeof window !== "undefined") {
 export default function LandingPage() {
     const containerRef = useRef<HTMLDivElement>(null);
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
-    const [isDarkMode, setIsDarkMode] = useState(true);
-    const [isScrolled, setIsScrolled] = useState(false);
-
-    // Audio and Loader State
-    const [hasEntered, setHasEntered] = useState(false);
+    const [hasScrolledTable, setHasScrolledTable] = useState(false);
     const [isVideoEnded, setIsVideoEnded] = useState(false);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
-    const [hasScrolledTable, setHasScrolledTable] = useState(false);
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const masterTlRef = useRef<gsap.core.Timeline | null>(null);
 
+    const { hasEntered } = useGlobalContext();
     const router = useRouter();
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 150) {
-                setIsScrolled(true);
-            } else {
-                setIsScrolled(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    useEffect(() => {
-        if (theme === 'system') {
-            const mq = window.matchMedia('(prefers-color-scheme: dark)');
-            setIsDarkMode(mq.matches);
-
-            const listener = (e: MediaQueryListEvent) => {
-                setIsDarkMode(e.matches);
-            };
-            mq.addEventListener('change', listener);
-            return () => mq.removeEventListener('change', listener);
-        } else {
-            setIsDarkMode(theme === 'dark');
-        }
-    }, [theme]);
 
     const specializations = [
         "Architecture",
@@ -276,47 +238,13 @@ export default function LandingPage() {
         { title: "Horizon", subtitle: "2023 / RESIDENTIAL", image: "https://images.unsplash.com/photo-1545622744-8d4cb237deaf?q=80&w=800&auto=format&fit=crop" },
     ];
 
-    // Handle Audio Mute Toggle
-    const toggleMute = () => {
-        if (audioRef.current) {
-            audioRef.current.muted = !isMuted;
-            setIsMuted(!isMuted);
-        }
-    };
-
-    // Handle actual entry after clicking "Enter"
-    const handleEnter = () => {
-        setHasEntered(true);
-        if (audioRef.current) {
-            audioRef.current.volume = 0.5;
-            audioRef.current.play().catch(e => console.error("Audio play failed:", e));
-        }
-        if (masterTlRef.current) {
-            masterTlRef.current.play();
-        }
-    };
-
     useGSAP(() => {
-        // Master startup timeline (paused until user interaction)
-        const masterTl = gsap.timeline({ paused: true });
-        masterTlRef.current = masterTl;
 
-        // 1. Initial logo fade up
-        masterTl.to('.loader-text', { opacity: 1, duration: 0.8, y: -20, ease: "power3.out" })
-            // 2. Logo fade out
-            .to('.loader-text', { opacity: 0, duration: 0.5, delay: 0.2, y: -40, ease: "power3.in" })
-            // 3. Black background slides up
-            .to('.loader-bg', { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.2")
-            // 4. Yellow container slides up
-            .to('.loader-container', { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.65")
-            // 5. Hide container
-            .set('.loader-container', { display: "none" });
-
-        // Hero entry animation correctly sequenced after the loader finishes
-        masterTl.fromTo('.hero-bg-video',
+        // Hero entry animation
+        const heroTl = gsap.timeline({ delay: 1.5 });
+        heroTl.fromTo('.hero-bg-video',
             { scale: 1.1, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 1.5, ease: "power3.out" },
-            "-=0.4"
+            { scale: 1, opacity: 1, duration: 1.5, ease: "power3.out" }
         )
             .fromTo('.hero-title-char',
                 { y: '120%', opacity: 0, rotationZ: 10 },
@@ -363,125 +291,23 @@ export default function LandingPage() {
     });
 
     return (
-        <div className={isDarkMode ? 'dark' : ''}>
-            {/* ---------- BACKGROUND AUDIO ---------- */}
-            <audio ref={audioRef} src="/music.mp3" loop preload="auto" />
-
-            {/* ---------- AUDIO TOGGLE ---------- */}
-            {hasEntered && (
-                <button
-                    onClick={toggleMute}
-                    className="fixed bottom-6 left-6 z-[100] w-12 h-12 rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-md flex justify-center cursor-pointer items-center hover:bg-white dark:hover:bg-white/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.1)] overflow-hidden group"
-                    aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-                >
-                    {isMuted ? (
-                        <div className="w-5 h-[2px] bg-black dark:bg-white rounded-full transition-all duration-300"></div>
-                    ) : (
-                        <svg className="w-6 h-6 text-black dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <style dangerouslySetInnerHTML={{
-                                __html: `
-                                @keyframes wave {
-                                    0% { d: path("M3 12h2l2-2 3 4 3-4 3 4 2-2h3"); }
-                                    20% { d: path("M3 12h2l2-8 3 16 3-16 3 16 2-8h3"); }
-                                    40% { d: path("M3 12h2l2-4 3 8 3-8 3 8 2-4h3"); }
-                                    60% { d: path("M3 12h2l2-10 3 20 3-20 3 20 2-10h3"); }
-                                    80% { d: path("M3 12h2l2-6 3 12 3-12 3 12 2-6h3"); }
-                                    100% { d: path("M3 12h2l2-2 3 4 3-4 3 4 2-2h3"); }
-                                }
-                                .wave-path { animation: wave 1.2s infinite ease-in-out; }
-                            `}} />
-                            <path className="wave-path" d="M3 12h2l2-2 3 4 3-4 3 4 2-2h3" />
-                        </svg>
-                    )}
-                </button>
-            )}
-
-            <CustomCursor />
-
-            {/* ---------- INITIAL LOADING SCREEN ---------- */}
-            <div className={`loader-container fixed inset-0 z-[200] bg-[#ccff00] flex flex-col items-center justify-center ${hasEntered ? 'pointer-events-none' : ''}`}>
-                <div className="loader-bg absolute inset-0 bg-[#0a0a0a]" />
-
-                {!hasEntered ? (
-                    <div className="relative z-10 flex flex-col items-center">
-                        <div className="text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4 mb-8">
-                            <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                            <span>WEINIX</span>
-                        </div>
-                        <button
-                            onClick={handleEnter}
-                            disabled={!isVideoLoaded}
-                            className={`text-white border border-white/30 px-8 py-3 rounded-full uppercase tracking-widest text-sm font-bold text-center transition-all duration-300 ${isVideoLoaded ? 'hover:bg-white hover:text-black cursor-pointer animate-pulse' : 'opacity-50 cursor-wait'}`}
-                        >
-                            {isVideoLoaded ? 'Enter Experience' : 'Loading Experience...'}
-                        </button>
-                    </div>
-                ) : (
-                    <div className="loader-text relative z-10 opacity-0 transform translate-y-5 text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4">
-                        <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                        <span>WEINIX</span>
-                    </div>
-                )}
-            </div>
-
-            <div ref={containerRef} className="bg-[#f5f5f5] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen overflow-hidden font-sans transition-colors duration-500">
-
-                {/* ---------- NAVBAR ---------- */}
-                <nav className="absolute w-full z-50 px-6 py-4 top-0 left-0 transition-colors duration-500 bg-transparent">
-                    <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
-                        <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-white transition-colors">
-                            <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                            <span>WEINIX</span>
-                        </div>
-                        <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-white transition-colors">
-                            <a href="#" className="hover:opacity-70 transition-opacity">Home</a>
-                            <a href="#" className="hover:opacity-70 transition-opacity">Project</a>
-                            <a href="#" className="hover:opacity-70 transition-opacity">Service</a>
-                            <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
-                        </div>
-                        <div className="flex items-center gap-6 text-white transition-colors">
-                            <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
-                            {/*  <button className="hover:opacity-70 transition-opacity cursor-pointer"><ShoppingCart size={22} /></button> */}
-                            <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
-                                <Menu size={22} />
-                            </button>
-                        </div>
-                    </div>
-                </nav>
-                <nav className={`fixed w-full z-[100] px-6 py-4 top-0 left-0 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10 transition-all duration-500 transform ${isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
-                    <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
-                        <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
-                            <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
-                            <span>WEINIX</span>
-                        </div>
-                        <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
-                            <a href="#" className="hover:opacity-70 transition-opacity">Home</a>
-                            <a href="#" className="hover:opacity-70 transition-opacity">Project</a>
-                            <a href="#" className="hover:opacity-70 transition-opacity">Service</a>
-                            <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
-                        </div>
-                        <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
-                            <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
-                            {/* <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => router.push('/cart')}><ShoppingCart size={22} /></button> */}
-                            <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
-                                <Menu size={22} />
-                            </button>
-                        </div>
-                    </div>
-                </nav>
-
-                {/* ---------- HERO SECTION ---------- */}
+        <div ref={containerRef}>
                 <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
 
                     {/* Background Video */}
                     <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center bg-black">
                         <video
-                            key={isDarkMode ? 'dark' : 'light'}
+                            key="hero-video"
                             className="hero-bg-video w-full h-full object-cover opacity-90"
                             autoPlay
                             loop
                             muted
                             playsInline
+                            // @ts-ignore - webkit-specific attribute
+                            webkit-playsinline="true"
+                            x-webkit-airplay="deny"
+                            disablePictureInPicture
+                            disableRemotePlayback
                             preload="auto"
                             onCanPlayThrough={() => setIsVideoLoaded(true)}
                             onLoadedData={() => setIsVideoLoaded(true)}
@@ -527,7 +353,7 @@ export default function LandingPage() {
                             </button>
                         </div>
                     </div>
-                    <div className={`absolute bottom-0 left-0 w-full ${isDarkMode ? 'h-24' : 'h-8 opacity-20'}  bg-gradient-to-b from-transparent to-white dark:to-[#0a0a0a] pointer-events-none`}></div>
+                    <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-white dark:to-[#0a0a0a] pointer-events-none"></div>
 
                     {/* Scroll Indicator */}
                     <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-20 mix-blend-difference text-white opacity-80">
@@ -597,7 +423,9 @@ export default function LandingPage() {
 
                         {/* Stage 3 pt2 (Top Mid-R) */}
                         <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-end items-end text-right group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-all duration-500 active:scale-[0.98] relative overflow-hidden">
-                            <BlurImage src="mesh.png" alt="" className="w-48 h-48 object-cover absolute -top-8 -left-8 opacity-40 group-hover:opacity-60 group-active:opacity-60 group-hover:scale-110 group-active:scale-110 group-hover:rotate-12 group-active:rotate-12 transition-all duration-700 ease-[cubic-bezier(0.87,0,0.13,1)] pointer-events-none" />
+                            <div className="absolute -top-8 -left-8 w-48 h-48 opacity-40 group-hover:opacity-60 group-active:opacity-60 group-hover:scale-110 group-active:scale-110 group-hover:rotate-12 group-active:rotate-12 transition-all duration-[800ms] ease-[cubic-bezier(0.87,0,0.13,1)] pointer-events-none">
+                                <BlurImage src="mesh.png" alt="" className="w-full h-full object-cover" />
+                            </div>
                             <div className="relative z-10 w-full flex flex-col items-end justify-end">
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 transition-colors">No Chemicals</p>
                                 <h3 className="text-5xl font-bold text-black dark:text-white mb-1 group-hover:scale-105 group-active:scale-105 transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] origin-right">0%</h3>
@@ -659,24 +487,36 @@ export default function LandingPage() {
                         </div>
 
                         {/* Stage 1 (Center Big) */}
-                        <div className="md:col-span-2 md:row-span-2 rounded-[2rem] relative flex items-center justify-center p-0 overflow-hidden group cursor-pointer active:scale-[0.99] transition-transform duration-500">
-                            <BlurImage src="collection.jpeg" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 group-active:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.87,0,0.13,1)]" alt="Collection" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#171717] dark:via-[#171717]/40 to-transparent transition-colors duration-500"></div>
-
-                            <AnimatedCO2Card />
-
-                            <div className="absolute right-6 bottom-1/4 bg-white/80 dark:bg-[#1a1a1a] backdrop-blur-md border border-black/10 dark:border-white/10 p-5 rounded-2xl text-black dark:text-white group-hover:-translate-y-2 group-active:-translate-y-2 transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] delay-200">
-                                <div className="w-6 h-6 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center absolute top-3 right-3 text-[#ccff00] text-xs transition-colors">♥</div>
-                                <h3 className="text-2xl font-bold mb-1">1 kg</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-2 transition-colors">Collected Textiles</p>
-                                <p className="text-[#22c55e] text-xs font-bold flex items-center gap-1">▲ Prevented</p>
+                        <div className="md:col-span-2 md:row-span-2 rounded-[2rem] relative p-0 overflow-visible group cursor-pointer active:scale-[0.99] transition-transform duration-500 mt-0">
+                            {/* Inner clipping context for background/overlay */}
+                            <div className="absolute inset-0 rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-[#111111] border border-gray-200 dark:border-white/5">
+                                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#0a0a0a] dark:via-[#111111]/40 to-transparent transition-colors duration-500 z-10"></div>
                             </div>
 
-                            <div className="absolute bottom-6 left-6 right-6 z-10 pointers-events-none">
-                                <span className="bg-[#ccff00] text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3 inline-block">Stage 1: Collection</span>
-                                <p className="text-black dark:text-white text-base md:text-lg font-medium leading-snug w-full md:w-3/4 transition-colors">
-                                    &quot;It starts with you. Old clothes, worn linens, forgotten fabrics—we collect them before they reach the landfill.&quot;
-                                </p>
+                            {/* Outer pop-out image */}
+                            <div className="absolute inset-x-0 bottom-0 top-[-15%] z-10 flex items-end justify-center pointer-events-none">
+                                <BlurImage src="centre.png" className="w-[110%] h-[110%] max-w-none object-contain object-bottom opacity-100 origin-bottom transition-transform duration-1400 ease-[cubic-bezier(0.87,0,0.13,1)] drop-shadow-2xl" alt="Collection" />
+                            </div>
+
+                            {/* Ensure interactive elements sit above the image */}
+                            <div className="relative z-20 w-full h-full pointer-events-none">
+                                <div className="pointer-events-auto w-full h-full">
+                                    <AnimatedCO2Card />
+
+                                    <div className="absolute right-6 bottom-1/4 bg-white/80 dark:bg-[#1a1a1a] backdrop-blur-md border border-black/10 dark:border-white/10 p-5 rounded-2xl text-black dark:text-white group-hover:-translate-y-2 group-active:-translate-y-2 transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] delay-200">
+                                        <div className="w-6 h-6 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center absolute top-3 right-3 text-[#ccff00] text-xs transition-colors">♥</div>
+                                        <h3 className="text-2xl font-bold mb-1">1 kg</h3>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-2 transition-colors">Collected Textiles</p>
+                                        <p className="text-[#22c55e] text-xs font-bold flex items-center gap-1">▲ Prevented</p>
+                                    </div>
+
+                                    <div className="absolute bottom-6 left-6 right-6 z-10">
+                                        <span className="bg-[#ccff00] text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3 inline-block">Our Customers</span>
+                                        <p className="text-black dark:text-white text-base md:text-lg font-medium leading-snug w-full md:w-3/4 transition-colors">
+                                            &quot;It starts with you. Old clothes, worn linens, forgotten fabrics—we collect them before they reach the landfill.&quot;
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -686,8 +526,12 @@ export default function LandingPage() {
                                 Ancient Craft <br /> + Sustainability
                             </div>
                             <div className="relative w-full h-40 mb-6 flex justify-center items-center">
-                                <BlurImage src="weaving-1.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute -rotate-12 group-hover:rotate-0 group-active:rotate-0 transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)]" alt="Weaving 1" />
-                                <BlurImage src="weaving-2.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute rotate-12 mt-8 ml-8 group-hover:rotate-0 group-active:rotate-0 transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] delay-75 border-2 border-white dark:border-[#1a1a1a]" alt="Weaving 2" />
+                                <div className="absolute w-24 h-32 -rotate-12 group-hover:rotate-0 group-active:rotate-0 transition-transform duration-[800ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
+                                    <BlurImage src="weaving-1.webp" className="w-full h-full rounded-[1rem] object-cover" alt="Weaving 1" />
+                                </div>
+                                <div className="absolute w-24 h-32 rotate-12 mt-8 ml-8 group-hover:rotate-0 group-active:rotate-0 transition-all duration-[800ms] ease-[cubic-bezier(0.87,0,0.13,1)] delay-75">
+                                    <BlurImage src="weaving-2.webp" className="w-full h-full rounded-[1rem] object-cover border-2 border-white dark:border-[#1a1a1a]" alt="Weaving 2" />
+                                </div>
                             </div>
                             <p className="text-black dark:text-white text-center text-sm font-medium leading-relaxed mt-4 transition-colors">
                                 Traditional looms weave rescued fibers into premium sheets. Each takes 4 hours, touching 12 pairs of skilled hands.
@@ -722,7 +566,6 @@ export default function LandingPage() {
                         {/* Stage 6 pt3 (Bottom Right - We Build Future equivalent) */}
                         <div className="md:col-span-2 md:row-span-1 bg-[#ccff00] rounded-[2rem] p-8 flex items-center justify-between group cursor-pointer overflow-hidden relative active:scale-[0.98] transition-transform duration-500">
                             <div className="z-10 relative">
-                                <p className="text-black/50 text-[10px] font-bold uppercase tracking-widest mb-2">Stage 6: Finishing & Quality</p>
                                 <h2 className="text-3xl md:text-5xl font-bold text-black mb-2 leading-none tracking-tighter">Waste,<br />Reimagined.</h2>
                                 <p className="text-black/80 text-sm font-semibold max-w-[200px] mt-4">Every sheet passes 7 quality checks before reaching you.</p>
                             </div>
@@ -962,156 +805,6 @@ export default function LandingPage() {
                         </button>
                     </div>
                 </section>
-
-                {/* ---------- NEW FOOTER ---------- */}
-                <footer className="relative pt-32 pb-12 px-4 md:px-8 mt-12 bg-gray-100 dark:bg-[#0a0a0a] transition-colors duration-500 overflow-hidden">
-                    {/* Background subtle lines / grain simulation */}
-                    <div className="absolute inset-0 opacity-10 dark:opacity-5 mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.1) 4px, rgba(0,0,0,0.1) 5px)' }}></div>
-
-                    <div className="max-w-[1200px] mx-auto relative z-10 animate-section">
-
-                        {/* CTA Floating Card */}
-                        <div className="bg-white dark:bg-[#111111] rounded-[3rem] p-10 md:p-16 mb-24 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-12 border border-black/5 dark:border-white/5 transition-colors">
-                            <div className="flex-1 max-w-2xl">
-                                <h3 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-black dark:text-white leading-[1.1] mb-10 transition-colors">
-                                    Let&apos;s Turn Big Ideas Into Extraordinary Realities – Together
-                                </h3>
-                                <div className="flex flex-wrap items-center gap-4">
-                                    <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
-                                        Contact Sales
-                                    </button>
-                                    <button className="bg-transparent border border-black/20 dark:border-white/20 hover:border-black dark:hover:border-white text-black dark:text-white px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase flex items-center gap-2 transition-colors">
-                                        <ArrowRight size={16} /> Book a Consultation
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Abstract Brand Graphic */}
-                            <div className="shrink-0 relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
-                                <div className="absolute inset-0 rounded-full border-[1.5rem] md:border-[2rem] border-[#ccff00]"></div>
-                                <div className="absolute w-20 h-20 md:w-28 md:h-28 bg-[#ccff00] rounded-full"></div>
-                                <div className="absolute top-0 right-1/2 translate-x-12 -translate-y-4 md:translate-x-16 md:-translate-y-6 w-10 h-10 md:w-14 md:h-14 bg-[#ccff00] rounded-full"></div>
-                            </div>
-                        </div>
-
-                        {/* 4 Column Layout */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-20 text-black dark:text-white transition-colors">
-
-                            {/* Col 1: Brand */}
-                            <div className="lg:col-span-4">
-                                <div className="flex items-center gap-3 font-bold text-2xl tracking-tighter mb-6">
-                                    <div className="w-5 h-5 bg-[#ccff00] transform -skew-x-12" />
-                                    <div className="w-2 h-5 bg-[#171717] dark:bg-white transform -skew-x-12 -ml-2 transition-colors" />
-                                    <span>WEINIX</span>
-                                </div>
-                                <p className="text-sm max-w-[280px] leading-relaxed mb-8 opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
-                                    We are a multidisciplinary architecture studio crafting bold, purposeful spaces that stand the test of time.
-                                </p>
-                                <div className="flex gap-4">
-                                    <a href="#" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-[#ccff00] hover:text-black transition-colors">
-                                        <span className="font-serif font-bold text-sm">f</span>
-                                    </a>
-                                    <a href="#" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-[#ccff00] hover:text-black transition-colors">
-                                        <span className="font-bold text-xs uppercase tracking-widest">in</span>
-                                    </a>
-                                </div>
-                            </div>
-
-                            {/* Col 2: Nav Items */}
-                            <div className="lg:col-span-2">
-                                <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Nav Item</h4>
-                                <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
-                                    <li><a href="#" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">About</a></li>
-                                    <li><a href="#" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Our Architect</a></li>
-                                    <li><a href="#" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Process</a></li>
-                                </ul>
-                            </div>
-
-                            {/* Col 3: Contact */}
-                            <div className="lg:col-span-3">
-                                <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Contact</h4>
-                                <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
-                                    <li className="flex gap-3">
-                                        <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                        <a href="mailto:hello@axiombuild.com" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">hello@axiombuild.com</a>
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                                        <span>+1 (123) 985 789</span>
-                                    </li>
-                                    <li className="flex justify-start gap-3">
-                                        {/* Simple Map Pin Icon */}
-                                        <svg className="w-4 h-4 mt-1 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                        <span>213 West Orchard Street<br />Kings Mountain, NC 28086</span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            {/* Col 4: Newsletter */}
-                            <div className="lg:col-span-3">
-                                <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Newsletter</h4>
-                                <p className="text-sm opacity-60 text-gray-800 dark:text-gray-300 mb-6 leading-relaxed transition-colors">
-                                    Stay informed with the latest listings, insights, and real estate news.
-                                </p>
-                                <div className="relative flex items-center bg-white dark:bg-[#1a1a1a] rounded-full p-1 border border-black/10 dark:border-white/10 shadow-sm transition-colors">
-                                    <input
-                                        type="email"
-                                        placeholder="Email Address"
-                                        className="w-full bg-transparent pl-4 pr-2 text-sm focus:outline-none text-black dark:text-white"
-                                    />
-                                    <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors shrink-0">
-                                        Subscribe
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        {/* Footer Bottom Bar */}
-                        <div className="pt-8 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center text-xs opacity-60 text-black dark:text-white transition-colors">
-                            <p>© 2024 WEINIX. All Rights Reserved.</p>
-
-                            {/* Theme Toggle Pill (Moved from right side to bottom bar for space) */}
-                            <div className="flex items-center justify-center rounded-[#2rem] p-1.5 shadow-inner   mt-4 md:mt-0 transition-colors">
-                                <button
-                                    onClick={() => setTheme('light')}
-                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'light' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
-                                    aria-label="Light Theme"
-                                >
-                                    <Sun size={14} strokeWidth={2} />
-                                </button>
-                                <button
-                                    onClick={() => setTheme('dark')}
-                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'dark' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
-                                    aria-label="Dark Theme"
-                                >
-                                    <Moon size={14} strokeWidth={2} />
-                                </button>
-                                <button
-                                    onClick={() => setTheme('system')}
-                                    className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'system' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
-                                    aria-label="System Theme"
-                                >
-                                    <Monitor size={14} strokeWidth={2} />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Antimetal Brand Footer */}
-                        <div className="mt-16 flex items-center justify-center gap-8 opacity-60 hover:opacity-100 transition-opacity cursor-pointer text-black dark:text-[#a0a0a0]">
-                            <div className="flex items-center gap-3">
-                                <div className="w-12 h-10 bg-[#ccff00] transform -skew-x-12" />
-                                <div className="w-5 h-10 bg-[#171717] dark:bg-white transform -skew-x-12 -ml-2 transition-colors" />
-                            </div>
-                            <span className="text-8xl font-medium tracking-wide bg-clip-text text-transparent bg-gradient-to-b from-black to-black/60 dark:from-[#cfcfcf] dark:to-[#555]">
-                                WEINIX
-                            </span>
-                        </div>
-                    </div>
-                </footer>
-
-                <FullScreenMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
             </div>
-        </div>
     );
 }

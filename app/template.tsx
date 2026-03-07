@@ -1,0 +1,131 @@
+"use client";
+
+import React, { useRef, useEffect, useState } from 'react';
+import gsap from 'gsap';
+import { usePathname } from 'next/navigation';
+import { useGlobalContext } from '@/context/GlobalContext';
+
+// Map routes to display titles
+function getPageTitle(pathname: string): string {
+    const map: Record<string, string> = {
+        '/landing': 'HOME',
+        '/about-us': 'ABOUT US',
+        '/': 'HOME',
+    };
+    return map[pathname] || pathname.replace('/', '').replace(/-/g, ' ').toUpperCase() || 'HOME';
+}
+
+export default function Template({ children }: { children: React.ReactNode }) {
+    const { hasEntered, setHasEntered, audioRef } = useGlobalContext();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const bgRef = useRef<HTMLDivElement>(null);
+    const titleRef = useRef<HTMLDivElement>(null);
+    const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+    const pathname = usePathname();
+    const pageTitle = getPageTitle(pathname);
+
+    // For pages other than the first load, mark video as loaded immediately
+    useEffect(() => {
+        if (hasEntered) {
+            setIsVideoLoaded(true);
+        } else {
+            const timer = setTimeout(() => setIsVideoLoaded(true), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [hasEntered]);
+
+    // Handle entry click (first visit only)
+    const handleEnter = () => {
+        setHasEntered(true);
+        if (audioRef.current) {
+            audioRef.current.volume = 0.5;
+            audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+        }
+    };
+
+    // Page transition animation
+    useEffect(() => {
+        if (!hasEntered || !containerRef.current || !bgRef.current) return;
+
+        const tl = gsap.timeline();
+
+        // Animate the page title letters in
+        if (titleRef.current) {
+            const chars = titleRef.current.querySelectorAll('.page-title-char');
+            tl.fromTo(chars,
+                { y: '110%', opacity: 0, rotationZ: 8 },
+                { y: '0%', opacity: 1, rotationZ: 0, duration: 0.5, stagger: 0.04, ease: "power4.out" }
+            )
+            // Hold for a beat
+            .to({}, { duration: 0.3 })
+            // Fade out title
+            .to(chars,
+                { y: '-60%', opacity: 0, duration: 0.35, stagger: 0.02, ease: "power3.in" }
+            );
+        }
+
+        // Black background slides up
+        tl.to(bgRef.current, { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.2")
+          // Yellow container slides up
+          .to(containerRef.current, { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.65")
+          // Hide container
+          .set(containerRef.current, { display: "none" });
+
+    }, [hasEntered]);
+
+    return (
+        <>
+            {/* Loader / Page Transition Overlay */}
+            <div
+                ref={containerRef}
+                className={`fixed inset-0 z-[200] bg-[#ccff00] flex flex-col items-center justify-center ${hasEntered ? 'pointer-events-none' : ''}`}
+            >
+                <div ref={bgRef} className="absolute inset-0 bg-[#0a0a0a]" />
+
+                {!hasEntered ? (
+                    /* ---- FIRST VISIT: Enter Experience (original WEINIX branding) ---- */
+                    <div className="relative z-10 flex flex-col items-center">
+                        <div className="text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4 mb-8">
+                            <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
+                            <span>WEINIX</span>
+                        </div>
+                        <button
+                            onClick={handleEnter}
+                            disabled={!isVideoLoaded}
+                            className={`text-white border border-white/30 px-8 py-3 rounded-full uppercase tracking-widest text-sm font-bold text-center transition-all duration-300 ${isVideoLoaded ? 'hover:bg-white hover:text-black cursor-pointer animate-pulse' : 'opacity-50 cursor-wait'}`}
+                        >
+                            {isVideoLoaded ? 'Enter Experience' : 'Loading Experience...'}
+                        </button>
+                    </div>
+                ) : (
+                    /* ---- PAGE TRANSITION: Animated Title ---- */
+                    <div className="relative z-10 flex flex-col items-center">
+                        {/* Small WEINIX branding */}
+                        <div className="text-white/30 text-xs font-bold tracking-[0.4em] uppercase flex items-center gap-2 mb-8">
+                            <div className="w-2.5 h-2.5 bg-[#ccff00] transform rotate-45 rounded-sm opacity-60" />
+                            <span>WEINIX</span>
+                        </div>
+
+                        {/* Large animated page title */}
+                        <div ref={titleRef} className="overflow-hidden flex items-center justify-center">
+                            <h1 className="text-white text-7xl md:text-[9rem] lg:text-[12rem] font-bold tracking-tighter leading-none text-center flex">
+                                {pageTitle.split('').map((char, i) => (
+                                    <span
+                                        key={i}
+                                        className="page-title-char inline-block"
+                                        style={{ display: char === ' ' ? 'inline' : 'inline-block' }}
+                                    >
+                                        {char === ' ' ? '\u00A0' : char}
+                                    </span>
+                                ))}
+                            </h1>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Actual Page Content */}
+            {children}
+        </>
+    );
+}
