@@ -59,19 +59,19 @@ export default function Template({ children }: { children: React.ReactNode }) {
                 ref={containerRef}
                 className="fixed inset-0 z-[200] bg-[#ccff00] flex flex-col items-center justify-center pointer-events-none"
             >
-                <div ref={bgRef} className="absolute inset-0 bg-[#0a0a0a]" />
+                <div ref={bgRef} className="absolute inset-0 bg-[#f0f0f0] dark:bg-[#0a0a0a] transition-colors duration-500" />
 
                 {/* ---- PAGE TRANSITION: Animated Title ---- */}
                 <div className="relative z-10 flex flex-col items-center">
                     {/* Small WEINIX branding */}
-                    <div className="text-white/30 text-xs font-bold tracking-[0.4em] uppercase flex items-center gap-2 mb-8">
+                    <div className="text-black/30 dark:text-white/30 transition-colors duration-500 text-xs font-bold tracking-[0.4em] uppercase flex items-center gap-2 mb-8">
                         <div className="w-2.5 h-2.5 bg-[#ccff00] transform rotate-45 rounded-sm opacity-60" />
                         <span>WEINIX</span>
                     </div>
 
                     {/* Large animated page title */}
                     <div ref={titleRef} className="overflow-hidden flex items-center justify-center">
-                        <h1 className="text-white text-7xl md:text-[9rem] lg:text-[12rem] font-bold tracking-tighter leading-none text-center flex">
+                        <h1 className="text-black dark:text-white transition-colors duration-500 text-7xl md:text-[9rem] lg:text-[12rem] font-bold tracking-tighter leading-none text-center flex">
                             {pageTitle.split('').map((char, i) => (
                                 <span
                                     key={i}

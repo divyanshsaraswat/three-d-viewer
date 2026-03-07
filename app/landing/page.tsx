@@ -382,22 +382,22 @@ export default function LandingPage() {
                         ref={overlayContainerRef}
                         className="fixed inset-0 z-[250] bg-[#ccff00] flex flex-col items-center justify-center"
                     >
-                        <div ref={overlayBgRef} className="absolute inset-0 bg-[#0a0a0a]" />
+                        <div ref={overlayBgRef} className="absolute inset-0 bg-[#f0f0f0] dark:bg-[#0a0a0a] transition-colors duration-500" />
 
                         <div className="relative z-10 flex flex-col items-center">
-                            <div className="text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4 mb-8">
+                            <div className="text-black dark:text-white transition-colors duration-500 text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4 mb-8">
                                 <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
                                 <span>WEINIX</span>
                             </div>
                             
-                            <div className="text-[#ccff00] text-sm font-mono mb-6 tracking-widest uppercase h-4">
+                            <div className="text-[#6b8500] dark:text-[#ccff00] transition-colors duration-500 text-sm font-mono mb-6 tracking-widest uppercase h-4">
                                 {!isAllMediaLoaded ? `Loading Assets... ${mediaProgress}%` : ''}
                             </div>
 
                             <button
                                 onClick={handleEnter}
                                 disabled={!isAllMediaLoaded}
-                                className={`text-white border border-white/30 px-8 py-3 rounded-full uppercase tracking-widest text-sm font-bold text-center transition-all duration-300 ${isAllMediaLoaded ? 'hover:bg-white hover:text-black cursor-pointer animate-pulse' : 'opacity-50 cursor-wait'}`}
+                                className={`text-black dark:text-white border border-black/30 dark:border-white/30 px-8 py-3 rounded-full uppercase tracking-widest text-sm font-bold text-center transition-all duration-300 ${isAllMediaLoaded ? 'hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black cursor-pointer animate-pulse' : 'opacity-50 cursor-wait'}`}
                             >
                                 {isAllMediaLoaded ? 'Enter Experience' : 'Preparing Experience...'}
                             </button>
@@ -466,7 +466,6 @@ export default function LandingPage() {
                             onLoadedData={() => setIsVideoLoaded(true)}
                         >
                             <source src="hero-section 2.webm" type="video/webm" />
-                            <source src="hero-section-2.mp4" type="video/mp4" />
                         </video>
                         {/* Invisible layer to physically block ALL interactions on the video */}
                         <div className="absolute inset-0 z-10 w-full h-full" style={{ touchAction: 'none' }} onContextMenu={(e) => e.preventDefault()}></div>
