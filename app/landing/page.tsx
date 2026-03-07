@@ -160,6 +160,57 @@ const AnimatedCircleGraph = () => {
     );
 };
 
+const AnimatedCO2Card = () => {
+    const cardRef = useRef<HTMLDivElement>(null);
+    const numRef = useRef<HTMLSpanElement>(null);
+    const progressRef = useRef<HTMLDivElement>(null);
+
+    useGSAP(() => {
+        const counter = { val: 0 };
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: cardRef.current,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+            }
+        });
+
+        tl.to(counter, {
+            val: 3,
+            duration: 2,
+            ease: "power3.out",
+            onUpdate: () => {
+                if (numRef.current) {
+                    numRef.current.innerText = counter.val.toFixed(1);
+                }
+            }
+        }, 0);
+
+        tl.fromTo(progressRef.current,
+            { width: "0%" },
+            { width: "66%", duration: 2, ease: "power3.out" },
+            0
+        );
+    }, []);
+
+    return (
+        <div ref={cardRef} className="absolute left-6 bottom-1/3 bg-white/50 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 p-3 rounded-2xl flex items-center gap-3 transition-all duration-500 delay-100 group hover:-translate-y-2 active:scale-[0.98]">
+            <div className="w-8 h-8 rounded-full bg-[#ccff00] flex items-center justify-center text-black overflow-hidden relative">
+                <ArrowUpRight size={16} className="absolute transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] group-hover:translate-x-6 group-hover:-translate-y-6 group-active:translate-x-6 group-active:-translate-y-6" />
+                <ArrowUpRight size={16} className="absolute transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] -translate-x-6 translate-y-6 group-hover:translate-x-0 group-hover:translate-y-0 group-active:translate-x-0 group-active:translate-y-0" />
+            </div>
+            <div>
+                <p className="text-black dark:text-white font-bold text-sm transition-colors">
+                    <span ref={numRef}>0.0</span> kg CO2
+                </p>
+                <div className="w-16 h-1 bg-black/20 dark:bg-white/30 rounded-full mt-1 overflow-hidden">
+                    <div ref={progressRef} className="h-full bg-[#ccff00] rounded-full w-0"></div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 }
@@ -378,19 +429,19 @@ export default function LandingPage() {
                 {/* ---------- NAVBAR ---------- */}
                 <nav className="absolute w-full z-50 px-6 py-4 top-0 left-0 transition-colors duration-500 bg-transparent">
                     <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
-                        <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
+                        <div className="flex items-center gap-3 font-bold text-xl tracking-tighter text-white transition-colors">
                             <div className="w-4 h-4 bg-[#ccff00] transform rotate-45 rounded-sm" />
                             <span>WEINIX</span>
                         </div>
-                        <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
+                        <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-white transition-colors">
                             <a href="#" className="hover:opacity-70 transition-opacity">Home</a>
                             <a href="#" className="hover:opacity-70 transition-opacity">Project</a>
                             <a href="#" className="hover:opacity-70 transition-opacity">Service</a>
                             <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
                         </div>
-                        <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
+                        <div className="flex items-center gap-6 text-white transition-colors">
                             <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
-                            <button className="hover:opacity-70 transition-opacity cursor-pointer"><ShoppingCart size={22} /></button>
+                            {/*  <button className="hover:opacity-70 transition-opacity cursor-pointer"><ShoppingCart size={22} /></button> */}
                             <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
                                 <Menu size={22} />
                             </button>
@@ -411,7 +462,7 @@ export default function LandingPage() {
                         </div>
                         <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
                             <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
-                            <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => router.push('/cart')}><ShoppingCart size={22} /></button>
+                            {/* <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => router.push('/cart')}><ShoppingCart size={22} /></button> */}
                             <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
                                 <Menu size={22} />
                             </button>
@@ -536,20 +587,20 @@ export default function LandingPage() {
                         </div>
 
                         {/* Stage 3 pt1 (Top Mid-L) */}
-                        <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-center group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500">
+                        <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-center group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-all duration-500 active:scale-[0.98]">
                             <div className="flex items-end gap-2 mb-2">
-                                <h3 className="text-4xl font-bold text-black dark:text-white group-hover:text-[#ccff00] transition-colors">Pure</h3>
+                                <h3 className="text-4xl font-bold text-black dark:text-white group-hover:text-[#ccff00] group-active:text-[#ccff00] transition-colors duration-500 ease-[cubic-bezier(0.87,0,0.13,1)]">Pure</h3>
                                 <span className="text-sm pb-1 text-[#ccff00]">Fibers</span>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 font-medium transition-colors">Mechanical shredding breaks fabrics back to their core. Ready for rebirth.</p>
                         </div>
 
                         {/* Stage 3 pt2 (Top Mid-R) */}
-                        <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-end items-end text-right group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500 relative overflow-hidden">
-                            <BlurImage src="mesh.png" alt="" className="w-48 h-48 object-cover absolute -top-8 -left-8 opacity-40 group-hover:opacity-60 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 pointer-events-none" />
+                        <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-end items-end text-right group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-all duration-500 active:scale-[0.98] relative overflow-hidden">
+                            <BlurImage src="mesh.png" alt="" className="w-48 h-48 object-cover absolute -top-8 -left-8 opacity-40 group-hover:opacity-60 group-active:opacity-60 group-hover:scale-110 group-active:scale-110 group-hover:rotate-12 group-active:rotate-12 transition-all duration-700 ease-[cubic-bezier(0.87,0,0.13,1)] pointer-events-none" />
                             <div className="relative z-10 w-full flex flex-col items-end justify-end">
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 transition-colors">No Chemicals</p>
-                                <h3 className="text-5xl font-bold text-black dark:text-white mb-1 group-hover:scale-105 transition-transform origin-right">0%</h3>
+                                <h3 className="text-5xl font-bold text-black dark:text-white mb-1 group-hover:scale-105 group-active:scale-105 transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] origin-right">0%</h3>
                                 <p className="text-[#e78b1f] text-sm font-bold">Dyes used</p>
                             </div>
                         </div>
@@ -608,21 +659,13 @@ export default function LandingPage() {
                         </div>
 
                         {/* Stage 1 (Center Big) */}
-                        <div className="md:col-span-2 md:row-span-2 rounded-[2rem] relative flex items-center justify-center p-0 overflow-hidden group cursor-pointer">
-                            <BlurImage src="collection.jpeg" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Collection" />
+                        <div className="md:col-span-2 md:row-span-2 rounded-[2rem] relative flex items-center justify-center p-0 overflow-hidden group cursor-pointer active:scale-[0.99] transition-transform duration-500">
+                            <BlurImage src="collection.jpeg" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 group-active:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.87,0,0.13,1)]" alt="Collection" />
                             <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#171717] dark:via-[#171717]/40 to-transparent transition-colors duration-500"></div>
 
-                            <div className="absolute left-6 bottom-1/3 bg-white/50 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/20 p-3 rounded-2xl flex items-center gap-3 group-hover:-translate-y-2 transition-all duration-500 delay-100">
-                                <div className="w-8 h-8 rounded-full bg-[#ccff00] flex items-center justify-center text-black">
-                                    <ArrowUpRight size={16} />
-                                </div>
-                                <div>
-                                    <p className="text-black dark:text-white font-bold text-sm transition-colors">3 kg CO2</p>
-                                    <div className="w-16 h-1 bg-black/20 dark:bg-white/30 rounded-full mt-1"><div className="w-2/3 h-full bg-[#ccff00] rounded-full"></div></div>
-                                </div>
-                            </div>
+                            <AnimatedCO2Card />
 
-                            <div className="absolute right-6 bottom-1/4 bg-white/80 dark:bg-[#1a1a1a] backdrop-blur-md border border-black/10 dark:border-white/10 p-5 rounded-2xl text-black dark:text-white group-hover:-translate-y-2 transition-all duration-500 delay-200">
+                            <div className="absolute right-6 bottom-1/4 bg-white/80 dark:bg-[#1a1a1a] backdrop-blur-md border border-black/10 dark:border-white/10 p-5 rounded-2xl text-black dark:text-white group-hover:-translate-y-2 group-active:-translate-y-2 transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] delay-200">
                                 <div className="w-6 h-6 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center absolute top-3 right-3 text-[#ccff00] text-xs transition-colors">♥</div>
                                 <h3 className="text-2xl font-bold mb-1">1 kg</h3>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-2 transition-colors">Collected Textiles</p>
@@ -638,13 +681,13 @@ export default function LandingPage() {
                         </div>
 
                         {/* Stage 5 (Bottom Left) */}
-                        <div className="md:col-span-1 md:row-span-2 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col items-center group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500">
+                        <div className="md:col-span-1 md:row-span-2 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col items-center group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-all duration-500 active:scale-[0.98]">
                             <div className="bg-[#ccff00] text-black text-xl font-bold rounded-2xl p-4 text-center w-full mb-6">
                                 Ancient Craft <br /> + Sustainability
                             </div>
                             <div className="relative w-full h-40 mb-6 flex justify-center items-center">
-                                <BlurImage src="weaving-1.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute -rotate-12 group-hover:rotate-0 transition-transform duration-500" alt="Weaving 1" />
-                                <BlurImage src="weaving-2.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute rotate-12 mt-8 ml-8 group-hover:rotate-0 transition-transform duration-500 delay-100 border-2 border-white dark:border-[#1a1a1a] transition-colors" alt="Weaving 2" />
+                                <BlurImage src="weaving-1.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute -rotate-12 group-hover:rotate-0 group-active:rotate-0 transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)]" alt="Weaving 1" />
+                                <BlurImage src="weaving-2.webp" className="w-24 h-32 rounded-[1rem] object-cover absolute rotate-12 mt-8 ml-8 group-hover:rotate-0 group-active:rotate-0 transition-all duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] delay-75 border-2 border-white dark:border-[#1a1a1a]" alt="Weaving 2" />
                             </div>
                             <p className="text-black dark:text-white text-center text-sm font-medium leading-relaxed mt-4 transition-colors">
                                 Traditional looms weave rescued fibers into premium sheets. Each takes 4 hours, touching 12 pairs of skilled hands.
@@ -652,8 +695,8 @@ export default function LandingPage() {
                         </div>
 
                         {/* Stage 6 pt1 (Middle Right - CUBO equivalent) */}
-                        <div className="md:col-span-1 md:row-span-1 bg-white dark:bg-[#222222] border border-gray-100 dark:border-transparent transition-colors duration-500 rounded-[2rem] flex flex-col items-center justify-center p-6 group cursor-pointer overflow-hidden relative">
-                            <div className="w-16 h-16 border-4 border-black/10 dark:border-white/20 rounded-full flex items-center justify-center relative mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <div className="md:col-span-1 md:row-span-1 bg-white dark:bg-[#222222] border border-gray-100 dark:border-transparent transition-all duration-500 rounded-[2rem] flex flex-col items-center justify-center p-6 group cursor-pointer overflow-hidden relative active:scale-[0.98]">
+                            <div className="w-16 h-16 border-4 border-black/10 dark:border-white/20 rounded-full flex items-center justify-center relative mb-4 group-hover:scale-110 group-active:scale-110 transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)]">
                                 <div className="w-6 h-6 border-4 border-[#ccff00] rounded-full absolute -top-2"></div>
                                 <div className="w-6 h-6 border-4 border-black dark:border-white rounded-full absolute -bottom-1 -left-1 transition-colors"></div>
                                 <div className="w-6 h-6 border-4 border-[#e78b1f] rounded-full absolute -bottom-1 -right-1"></div>
@@ -663,27 +706,27 @@ export default function LandingPage() {
                         </div>
 
                         {/* Stage 6 pt2 (Bottom Mid-L - Color Swatches equivalent) */}
-                        <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500">
+                        <div className="md:col-span-1 md:row-span-1 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-all duration-500 active:scale-[0.98]">
                             <div>
                                 <h3 className="text-3xl font-bold text-black dark:text-white mb-1 transition-colors">300 TC</h3>
                                 <p className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-widest transition-colors">Quality Note</p>
                             </div>
                             <div className="flex gap-2 mt-4">
-                                <div className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-[#222222] group-hover:bg-white transition-colors duration-300 delay-0"></div>
-                                <div className="w-10 h-10 rounded-xl bg-gray-300 dark:bg-[#333333] group-hover:bg-[#ccff00] transition-colors duration-300 delay-75"></div>
-                                <div className="w-10 h-10 rounded-xl bg-gray-400 dark:bg-[#444444] group-hover:bg-[#e78b1f] transition-colors duration-300 delay-150"></div>
+                                <div className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-[#222222] group-hover:bg-white group-active:bg-white transition-colors duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] delay-0"></div>
+                                <div className="w-10 h-10 rounded-xl bg-gray-300 dark:bg-[#333333] group-hover:bg-[#ccff00] group-active:bg-[#ccff00] transition-colors duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] delay-75"></div>
+                                <div className="w-10 h-10 rounded-xl bg-gray-400 dark:bg-[#444444] group-hover:bg-[#e78b1f] group-active:bg-[#e78b1f] transition-colors duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] delay-150"></div>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 font-medium transition-colors">Softer than conventional cotton.</p>
                         </div>
 
                         {/* Stage 6 pt3 (Bottom Right - We Build Future equivalent) */}
-                        <div className="md:col-span-2 md:row-span-1 bg-[#ccff00] rounded-[2rem] p-8 flex items-center justify-between group cursor-pointer overflow-hidden relative">
+                        <div className="md:col-span-2 md:row-span-1 bg-[#ccff00] rounded-[2rem] p-8 flex items-center justify-between group cursor-pointer overflow-hidden relative active:scale-[0.98] transition-transform duration-500">
                             <div className="z-10 relative">
                                 <p className="text-black/50 text-[10px] font-bold uppercase tracking-widest mb-2">Stage 6: Finishing & Quality</p>
                                 <h2 className="text-3xl md:text-5xl font-bold text-black mb-2 leading-none tracking-tighter">Waste,<br />Reimagined.</h2>
                                 <p className="text-black/80 text-sm font-semibold max-w-[200px] mt-4">Every sheet passes 7 quality checks before reaching you.</p>
                             </div>
-                            <div className="absolute -right-10 -top-10 text-black/10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
+                            <div className="absolute -right-10 -top-10 text-black/10 group-hover:scale-105 group-active:scale-105 group-hover:rotate-6 group-active:rotate-6 transition-all duration-[800ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
                                 <BlurImage src="spring.png" alt="Interactive placeholder" className="w-[240px] h-[240px] rounded-[3rem] object-cover opacity-100" />
                             </div>
                         </div>
@@ -762,8 +805,8 @@ export default function LandingPage() {
 
                         <div className="relative rounded-[2rem] overflow-hidden shadow-2xl transition-colors duration-500">
                             {/* Scroll Hint Overlay (Mobile Only) */}
-                            <div className={`md:hidden absolute inset-y-0 right-0 z-10 w-24 flex items-center justify-end pr-4 pointer-events-none bg-gradient-to-l from-black/80 dark:from-black via-black/40 to-transparent transition-opacity duration-500 ${!hasScrolledTable ? 'opacity-100' : 'opacity-0'}`}>
-                                <div className="flex flex-col items-center gap-2 text-white drop-shadow-md pb-4">
+                            <div className={`md:hidden absolute inset-y-0 right-0 z-10 w-24 flex items-center justify-end pr-4 pointer-events-none bg-gradient-to-l from-gray-100/90 dark:from-black via-gray-100/50 dark:via-black/40 to-transparent transition-opacity duration-500 ${!hasScrolledTable ? 'opacity-100' : 'opacity-0'}`}>
+                                <div className="flex flex-col items-center gap-2 text-black/70 dark:text-white drop-shadow-md pb-4 transition-colors">
                                     <ArrowRight size={24} className="animate-[fadeSlideRight_1.5s_infinite_ease-in-out]" />
                                     <span className="text-[10px] font-bold uppercase tracking-widest">Swipe</span>
                                 </div>

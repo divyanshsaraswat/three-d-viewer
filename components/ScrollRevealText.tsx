@@ -72,14 +72,18 @@ export default function ScrollRevealText() {
 
     useGSAP(() => {
         const items = gsap.utils.toArray('.reveal-item');
+        const iconWrappers = gsap.utils.toArray<HTMLElement>('.icon-wrapper');
+
+        // Measure natural widths for sliding effect
+        iconWrappers.forEach(w => {
+            w.dataset.targetWidth = `${w.offsetWidth}px`;
+            gsap.set(w, { width: 0, opacity: 0 });
+        });
 
         gsap.set(items, {
-            opacity: 0.15,
-            scale: (i, target: any) => {
-                if (target.classList.contains('icon-item')) return 0.3;
-                return 1; // Both normal words and highlight wrappers start at exactly 1
-            },
-            y: (i, target: any) => target.classList.contains('highlight-item') ? 15 : 0
+            opacity: (i, target: any) => target.classList.contains('icon-item') ? 1 : 0.15,
+            scale: (i, target: any) => target.classList.contains('icon-item') ? 0 : 1,
+            y: 0 // Normal baseline state for all items
         });
 
         const tl = gsap.timeline({
@@ -106,25 +110,35 @@ export default function ScrollRevealText() {
 
             const startTime = (i / totalItems) * 0.8;
 
-            tl.to(item, {
-                opacity: 1,
-                duration: 0.05,
-                ease: "none"
-            }, startTime);
-
             if (isIcon) {
+                const wrapper = item.closest('.icon-wrapper');
+                
+                // Animate wrapper expanding to slide text
+                tl.to(wrapper, {
+                    width: wrapper.dataset.targetWidth,
+                    opacity: 1,
+                    duration: 0.2,
+                    ease: "power2.out"
+                }, startTime);
+
+                // Animate icon popping up
                 tl.to(item, {
                     scale: 1,
-                    duration: 0.1,
+                    duration: 0.2,
                     ease: "back.out(2)"
+                }, startTime);
+            } else {
+                tl.to(item, {
+                    opacity: 1,
+                    duration: 0.05,
+                    ease: "none"
                 }, startTime);
             }
 
             if (isHighlight) {
-                // The item itself just scales up naturally
+                // The item itself just scales up naturally (without y-shift translation)
                 tl.to(item, {
                     scale: 1,
-                    y: 0,
                     duration: 0.15,
                     ease: "back.out(1.5)"
                 }, startTime);
@@ -145,20 +159,29 @@ export default function ScrollRevealText() {
     }, { scope: containerRef });
 
     return (
-        <section ref={containerRef} className="relative w-full flex items-center justify-center overflow-hidden py-32 pointer-events-none">
-            <div ref={textWrapperRef} className="max-w-[1000px] px-4 md:px-8 mx-auto flex flex-wrap justify-center items-center text-center gap-x-2 gap-y-3 md:gap-x-3 md:gap-y-4">
+        <section ref={containerRef} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden py-32 pointer-events-none">
+            <div ref={textWrapperRef} className="max-w-[1000px] px-4 md:px-8 mx-auto flex flex-wrap justify-center items-center text-center gap-y-3 md:gap-y-4">
                 {words.map((w, i) => {
                     const isIcon = w.type === 'icon';
                     const isHighlight = w.type === 'highlight';
 
                     const typography = "text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight";
+                    const padding = "px-1 md:px-1.5";
 
                     if (!isHighlight) {
+                        if (isIcon) {
+                            return (
+                                <span key={i} className="icon-wrapper inline-flex overflow-hidden mx-0 items-center justify-center">
+                                    <span className={`reveal-item icon-item ${typography} ${padding} text-black dark:text-white transition-colors inline-flex items-center justify-center transform origin-center`}>
+                                        {w.text}
+                                    </span>
+                                </span>
+                            );
+                        }
                         return (
                             <span
                                 key={i}
-                                className={`reveal-item ${typography} text-black dark:text-white transition-colors ${isIcon ? 'icon-item inline-flex items-center justify-center transform origin-bottom translate-y-1 md:translate-y-2' : ''
-                                    }`}
+                                className={`reveal-item ${typography} ${padding} text-black dark:text-white transition-colors`}
                             >
                                 {w.text}
                             </span>
@@ -173,16 +196,14 @@ export default function ScrollRevealText() {
                     if (w.color === 'purple') highlightColors = "border-purple-500/50 bg-purple-500/5 text-purple-500";
 
                     return (
-                        <span key={i} className={`reveal-item highlight-item relative inline-flex items-center justify-center transform`}>
+                        <span key={i} className={`reveal-item highlight-item relative inline-flex items-center justify-center transform ${padding}`}>
                             {/* Inactive state text (looks identically spaced and placed like normal words) */}
                             <span className={`${typography} text-black dark:text-white transition-colors relative z-10`}>
                                 {w.text}
                             </span>
 
-                            {/* Animated Active State overlay (colored box + colored text)
-                                We use negative absolute positioning to create the padding *outward* 
-                                from the base word without shifting the rest of the sentence. */}
-                            <span className={`highlight-overlay absolute -inset-y-1.5 -inset-x-4 md:-inset-y-2 flex items-center justify-center border-[3px] border-dotted rounded-[2rem] opacity-0 scale-95 z-20 ${highlightColors} drop-shadow-sm pointer-events-none`}>
+                            {/* Animated Active State overlay (colored box + colored text) */}
+                            <span className={`highlight-overlay absolute -inset-y-1.5 inset-x-0 md:-inset-y-2 flex items-center justify-center border-[3px] border-dotted rounded-[2rem] opacity-0 scale-95 z-20 ${highlightColors} drop-shadow-sm pointer-events-none`}>
                                 <span className={`${typography}`}>
                                     {w.text}
                                 </span>
