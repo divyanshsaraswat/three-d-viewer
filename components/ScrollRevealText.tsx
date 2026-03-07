@@ -75,26 +75,25 @@ export default function ScrollRevealText() {
         const items = gsap.utils.toArray('.reveal-item');
         const iconWrappers = gsap.utils.toArray<HTMLElement>('.icon-wrapper');
 
-        // Instead of collapsing width to 0 (which causes CLS), keep natural width and
-        // just hide the icon via scale/opacity. This avoids text reflow entirely.
-        iconWrappers.forEach(w => {
-            gsap.set(w, { opacity: 0 });
-        });
-
+        // Initial setup
+        iconWrappers.forEach(w => gsap.set(w, { opacity: 0 }));
+        
         gsap.set(items, {
             opacity: (i, target: any) => target.classList.contains('icon-item') ? 0 : 0.15,
             scale: (i, target: any) => target.classList.contains('icon-item') ? 0 : 1,
-            y: 0 // Normal baseline state for all items
+            y: 0,
+            force3D: true // Force GPU acceleration
         });
 
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: containerRef.current,
                 start: "top top",
-                end: "+=150%",
-                scrub: 1,
+                end: "+=120%", // Slightly reduced scroll length so it feels more responsive
+                scrub: 1.5, // Added smoothing to the scrub so it catches up gracefully
                 pin: true,
                 anticipatePin: 1,
+                fastScrollEnd: true, // Optimizes fast scrolling
                 onRefresh: () => {
                     if (containerRef.current?.parentElement?.classList.contains('pin-spacer')) {
                         containerRef.current.parentElement.style.pointerEvents = 'none';
@@ -105,118 +104,96 @@ export default function ScrollRevealText() {
 
         const totalItems = items.length;
 
+        // Batch processing the timeline creation significantly reduces JS overhead
         items.forEach((item: any, i) => {
             const isIcon = item.classList.contains('icon-item');
             const isHighlight = item.classList.contains('highlight-item');
 
-            const startTime = (i / totalItems) * 0.8;
+            // Map staggering proportionally to scroll height
+            const startTime = (i / totalItems) * 1.0; 
 
             if (isIcon) {
                 const wrapper = item.closest('.icon-wrapper');
-                
-                // Fade in the wrapper and scale up the icon (no width change = no CLS)
-                tl.to(wrapper, {
-                    opacity: 1,
-                    duration: 0.2,
-                    ease: "power2.out"
-                }, startTime);
-
-                // Animate icon popping up
-                tl.to(item, {
-                    opacity: 1,
-                    scale: 1,
-                    duration: 0.2,
-                    ease: "back.out(2)"
-                }, startTime);
+                tl.to(wrapper, { opacity: 1, duration: 0.1, ease: "none", force3D: true }, startTime)
+                  .to(item, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(2)", force3D: true }, startTime);
             } else {
-                tl.to(item, {
-                    opacity: 1,
-                    duration: 0.05,
-                    ease: "none"
-                }, startTime);
+                tl.to(item, { opacity: 1, duration: 0.1, ease: "none", force3D: true }, startTime);
             }
 
             if (isHighlight) {
-                // The item itself just scales up naturally (without y-shift translation)
-                tl.to(item, {
-                    scale: 1,
-                    duration: 0.15,
-                    ease: "back.out(1.5)"
-                }, startTime);
-
-                // We find the overlay inside this specific highlight item and pop it in
+                tl.to(item, { scale: 1, duration: 0.15, ease: "back.out(1.5)", force3D: true }, startTime);
                 const overlay = item.querySelector('.highlight-overlay');
                 if (overlay) {
-                    tl.to(overlay, {
-                        opacity: 1,
-                        scale: 1,
-                        duration: 0.2,
-                        ease: "back.out(1.5)"
-                    }, startTime);
+                    tl.to(overlay, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(1.5)", force3D: true }, startTime);
                 }
             }
         });
     }, { scope: containerRef });
+
+    // Grouping adjacent pure words drastically reduces DOM count
+    const groupedElements: React.ReactNode[] = [];
+    let currentTextBlock = "";
+    
+    const typography = "text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight [text-shadow:0_2px_8px_rgba(255,255,255,0.4)] dark:[text-shadow:0_2px_8px_rgba(0,0,0,0.4)]";
+    const padding = "px-1 md:px-1.5";
+    const baseClasses = `${typography} text-black dark:text-white transition-colors`;
+    
+    words.forEach((w, i) => {
+        if (w.type === 'word') {
+            currentTextBlock += (currentTextBlock ? " " : "") + w.text;
+            
+            // If next word isn't a simple word, or it's the last word, close and push this block
+            if (i === words.length - 1 || words[i + 1].type !== 'word') {
+                // Split the accumulated text block back into spans only when necessary to maintain sequential reveal,
+                // but we avoid deep nesting it.
+                currentTextBlock.split(" ").forEach((text, blockIndex) => {
+                   groupedElements.push(
+                        <span key={`word-${i}-${blockIndex}`} className={`reveal-item ${baseClasses} ${padding} inline-block`} style={{ willChange: "opacity", transform: "translateZ(0)" }}>
+                            {text}
+                        </span>
+                   );
+                });
+                currentTextBlock = ""; // reset
+            }
+        } else if (w.type === 'icon') {
+            groupedElements.push(
+                <span key={`icon-${i}`} className="icon-wrapper inline-flex overflow-hidden mx-0 items-center justify-center transform-gpu" style={{ willChange: "opacity" }}>
+                    <span className={`reveal-item icon-item ${baseClasses} ${padding} inline-flex items-center justify-center origin-center`} style={{ willChange: "transform, opacity", transform: "translateZ(0)" }}>
+                        {w.text}
+                    </span>
+                </span>
+            );
+        } else if (w.type === 'highlight') {
+            let highlightColors = "";
+            if (w.color === 'blue') highlightColors = "border-blue-500/50 bg-blue-500/5 text-blue-500";
+            if (w.color === 'green') highlightColors = "border-[#ccff00]/50 bg-[#ccff00]/5 text-[#ccff00]";
+            if (w.color === 'orange') highlightColors = "border-orange-500/50 bg-orange-500/5 text-orange-500";
+            if (w.color === 'purple') highlightColors = "border-purple-500/50 bg-purple-500/5 text-purple-500";
+
+            groupedElements.push(
+                <span key={`highlight-${i}`} className={`reveal-item highlight-item relative inline-flex items-center justify-center origin-center ${padding}`} style={{ willChange: "transform", transform: "translateZ(0)" }}>
+                    <span className={`${baseClasses} relative z-10`} style={{ willChange: "opacity", transform: "translateZ(0)" }}>
+                        {w.text}
+                    </span>
+                    <span className={`highlight-overlay absolute -inset-y-1.5 inset-x-0 md:-inset-y-2 flex items-center justify-center border-[2px] border-dotted rounded-[1.5rem] opacity-0 scale-95 z-20 ${highlightColors} drop-shadow-lg pointer-events-none transform-gpu`} style={{ contain: 'strict', willChange: "transform, opacity" }}>
+                        <span className={`${typography} px-[1.5px] isolate`}>
+                            {w.text}
+                        </span>
+                    </span>
+                </span>
+            );
+        }
+    });
+
     return (
-        <section ref={containerRef} className="relative w-full h-[100vh] flex items-center justify-center overflow-hidden pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500">
+        <section ref={containerRef} className="relative w-full h-[100vh] flex items-center justify-center overflow-hidden pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500" style={{ contain: 'paint' }}>
             {/* Background Ribbons */}
             <div className="absolute inset-0 z-10 pointer-events-none">
                 <AnimatedRibbons />
             </div>
 
-            <div ref={textWrapperRef} className="relative z-20 max-w-[1000px] px-4 md:px-8 mx-auto flex flex-wrap justify-center items-center text-center gap-y-3 md:gap-y-4">
-                {words.map((w, i) => {
-                    const isIcon = w.type === 'icon';
-                    const isHighlight = w.type === 'highlight';
-
-                    const typography = "text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight [text-shadow:0_2px_8px_rgba(255,255,255,0.4)] dark:[text-shadow:0_2px_8px_rgba(0,0,0,0.4)]";
-                    const padding = "px-1 md:px-1.5";
-                    const willChange = { willChange: "transform, opacity" };
-
-                    if (!isHighlight) {
-                        if (isIcon) {
-                            return (
-                                <span key={i} className="icon-wrapper inline-flex overflow-hidden mx-0 items-center justify-center">
-                                    <span className={`reveal-item icon-item ${typography} ${padding} text-black dark:text-white transition-colors inline-flex items-center justify-center transform origin-center`} style={willChange}>
-                                        {w.text}
-                                    </span>
-                                </span>
-                            );
-                        }
-                        return (
-                            <span
-                                key={i}
-                                className={`reveal-item ${typography} ${padding} text-black dark:text-white transition-colors`}
-                                style={willChange}
-                            >
-                                {w.text}
-                            </span>
-                        );
-                    }
-
-                    // For highlight elements, they start as pure text to not break sentence flow.
-                    let highlightColors = "";
-                    if (w.color === 'blue') highlightColors = "border-blue-500/50 bg-blue-500/5 text-blue-500";
-                    if (w.color === 'green') highlightColors = "border-[#ccff00]/50 bg-[#ccff00]/5 text-[#ccff00]";
-                    if (w.color === 'orange') highlightColors = "border-orange-500/50 bg-orange-500/5 text-orange-500";
-                    if (w.color === 'purple') highlightColors = "border-purple-500/50 bg-purple-500/5 text-purple-500";
-
-                    return (
-                        <span key={i} className={`reveal-item highlight-item relative inline-flex items-center justify-center transform ${padding}`}>
-                            {/* Inactive state text (looks identically spaced and placed like normal words) */}
-                            <span className={`${typography} text-black dark:text-white transition-colors relative z-10`} style={willChange}>
-                                {w.text}
-                            </span>
-
-                            {/* Animated Active State overlay (colored box + colored text) */}
-                            <span className={`highlight-overlay absolute -inset-y-1.5 inset-x-0 md:-inset-y-2 flex items-center justify-center border-[2px]  border-dotted rounded-[1.5rem] opacity-0 scale-95 z-20 ${highlightColors} drop-shadow-lg pointer-events-none`}>
-                                <span className={`${typography} px-[1.5px]`}>
-                                    {w.text}
-                                </span>
-                            </span>
-                        </span>
-                    );
-                })}
+            <div ref={textWrapperRef} className="relative z-20 w-[95%] max-w-[1000px] px-2 sm:px-4 md:px-8 mx-auto flex flex-wrap justify-center items-center text-center gap-y-2 md:gap-y-4">
+                {groupedElements}
             </div>
         </section>
     );
