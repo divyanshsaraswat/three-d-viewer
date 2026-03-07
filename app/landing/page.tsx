@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -216,12 +216,98 @@ if (typeof window !== "undefined") {
 
 export default function LandingPage() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const overlayContainerRef = useRef<HTMLDivElement>(null);
+    const overlayBgRef = useRef<HTMLDivElement>(null);
+    
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [hasScrolledTable, setHasScrolledTable] = useState(false);
     const [isVideoEnded, setIsVideoEnded] = useState(false);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+    
+    const [mediaProgress, setMediaProgress] = useState(0);
+    const [isAllMediaLoaded, setIsAllMediaLoaded] = useState(false);
 
-    const { hasEntered, isMuted, setIsMuted, audioRef } = useGlobalContext();
+    const { hasEntered, setHasEntered, isMuted, setIsMuted, audioRef } = useGlobalContext();
+
+    useEffect(() => {
+        if (hasEntered) {
+            setIsAllMediaLoaded(true);
+            setMediaProgress(100);
+            return;
+        }
+
+        const imgElements = Array.from(document.querySelectorAll('img'));
+        const videoElements = Array.from(document.querySelectorAll('video'));
+        const totalMedia = imgElements.length + videoElements.length;
+
+        if (totalMedia === 0) {
+            setIsAllMediaLoaded(true);
+            setMediaProgress(100);
+            return;
+        }
+
+        let loadedCount = 0;
+        const mediaPromises: Promise<void>[] = [];
+
+        imgElements.forEach((img) => {
+            const src = img.getAttribute('src');
+            if (src) {
+                mediaPromises.push(new Promise<void>((resolve) => {
+                    const preloader = new Image();
+                    preloader.src = src;
+                    if (preloader.complete) {
+                        resolve();
+                    } else {
+                        preloader.onload = () => resolve();
+                        preloader.onerror = () => resolve();
+                    }
+                }));
+            } else {
+                mediaPromises.push(Promise.resolve());
+            }
+        });
+
+        videoElements.forEach((vid) => {
+            mediaPromises.push(new Promise<void>((resolve) => {
+                if (vid.readyState >= 3) {
+                    resolve();
+                } else {
+                    const onLoaded = () => resolve();
+                    vid.addEventListener('canplaythrough', onLoaded, { once: true });
+                    vid.addEventListener('error', onLoaded, { once: true });
+                    setTimeout(onLoaded, 5000);
+                }
+            }));
+        });
+
+        mediaPromises.forEach(p => p.then(() => {
+            loadedCount++;
+            setMediaProgress(Math.floor((loadedCount / totalMedia) * 100));
+        }));
+
+        Promise.all(mediaPromises).then(() => {
+            setIsAllMediaLoaded(true);
+            setMediaProgress(100);
+        });
+    }, [hasEntered]);
+
+    const handleEnter = () => {
+        if (audioRef.current) {
+            audioRef.current.volume = 0.5;
+            audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+        }
+        
+        if (overlayContainerRef.current && overlayBgRef.current) {
+            const tl = gsap.timeline({
+                onComplete: () => setHasEntered(true)
+            });
+            tl.to(overlayBgRef.current, { yPercent: -100, duration: 0.8, ease: "expo.inOut" })
+              .to(overlayContainerRef.current, { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.65")
+              .set(overlayContainerRef.current, { display: "none" });
+        } else {
+            setHasEntered(true);
+        }
+    };
     const router = useRouter();
 
     const specializations = [
@@ -290,6 +376,35 @@ export default function LandingPage() {
 
     return (
         <div ref={containerRef}>
+                {/* ---------- FIRST VISIT: Enter Experience Overlay ---------- */}
+                {!hasEntered && (
+                    <div
+                        ref={overlayContainerRef}
+                        className="fixed inset-0 z-[250] bg-[#ccff00] flex flex-col items-center justify-center"
+                    >
+                        <div ref={overlayBgRef} className="absolute inset-0 bg-[#0a0a0a]" />
+
+                        <div className="relative z-10 flex flex-col items-center">
+                            <div className="text-white text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4 mb-8">
+                                <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
+                                <span>WEINIX</span>
+                            </div>
+                            
+                            <div className="text-[#ccff00] text-sm font-mono mb-6 tracking-widest uppercase h-4">
+                                {!isAllMediaLoaded ? `Loading Assets... ${mediaProgress}%` : ''}
+                            </div>
+
+                            <button
+                                onClick={handleEnter}
+                                disabled={!isAllMediaLoaded}
+                                className={`text-white border border-white/30 px-8 py-3 rounded-full uppercase tracking-widest text-sm font-bold text-center transition-all duration-300 ${isAllMediaLoaded ? 'hover:bg-white hover:text-black cursor-pointer animate-pulse' : 'opacity-50 cursor-wait'}`}
+                            >
+                                {isAllMediaLoaded ? 'Enter Experience' : 'Preparing Experience...'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* ---------- BACKGROUND AUDIO (Landing Page Only) ---------- */}
                 <audio ref={audioRef} src="/music.mp3" loop preload="auto" />
 
