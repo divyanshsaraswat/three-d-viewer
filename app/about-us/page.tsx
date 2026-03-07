@@ -5,11 +5,67 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import BlurImage from '@/components/BlurImage';
-import { Factory, Recycle, Activity, Droplets, LineChart, Leaf, ArrowRight, ArrowDown, FactoryIcon } from 'lucide-react';
+import { Factory, Recycle, Activity, Droplets, LineChart, Leaf, ArrowRight, ArrowDown } from 'lucide-react';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 }
+
+const ScrollPath = () => {
+    const svgRef = useRef<SVGSVGElement>(null);
+    const pathRef = useRef<SVGPathElement>(null);
+    const glowRef = useRef<SVGPathElement>(null);
+
+    useGSAP(() => {
+        if (!pathRef.current || !glowRef.current) return;
+        
+        // Timeout to ensure DOM and path lengths are fully computed before measuring
+        setTimeout(() => {
+            if (!pathRef.current) return;
+            const length = pathRef.current.getTotalLength();
+            gsap.set([pathRef.current, glowRef.current], { strokeDasharray: length, strokeDashoffset: length });
+
+            gsap.to([pathRef.current, glowRef.current], {
+                strokeDashoffset: 0,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: document.documentElement,
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 1, // Smooth scrub
+                }
+            });
+        }, 100);
+    }, []);
+
+    // We use vectorEffect="non-scaling-stroke" to maintain line weight while preserveAspectRatio="none" stretches it
+    return (
+        <div className="absolute top-[10%] left-1/2 w-full max-w-[1200px] h-[80%] -translate-x-1/2 pointer-events-none z-0 hidden lg:block overflow-visible">
+            <svg ref={svgRef} className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                <path 
+                    ref={glowRef}
+                    d="M 50 0 L 50 12 L 15 12 L 15 28 L 50 28 L 50 48 L 85 48 L 85 64 L 50 64 L 50 78 L 15 78 L 15 90 L 50 90 L 50 100" 
+                    fill="none" 
+                    stroke="#ccff00" 
+                    strokeWidth="8" 
+                    vectorEffect="non-scaling-stroke"
+                    strokeLinejoin="round"
+                    className="opacity-30 blur-md"
+                />
+                <path 
+                    ref={pathRef}
+                    d="M 50 0 L 50 12 L 15 12 L 15 28 L 50 28 L 50 48 L 85 48 L 85 64 L 50 64 L 50 78 L 15 78 L 15 90 L 50 90 L 50 100" 
+                    fill="none" 
+                    stroke="#ccff00" 
+                    strokeWidth="2" 
+                    vectorEffect="non-scaling-stroke"
+                    strokeLinejoin="round"
+                    className="opacity-80"
+                />
+            </svg>
+        </div>
+    );
+};
 
 export default function AboutUsPage() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -47,11 +103,32 @@ export default function AboutUsPage() {
                 }
             });
         });
+
+        // Connected Cards illuminate when scrolled into center
+        const connectCards = gsap.utils.toArray('.connect-card') as HTMLElement[];
+        connectCards.forEach((card: HTMLElement) => {
+            ScrollTrigger.create({
+                trigger: card,
+                start: "top 60%",
+                end: "bottom 40%",
+                toggleClass: "active-connect-card",
+            });
+        });
+
     }, { scope: containerRef });
 
     return (
-        <main ref={containerRef} className="min-h-screen bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] pt-[20vh] pb-32 overflow-hidden font-sans text-black dark:text-white transition-colors duration-500">
+        <main ref={containerRef} className="relative min-h-screen bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] pt-[20vh] pb-32 overflow-hidden font-sans text-black dark:text-white transition-colors duration-500">
             
+            <style dangerouslySetInnerHTML={{__html: `
+                .active-connect-card {
+                    border-color: rgba(204, 255, 0, 0.6) !important;
+                    box-shadow: 0 0 40px rgba(204, 255, 0, 0.15) !important;
+                }
+            `}} />
+
+            <ScrollPath />
+
             {/* HERO SECTION */}
             <section className="relative w-full max-w-[1000px] mx-auto flex flex-col items-center justify-center text-center px-4 md:px-8 mb-32 z-10">
                 <span className="hero-badge bg-black/5 dark:bg-white/10 text-black dark:text-white border border-black/10 dark:border-white/20 font-semibold tracking-widest text-[10px] sm:text-xs px-6 py-2 rounded-full uppercase mb-8">
@@ -77,18 +154,18 @@ export default function AboutUsPage() {
             </section>
 
             {/* BENTO GRID 1: THE PROBLEM & SOLUTION */}
-            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32">
+            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     
                     {/* The Problem (Large Card) */}
-                    <div className="md:col-span-2 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 flex flex-col justify-between group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-all duration-500">
+                    <div className="connect-card md:col-span-2 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 flex flex-col justify-between group cursor-pointer hover:border-black/10 transition-colors duration-700">
                         <div>
                             <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter mb-6 leading-[1.1]">The Problem We Solve.</h2>
                             <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base leading-relaxed max-w-xl transition-colors font-medium">
                                 Millions of tonnes of clothing are discarded annually—shoved into landfills, burned, or left to leach microplastics. Standard industry practice treats garments as disposable, ignoring the locked-in value of their raw materials.
                             </p>
                         </div>
-                        <div className="mt-12 bg-gray-50 dark:bg-[#222] p-6 rounded-2xl border border-gray-100 dark:border-white/5 group-hover:bg-[#ccff00]/10 transition-colors duration-500">
+                        <div className="mt-12 bg-gray-50 dark:bg-[#222] p-6 rounded-2xl border border-gray-100 dark:border-white/5 group-hover:bg-[#ccff00]/5 transition-colors duration-500">
                             <p className="text-black dark:text-white font-semibold text-sm md:text-base leading-relaxed border-l-4 border-[#ccff00] pl-4">
                                 Weinix exists to unlock that value. We recover cotton fibers, polyester threads, and blended textiles, executing industrial-scale material recovery to ensure absolutely nothing ends up in a dumping yard.
                             </p>
@@ -96,7 +173,7 @@ export default function AboutUsPage() {
                     </div>
 
                     {/* Stat Card */}
-                    <div className="md:col-span-1 bg-[#ccff00] rounded-[2rem] p-8 flex flex-col items-center justify-center text-center text-black group overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform duration-500">
+                    <div className="connect-card md:col-span-1 bg-[#ccff00] border border-transparent rounded-[2rem] p-8 flex flex-col items-center justify-center text-center text-black group overflow-hidden relative cursor-pointer active:scale-[0.98] transition-all duration-700">
                         <div className="absolute right-0 top-0 opacity-10 transform translate-x-12 -translate-y-12 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 pointer-events-none">
                             <Leaf size={250} />
                         </div>
@@ -111,13 +188,13 @@ export default function AboutUsPage() {
             </section>
 
             {/* PIPELINE (HOW IT WORKS) - HORIZONTAL BENTO */}
-            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32">
+            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
                 <div className="mb-8">
                     <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-tighter mb-2">The Process</h2>
                     <p className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-[10px] sm:text-xs font-bold">Structured Recovery Pipeline</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                     {[
                         { step: "01", title: "Sorting / Grading", desc: "Categorized by material composition, condition, and fiber type for optimal recovery." },
                         { step: "02", title: "Shredding", desc: "Garments are mechanically shredded into reusable raw fiber feedstock. No chemicals." },
@@ -125,7 +202,7 @@ export default function AboutUsPage() {
                         { step: "04", title: "Thermal Press", desc: "Processed under extreme heat and pressure to cast secondary solid commodities." },
                         { step: "05", title: "Distribution", desc: "Deployed to manufacturing and construction sectors as sustainable input material." }
                     ].map((item, i) => (
-                        <div key={i} className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-between hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500 group cursor-pointer active:scale-[0.98]">
+                        <div key={i} className="connect-card bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-between transition-colors duration-700 group cursor-pointer active:scale-[0.98]">
                             <div>
                                 <div className="text-[#ccff00] font-bold text-xl mb-4 group-hover:scale-110 transition-transform origin-left">{item.step}</div>
                                 <h3 className="text-lg font-bold mb-3 tracking-tight leading-snug">{item.title}</h3>
@@ -137,14 +214,11 @@ export default function AboutUsPage() {
             </section>
 
             {/* BENTO GRID 2: CREATION & IMPACT */}
-            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative">
-                {/* Visual connecting line behind the grid */}
-                <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#ccff00]/20 to-transparent pointer-events-none hidden md:block"></div>
-
+            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 relative z-10">
                     
                     {/* What We Create */}
-                    <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 relative overflow-hidden group cursor-pointer hover:border-black/10 dark:hover:border-white/10 transition-all duration-500 active:scale-[0.98]">
+                    <div className="connect-card bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 relative overflow-hidden group cursor-pointer transition-colors duration-700 active:scale-[0.98]">
                         <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter mb-8 z-10 relative">What We Build</h2>
                         <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {[
@@ -164,7 +238,7 @@ export default function AboutUsPage() {
                     </div>
 
                     {/* Impact Measured */}
-                    <div className="bg-[#111] text-white rounded-[2rem] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all duration-500">
+                    <div className="connect-card bg-[#111] text-white border border-transparent rounded-[2rem] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all duration-700">
                          {/* Subtle grid bg */}
                         <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-1000" style={{ backgroundImage: 'radial-gradient(circle at center, #fff 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
                         
@@ -201,8 +275,8 @@ export default function AboutUsPage() {
             </section>
 
             {/* CIRCULAR LOOP - MASSIVE BENTO CARD */}
-            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32">
-                 <div className="bg-white dark:bg-[#222] border border-gray-100 dark:border-transparent rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-transform duration-500">
+            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
+                 <div className="connect-card bg-white dark:bg-[#222] border border-gray-100 dark:border-transparent rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
                      {/* Background overlay image clipping */}
                     <div className="absolute inset-0 z-0 bg-gray-100 dark:bg-[#111]">
                         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#0a0a0a] dark:via-[#111111]/40 to-transparent transition-colors duration-500 z-10"></div>
@@ -241,7 +315,7 @@ export default function AboutUsPage() {
             </section>
 
             {/* LEADERSHIP */}
-            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32">
+            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
                 <div className="mb-12">
                     <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-tighter mb-2">Leadership</h2>
                     <p className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold">The Visionaries behind the infrastructure</p>
@@ -249,7 +323,7 @@ export default function AboutUsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Laksh */}
-                    <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500 cursor-pointer active:scale-[0.98]">
+                    <div className="connect-card bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
                         <div className="w-32 h-32 md:w-32 md:h-32 shrink-0 rounded-[1.5rem] overflow-hidden border-2 border-white dark:border-[#222] shadow-sm relative">
                             <div className="w-full h-full grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1000ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
                                 <BlurImage src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=800&auto=format&fit=crop" alt="Laksh Sharma" className="w-full h-full object-cover" />
@@ -265,7 +339,7 @@ export default function AboutUsPage() {
                     </div>
 
                     {/* Deep */}
-                    <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group hover:border-black/10 dark:hover:border-white/10 transition-colors duration-500 cursor-pointer active:scale-[0.98]">
+                    <div className="connect-card bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
                         <div className="w-32 h-32 md:w-32 md:h-32 shrink-0 rounded-[1.5rem] overflow-hidden border-2 border-white dark:border-[#222] shadow-sm relative">
                             <div className="w-full h-full grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1000ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
                                 <BlurImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Deep Patel" className="w-full h-full object-cover" />
@@ -283,8 +357,8 @@ export default function AboutUsPage() {
             </section>
 
             {/* VISION STATEMENT */}
-            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section">
-                <div className="bg-[#ccff00] text-black border border-black/10 rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-transform duration-500">
+            <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section relative z-10">
+                <div className="connect-card bg-[#ccff00] text-black border border-black/10 rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
                     {/* Interactive background blobbiness simulation on hover */}
                     <div className="absolute top-0 left-0 w-full h-full bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("https://www.transparenttextures.com/patterns/noise-lines.png")'}}></div>
                     
