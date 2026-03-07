@@ -445,10 +445,10 @@ export default function LandingPage() {
                 <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
 
                     {/* Background Video */}
-                    <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center bg-black">
+                    <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center bg-black select-none">
                         <video
                             key="hero-video"
-                            className="hero-bg-video w-full h-full object-cover opacity-90"
+                            className="hero-bg-video w-full h-full object-cover opacity-90 pointer-events-none select-none"
                             autoPlay
                             loop
                             muted
@@ -458,15 +458,20 @@ export default function LandingPage() {
                             x-webkit-airplay="deny"
                             disablePictureInPicture
                             disableRemotePlayback
+                            controls={false}
+                            tabIndex={-1}
                             preload="auto"
+                            style={{ pointerEvents: 'none' }}
                             onCanPlayThrough={() => setIsVideoLoaded(true)}
                             onLoadedData={() => setIsVideoLoaded(true)}
                         >
                             <source src="hero-section 2.webm" type="video/webm" />
+                            <source src="hero-section-2.mp4" type="video/mp4" />
                         </video>
-                        {/* <div className="absolute inset-0 bg-black/15 z-[1]"></div> */}
+                        {/* Invisible layer to physically block ALL interactions on the video */}
+                        <div className="absolute inset-0 z-10 w-full h-full" style={{ touchAction: 'none' }} onContextMenu={(e) => e.preventDefault()}></div>
                         {/* Radial Gradient overlay focused on center */}
-                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,transparent_70%)] z-[2]"></div>
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,transparent_70%)] z-[2] pointer-events-none"></div>
                     </div>
 
                     {/* Content Overlay */}
@@ -733,7 +738,7 @@ export default function LandingPage() {
                 <ProductCarousel />
 
                 {/* ---------- SELECTED WORKS (VIDEO BLOCK) ---------- */}
-                <section className="py-32 px-4 md:px-8 bg-gray-50 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
+                {/* <section className="py-32 px-4 md:px-8 bg-gray-50 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
                     <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-16 animate-section">
                         <div className="md:w-1/3">
                             <h2 className="text-5xl md:text-6xl font-bold uppercase tracking-tighter mb-6">SELECTED<br />WORKS</h2>
@@ -759,7 +764,7 @@ export default function LandingPage() {
                             </div>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 {/* ---------- GENERAL PURPOSE BUILDINGS ---------- */}
                 <section className="py-32 px-4 md:px-8 max-w-[1200px] mx-auto relative animate-section text-black dark:text-white transition-colors duration-500">

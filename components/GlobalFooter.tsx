@@ -112,7 +112,7 @@ export default function GlobalFooter() {
 
                 {/* Footer Bottom Bar */}
                 <div className="pt-8 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center text-xs opacity-60 text-black dark:text-white transition-colors">
-                    <p>© 2026 WEINIX. All Rights Reserved.</p>
+                    <p>© {new Date().getFullYear()} WEINIX. All Rights Reserved.</p>
 
                     {/* Theme Toggle Pill */}
                     <div className="flex items-center justify-center rounded-[2rem] p-1.5 shadow-inner mt-4 md:mt-0 transition-colors">
