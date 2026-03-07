@@ -221,7 +221,7 @@ export default function LandingPage() {
     const [isVideoEnded, setIsVideoEnded] = useState(false);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
-    const { hasEntered } = useGlobalContext();
+    const { hasEntered, isMuted, setIsMuted, audioRef } = useGlobalContext();
     const router = useRouter();
 
     const specializations = [
@@ -262,22 +262,20 @@ export default function LandingPage() {
                 "-=0.3"
             );
 
-        // Section reveal animations
+        // Section reveal animations — use opacity + transform only (no autoAlpha/y) to avoid CLS
         const sections = gsap.utils.toArray('.animate-section') as HTMLElement[];
         sections.forEach((section: HTMLElement) => {
-            gsap.fromTo(section,
-                { autoAlpha: 0, y: 50 },
-                {
-                    autoAlpha: 1,
-                    y: 0,
-                    duration: 1,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: section,
-                        start: "top 85%",
-                    }
+            gsap.set(section, { opacity: 0, yPercent: 5 });
+            gsap.to(section, {
+                opacity: 1,
+                yPercent: 0,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 85%",
                 }
-            );
+            });
         });
 
         // Spinning badge
@@ -292,6 +290,43 @@ export default function LandingPage() {
 
     return (
         <div ref={containerRef}>
+                {/* ---------- BACKGROUND AUDIO (Landing Page Only) ---------- */}
+                <audio ref={audioRef} src="/music.mp3" loop preload="auto" />
+
+                {/* ---------- AUDIO TOGGLE ---------- */}
+                {hasEntered && (
+                    <button
+                        onClick={() => {
+                            if (audioRef.current) {
+                                audioRef.current.muted = !isMuted;
+                                setIsMuted(!isMuted);
+                            }
+                        }}
+                        className="fixed bottom-6 left-6 z-[100] w-12 h-12 rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-md flex justify-center cursor-pointer items-center hover:bg-white dark:hover:bg-white/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.1)] overflow-hidden group"
+                        aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+                    >
+                        {isMuted ? (
+                            <div className="w-5 h-[2px] bg-black dark:bg-white rounded-full transition-all duration-300"></div>
+                        ) : (
+                            <svg className="w-6 h-6 text-black dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <style dangerouslySetInnerHTML={{
+                                    __html: `
+                                    @keyframes wave {
+                                        0% { d: path("M3 12h2l2-2 3 4 3-4 3 4 2-2h3"); }
+                                        20% { d: path("M3 12h2l2-8 3 16 3-16 3 16 2-8h3"); }
+                                        40% { d: path("M3 12h2l2-4 3 8 3-8 3 8 2-4h3"); }
+                                        60% { d: path("M3 12h2l2-10 3 20 3-20 3 20 2-10h3"); }
+                                        80% { d: path("M3 12h2l2-6 3 12 3-12 3 12 2-6h3"); }
+                                        100% { d: path("M3 12h2l2-2 3 4 3-4 3 4 2-2h3"); }
+                                    }
+                                    .wave-path { animation: wave 1.2s infinite ease-in-out; }
+                                `}} />
+                                <path className="wave-path" d="M3 12h2l2-2 3 4 3-4 3 4 2-2h3" />
+                            </svg>
+                        )}
+                    </button>
+                )}
+
                 <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
 
                     {/* Background Video */}
@@ -312,7 +347,6 @@ export default function LandingPage() {
                             onCanPlayThrough={() => setIsVideoLoaded(true)}
                             onLoadedData={() => setIsVideoLoaded(true)}
                         >
-                            <source src="hero-section 2.mp4" type="video/mp4" />
                             <source src="hero-section 2.webm" type="video/webm" />
                         </video>
                         {/* <div className="absolute inset-0 bg-black/15 z-[1]"></div> */}
@@ -368,7 +402,7 @@ export default function LandingPage() {
                 <ScrollRevealText />
 
                 {/* ---------- SUBTLE TICKER ---------- */}
-                <div className="w-full bg-[#ccff00] py-4 md:py-6 transform -rotate-3 scale-110 my-12 overflow-hidden flex whitespace-nowrap z-20 relative border-y-[3px] border-black drop-shadow-lg">
+                <div className="w-full bg-[#ccff00] py-4 md:py-6 transform -rotate-3 scale-110 my-12 overflow-hidden flex whitespace-nowrap z-20 relative border-y-[3px] border-black drop-shadow-lg" style={{ contain: "content" }}>
                     <style dangerouslySetInnerHTML={{
                         __html: `
                         @keyframes ticker-marquee {
@@ -486,8 +520,8 @@ export default function LandingPage() {
                             </div>
                         </div>
 
-                        {/* Stage 1 (Center Big) */}
-                        <div className="md:col-span-2 md:row-span-2 rounded-[2rem] relative p-0 overflow-visible group cursor-pointer active:scale-[0.99] transition-transform duration-500 mt-0">
+                        {/* Stage 1 (Center Big) — hidden on mobile to prevent overlap */}
+                        <div className="hidden md:block md:col-span-2 md:row-span-2 rounded-[2rem] relative p-0 overflow-visible group cursor-pointer active:scale-[0.99] transition-transform duration-500 mt-0">
                             {/* Inner clipping context for background/overlay */}
                             <div className="absolute inset-0 rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-[#111111] border border-gray-200 dark:border-white/5">
                                 <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#0a0a0a] dark:via-[#111111]/40 to-transparent transition-colors duration-500 z-10"></div>
@@ -495,7 +529,7 @@ export default function LandingPage() {
 
                             {/* Outer pop-out image */}
                             <div className="absolute inset-x-0 bottom-0 top-[-15%] z-10 flex items-end justify-center pointer-events-none">
-                                <BlurImage src="centre.png" className="w-[110%] h-[110%] max-w-none object-contain object-bottom opacity-100 origin-bottom transition-transform duration-1400 ease-[cubic-bezier(0.87,0,0.13,1)] drop-shadow-2xl" alt="Collection" />
+                                <BlurImage src="centre.webp" className="w-[110%] h-[110%] max-w-none object-contain object-bottom opacity-100 origin-bottom transition-transform duration-1400 ease-[cubic-bezier(0.87,0,0.13,1)] drop-shadow-2xl" alt="Collection" />
                             </div>
 
                             {/* Ensure interactive elements sit above the image */}

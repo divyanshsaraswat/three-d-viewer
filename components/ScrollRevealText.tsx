@@ -75,14 +75,14 @@ export default function ScrollRevealText() {
         const items = gsap.utils.toArray('.reveal-item');
         const iconWrappers = gsap.utils.toArray<HTMLElement>('.icon-wrapper');
 
-        // Measure natural widths for sliding effect
+        // Instead of collapsing width to 0 (which causes CLS), keep natural width and
+        // just hide the icon via scale/opacity. This avoids text reflow entirely.
         iconWrappers.forEach(w => {
-            w.dataset.targetWidth = `${w.offsetWidth}px`;
-            gsap.set(w, { width: 0, opacity: 0 });
+            gsap.set(w, { opacity: 0 });
         });
 
         gsap.set(items, {
-            opacity: (i, target: any) => target.classList.contains('icon-item') ? 1 : 0.15,
+            opacity: (i, target: any) => target.classList.contains('icon-item') ? 0 : 0.15,
             scale: (i, target: any) => target.classList.contains('icon-item') ? 0 : 1,
             y: 0 // Normal baseline state for all items
         });
@@ -114,9 +114,8 @@ export default function ScrollRevealText() {
             if (isIcon) {
                 const wrapper = item.closest('.icon-wrapper');
                 
-                // Animate wrapper expanding to slide text
+                // Fade in the wrapper and scale up the icon (no width change = no CLS)
                 tl.to(wrapper, {
-                    width: wrapper.dataset.targetWidth,
                     opacity: 1,
                     duration: 0.2,
                     ease: "power2.out"
@@ -124,6 +123,7 @@ export default function ScrollRevealText() {
 
                 // Animate icon popping up
                 tl.to(item, {
+                    opacity: 1,
                     scale: 1,
                     duration: 0.2,
                     ease: "back.out(2)"
@@ -158,9 +158,9 @@ export default function ScrollRevealText() {
         });
     }, { scope: containerRef });
     return (
-        <section ref={containerRef} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden py-32 pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500">
+        <section ref={containerRef} className="relative w-full h-[100vh] flex items-center justify-center overflow-hidden pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500">
             {/* Background Ribbons */}
-            <div className="absolute inset-0 z-10 w-full h-full pointer-events-none">
+            <div className="absolute inset-0 z-10 pointer-events-none">
                 <AnimatedRibbons />
             </div>
 
@@ -169,14 +169,15 @@ export default function ScrollRevealText() {
                     const isIcon = w.type === 'icon';
                     const isHighlight = w.type === 'highlight';
 
-                    const typography = "text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight [text-shadow:0_4px_24px_rgba(255,255,255,1),_0_0_12px_rgba(255,255,255,1)] dark:[text-shadow:0_4px_24px_rgba(0,0,0,1),_0_0_12px_rgba(0,0,0,1)]";
+                    const typography = "text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight [text-shadow:0_2px_8px_rgba(255,255,255,0.4)] dark:[text-shadow:0_2px_8px_rgba(0,0,0,0.4)]";
                     const padding = "px-1 md:px-1.5";
+                    const willChange = { willChange: "transform, opacity" };
 
                     if (!isHighlight) {
                         if (isIcon) {
                             return (
                                 <span key={i} className="icon-wrapper inline-flex overflow-hidden mx-0 items-center justify-center">
-                                    <span className={`reveal-item icon-item ${typography} ${padding} text-black dark:text-white transition-colors inline-flex items-center justify-center transform origin-center`}>
+                                    <span className={`reveal-item icon-item ${typography} ${padding} text-black dark:text-white transition-colors inline-flex items-center justify-center transform origin-center`} style={willChange}>
                                         {w.text}
                                     </span>
                                 </span>
@@ -186,6 +187,7 @@ export default function ScrollRevealText() {
                             <span
                                 key={i}
                                 className={`reveal-item ${typography} ${padding} text-black dark:text-white transition-colors`}
+                                style={willChange}
                             >
                                 {w.text}
                             </span>
@@ -202,7 +204,7 @@ export default function ScrollRevealText() {
                     return (
                         <span key={i} className={`reveal-item highlight-item relative inline-flex items-center justify-center transform ${padding}`}>
                             {/* Inactive state text (looks identically spaced and placed like normal words) */}
-                            <span className={`${typography} text-black dark:text-white transition-colors relative z-10`}>
+                            <span className={`${typography} text-black dark:text-white transition-colors relative z-10`} style={willChange}>
                                 {w.text}
                             </span>
 

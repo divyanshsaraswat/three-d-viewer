@@ -186,7 +186,7 @@ export default function SpecializationCarousel() {
             </div>
 
             {/* The structural middle track */}
-            <div className="flex-grow w-full relative flex items-center overflow-hidden">
+            <div className="flex-grow w-full relative flex items-center overflow-hidden" style={{ contain: "layout style" }}>
                 <div
                     ref={wrapperRef}
                     className="flex h-[60vh] md:h-[65vh] w-fit items-center cursor-grab select-none will-change-transform pb-12"
@@ -200,12 +200,15 @@ export default function SpecializationCarousel() {
                     {specs.map((spec, i) => (
                         <div
                             key={spec.id}
-                            className="spec-card h-full rounded-[2rem] overflow-hidden relative shrink-0 shadow-lg group pointer-events-none will-change-transform bg-black/50"
+                            className="spec-card h-full rounded-[2rem] overflow-hidden relative shrink-0 shadow-lg group pointer-events-none bg-black/50"
+                            style={{ willChange: "width, transform", contain: "layout" }}
                         >
                             <div className="card-inner absolute top-0 left-0 h-full w-full">
                                 <img
                                     src={spec.image}
                                     alt={spec.title}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-auto"
                                     style={{ objectPosition: "center center" }}
                                 />

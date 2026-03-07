@@ -20,8 +20,8 @@ export default function GlobalNav() {
                     <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-white transition-colors">
                         <Link href="/landing" className="hover:opacity-70 transition-opacity">Home</Link>
                         <Link href="/about-us" className="hover:opacity-70 transition-opacity">About Us</Link>
-                        <a href="#" className="hover:opacity-70 transition-opacity">Project</a>
-                        <a href="#" className="hover:opacity-70 transition-opacity">Service</a>
+                        {/* <a href="#" className="hover:opacity-70 transition-opacity">Project</a> */}
+                        <a href="#" className="hover:opacity-70 transition-opacity">Products</a>
                         <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
                     </div>
                     <div className="flex items-center gap-6 text-white transition-colors">
@@ -43,8 +43,8 @@ export default function GlobalNav() {
                     <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
                         <Link href="/landing" className="hover:opacity-70 transition-opacity">Home</Link>
                         <Link href="/about-us" className="hover:opacity-70 transition-opacity">About Us</Link>
-                        <a href="#" className="hover:opacity-70 transition-opacity">Project</a>
-                        <a href="#" className="hover:opacity-70 transition-opacity">Service</a>
+                        {/* <a href="#" className="hover:opacity-70 transition-opacity">Project</a> */}
+                        <a href="#" className="hover:opacity-70 transition-opacity">Products</a>
                         <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
                     </div>
                     <div className="flex items-center gap-6 text-black dark:text-white transition-colors">

@@ -11,9 +11,9 @@ interface FullScreenMenuProps {
 }
 
 const navLinks = [
-    { title: "ABOUT US", num: "01" },
-    { title: "OUR WORK", num: "02" },
-    { title: "SERVICES", num: "03" },
+    { title: "HOME", num: "01" },
+    { title: "ABOUT US", num: "02" },
+    { title: "PRODUCTS", num: "03" },
     { title: "BLOG", num: "04" },
     { title: "CONTACT US", num: "05" },
 ];
@@ -108,7 +108,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                     <div className="flex-1 flex flex-col justify-center mt-16 md:mt-12 w-full max-w-md mx-auto">
                         {navLinks.map((link, idx) => {
                             const isAboutUs = link.title === "ABOUT US";
-                            const href = isAboutUs ? "/about-us" : `/#${link.title.toLowerCase().replace(' ', '-')}`;
+                            const href = isAboutUs ? "/about-us" : `/${link.title.toLowerCase().replace(' ', '-')}`;
 
                             return (
                                 <Link

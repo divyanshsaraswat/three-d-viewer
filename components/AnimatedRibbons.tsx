@@ -74,12 +74,22 @@ export default function AnimatedRibbons() {
     }, { scope: containerRef });
 
     return (
-        <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0 mix-blend-multiply dark:mix-blend-screen bg-transparent opacity-80">
+        <div ref={containerRef} 
+            className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0 mix-blend-multiply dark:mix-blend-screen bg-transparent opacity-80"
+            style={{ transform: "translate3d(0,0,0)" }}
+        >
             {/* Ambient background glow to anchor the ribbons */}
             <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-[#ccff00] rounded-full blur-[150px] opacity-[0.05] dark:opacity-[0.1]"></div>
             <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#ccff00] rounded-full blur-[200px] opacity-[0.05] dark:opacity-[0.1]"></div>
 
-            <svg className="absolute inset-0 w-full h-full drop-shadow-2xl" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg 
+                className="absolute inset-0 w-full h-full" 
+                viewBox="0 0 1440 900" 
+                preserveAspectRatio="xMidYMid slice" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ transform: "translate3d(0,0,0)" }}
+            >
                 
                 {/* Glow Filters and Bright Cores */}
                 <defs>
@@ -101,7 +111,7 @@ export default function AnimatedRibbons() {
                         <stop offset="100%" stopColor="#eeff99" />
                     </linearGradient>
 
-                    <filter id="ultraGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <filter id="ultraGlow" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
                         <feGaussianBlur stdDeviation="35" result="blur" />
                         <feMerge>
                             <feMergeNode in="blur" />
@@ -111,7 +121,7 @@ export default function AnimatedRibbons() {
                 </defs>
 
                 {/* Ribbon 1: Top Left */}
-                <g className="ribbon-wrapper" filter="url(#ultraGlow)">
+                <g className="ribbon-wrapper" filter="url(#ultraGlow)" style={{ willChange: "transform" }}>
                     <path 
                         className="ribbon-path ribbon-1"
                         d="M 350 -50 Q 250 100, 150 220" 
@@ -130,7 +140,7 @@ export default function AnimatedRibbons() {
                 </g>
 
                 {/* Ribbon 2: Top Right */}
-                <g className="ribbon-wrapper" filter="url(#ultraGlow)">
+                <g className="ribbon-wrapper" filter="url(#ultraGlow)" style={{ willChange: "transform" }}>
                     <path 
                         className="ribbon-path ribbon-2-back"
                         d="M 950 -50 Q 880 150, 770 280" 
@@ -166,7 +176,7 @@ export default function AnimatedRibbons() {
                 </g>
 
                 {/* Ribbon 3: Middle Left */}
-                <g className="ribbon-wrapper" filter="url(#ultraGlow)">
+                <g className="ribbon-wrapper" filter="url(#ultraGlow)" style={{ willChange: "transform" }}>
                     {/* Glowing Auras */}
                     <path 
                         className="ribbon-path ribbon-3-back2"
@@ -217,7 +227,7 @@ export default function AnimatedRibbons() {
                 </g>
 
                 {/* Ribbon 4: Bottom Right */}
-                <g className="ribbon-wrapper" filter="url(#ultraGlow)">
+                <g className="ribbon-wrapper" filter="url(#ultraGlow)" style={{ willChange: "transform" }}>
                     <path 
                         className="ribbon-path ribbon-4-back"
                         d="M 1100 580 Q 980 680, 900 800" 

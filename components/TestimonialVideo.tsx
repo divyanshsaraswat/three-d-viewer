@@ -89,7 +89,7 @@ export default function TestimonialVideo() {
         <div className="w-full max-w-[1000px] mx-auto mb-20 animate-section relative rounded-3xl overflow-hidden shadow-xl aspect-video bg-gray-200 dark:bg-gray-800 border border-gray-100 dark:border-white/10 group">
             <video
                 ref={videoRef}
-                src="loading.mp4"
+                src="loading.webm"
                 className="w-full h-full object-cover"
                 muted={isMuted}
                 playsInline
