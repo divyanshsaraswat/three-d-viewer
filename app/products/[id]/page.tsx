@@ -106,7 +106,6 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
     const unwrappedParams = typeof params === 'object' && 'then' in params ? use(params) : params;
     
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     const id = unwrappedParams.id;
     
     const [activeColor, setActiveColor] = useState(0);
