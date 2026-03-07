@@ -11,61 +11,7 @@ if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 }
 
-const ScrollPath = () => {
-    const svgRef = useRef<SVGSVGElement>(null);
-    const pathRef = useRef<SVGPathElement>(null);
-    const glowRef = useRef<SVGPathElement>(null);
 
-    useGSAP(() => {
-        if (!pathRef.current || !glowRef.current) return;
-        
-        // Timeout to ensure DOM and path lengths are fully computed before measuring
-        setTimeout(() => {
-            if (!pathRef.current) return;
-            const length = pathRef.current.getTotalLength();
-            gsap.set([pathRef.current, glowRef.current], { strokeDasharray: length, strokeDashoffset: length });
-
-            gsap.to([pathRef.current, glowRef.current], {
-                strokeDashoffset: 0,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: document.documentElement,
-                    start: "top top",
-                    end: "bottom bottom",
-                    scrub: 1, // Smooth scrub
-                }
-            });
-        }, 100);
-    }, []);
-
-    // We use vectorEffect="non-scaling-stroke" to maintain line weight while preserveAspectRatio="none" stretches it
-    return (
-        <div className="absolute top-[10%] left-1/2 w-full max-w-[1200px] h-[80%] -translate-x-1/2 pointer-events-none z-0 hidden lg:block overflow-visible">
-            <svg ref={svgRef} className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <path 
-                    ref={glowRef}
-                    d="M 50 0 L 50 12 L 15 12 L 15 28 L 50 28 L 50 48 L 85 48 L 85 64 L 50 64 L 50 78 L 15 78 L 15 90 L 50 90 L 50 100" 
-                    fill="none" 
-                    stroke="#ccff00" 
-                    strokeWidth="8" 
-                    vectorEffect="non-scaling-stroke"
-                    strokeLinejoin="round"
-                    className="opacity-30 blur-md"
-                />
-                <path 
-                    ref={pathRef}
-                    d="M 50 0 L 50 12 L 15 12 L 15 28 L 50 28 L 50 48 L 85 48 L 85 64 L 50 64 L 50 78 L 15 78 L 15 90 L 50 90 L 50 100" 
-                    fill="none" 
-                    stroke="#ccff00" 
-                    strokeWidth="2" 
-                    vectorEffect="non-scaling-stroke"
-                    strokeLinejoin="round"
-                    className="opacity-80"
-                />
-            </svg>
-        </div>
-    );
-};
 
 export default function AboutUsPage() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -104,30 +50,14 @@ export default function AboutUsPage() {
             });
         });
 
-        // Connected Cards illuminate when scrolled into center
-        const connectCards = gsap.utils.toArray('.connect-card') as HTMLElement[];
-        connectCards.forEach((card: HTMLElement) => {
-            ScrollTrigger.create({
-                trigger: card,
-                start: "top 60%",
-                end: "bottom 40%",
-                toggleClass: "active-connect-card",
-            });
-        });
+
 
     }, { scope: containerRef });
 
     return (
         <main ref={containerRef} className="relative min-h-screen bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] pt-[20vh] pb-32 overflow-hidden font-sans text-black dark:text-white transition-colors duration-500">
             
-            <style dangerouslySetInnerHTML={{__html: `
-                .active-connect-card {
-                    border-color: rgba(204, 255, 0, 0.6) !important;
-                    box-shadow: 0 0 40px rgba(204, 255, 0, 0.15) !important;
-                }
-            `}} />
 
-            <ScrollPath />
 
             {/* HERO SECTION */}
             <section className="relative w-full max-w-[1000px] mx-auto flex flex-col items-center justify-center text-center px-4 md:px-8 mb-32 z-10">
@@ -158,7 +88,7 @@ export default function AboutUsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     
                     {/* The Problem (Large Card) */}
-                    <div className="connect-card md:col-span-2 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 flex flex-col justify-between group cursor-pointer hover:border-black/10 transition-colors duration-700">
+                    <div className="md:col-span-2 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 flex flex-col justify-between group cursor-pointer hover:border-black/10 transition-colors duration-700">
                         <div>
                             <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter mb-6 leading-[1.1]">The Problem We Solve.</h2>
                             <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base leading-relaxed max-w-xl transition-colors font-medium">
@@ -173,7 +103,7 @@ export default function AboutUsPage() {
                     </div>
 
                     {/* Stat Card */}
-                    <div className="connect-card md:col-span-1 bg-[#ccff00] border border-transparent rounded-[2rem] p-8 flex flex-col items-center justify-center text-center text-black group overflow-hidden relative cursor-pointer active:scale-[0.98] transition-all duration-700">
+                    <div className="md:col-span-1 bg-[#ccff00] border border-transparent rounded-[2rem] p-8 flex flex-col items-center justify-center text-center text-black group overflow-hidden relative cursor-pointer active:scale-[0.98] transition-all duration-700">
                         <div className="absolute right-0 top-0 opacity-10 transform translate-x-12 -translate-y-12 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 pointer-events-none">
                             <Leaf size={250} />
                         </div>
@@ -202,7 +132,7 @@ export default function AboutUsPage() {
                         { step: "04", title: "Thermal Press", desc: "Processed under extreme heat and pressure to cast secondary solid commodities." },
                         { step: "05", title: "Distribution", desc: "Deployed to manufacturing and construction sectors as sustainable input material." }
                     ].map((item, i) => (
-                        <div key={i} className="connect-card bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-between transition-colors duration-700 group cursor-pointer active:scale-[0.98]">
+                        <div key={i} className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col justify-between transition-colors duration-700 group cursor-pointer active:scale-[0.98]">
                             <div>
                                 <div className="text-[#ccff00] font-bold text-xl mb-4 group-hover:scale-110 transition-transform origin-left">{item.step}</div>
                                 <h3 className="text-lg font-bold mb-3 tracking-tight leading-snug">{item.title}</h3>
@@ -218,27 +148,31 @@ export default function AboutUsPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 relative z-10">
                     
                     {/* What We Create */}
-                    <div className="connect-card bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 relative overflow-hidden group cursor-pointer transition-colors duration-700 active:scale-[0.98]">
-                        <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter mb-8 z-10 relative">What We Build</h2>
-                        <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative group cursor-pointer transition-colors duration-700 active:scale-[0.98]">
+                        <div className="relative z-10 w-full mb-8">
+                            <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter mb-4 text-black dark:text-white">What We Build</h2>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base font-medium max-w-sm">
+                                We engineer high-performance secondary commodities, deploying recovered materials back into active industrial life cycles.
+                            </p>
+                        </div>
+                        
+                        <div className="relative z-10 grid grid-cols-2 gap-4">
                             {[
-                                "Recycled fiber insulation for construction.",
-                                "Non-woven fabrics for industrial packaging.",
-                                "Composite padding for logistics & furniture.",
-                                "Blended fiber boards replacing virgin wood."
-                            ].map((text, i) => (
-                                <div key={i} className="flex flex-col items-start gap-3 bg-white dark:bg-[#222] p-5 rounded-2xl border border-gray-100 dark:border-white/5 group-hover:border-[#ccff00]/30 transition-colors">
-                                    <div className="w-8 h-8 rounded-full bg-black/5 dark:bg-[#111] border border-black/10 dark:border-white/10 flex items-center justify-center shrink-0">
-                                        <Recycle size={14} className="text-[#ccff00]" />
-                                    </div>
-                                    <p className="text-sm font-semibold text-black/80 dark:text-white/80">{text}</p>
+                                { text: "Fiber insulation for construction.", icon: Recycle },
+                                { text: "Fabrics for industrial packaging.", icon: Recycle },
+                                { text: "Composite padding for logistics.", icon: Recycle },
+                                { text: "Boards replacing virgin wood.", icon: Recycle }
+                            ].map((item, i) => (
+                                <div key={i} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group/mini">
+                                    <item.icon className="text-[#ccff00] mb-3 group-hover/mini:scale-110 transition-transform origin-bottom-left" size={20} />
+                                    <p className="text-[11px] leading-relaxed font-semibold text-black/60 dark:text-white/50">{item.text}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     {/* Impact Measured */}
-                    <div className="connect-card bg-[#111] text-white border border-transparent rounded-[2rem] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all duration-700">
+                    <div className="bg-[#111] text-white border border-transparent rounded-[2rem] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all duration-700">
                          {/* Subtle grid bg */}
                         <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-1000" style={{ backgroundImage: 'radial-gradient(circle at center, #fff 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
                         
@@ -276,7 +210,7 @@ export default function AboutUsPage() {
 
             {/* CIRCULAR LOOP - MASSIVE BENTO CARD */}
             <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
-                 <div className="connect-card bg-white dark:bg-[#222] border border-gray-100 dark:border-transparent rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
+                 <div className="bg-white dark:bg-[#222] border border-gray-100 dark:border-transparent rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
                      {/* Background overlay image clipping */}
                     <div className="absolute inset-0 z-0 bg-gray-100 dark:bg-[#111]">
                         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#0a0a0a] dark:via-[#111111]/40 to-transparent transition-colors duration-500 z-10"></div>
@@ -323,7 +257,7 @@ export default function AboutUsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Laksh */}
-                    <div className="connect-card bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
+                    <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
                         <div className="w-32 h-32 md:w-32 md:h-32 shrink-0 rounded-[1.5rem] overflow-hidden border-2 border-white dark:border-[#222] shadow-sm relative">
                             <div className="w-full h-full grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1000ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
                                 <BlurImage src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=800&auto=format&fit=crop" alt="Laksh Sharma" className="w-full h-full object-cover" />
@@ -339,7 +273,7 @@ export default function AboutUsPage() {
                     </div>
 
                     {/* Deep */}
-                    <div className="connect-card bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
+                    <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
                         <div className="w-32 h-32 md:w-32 md:h-32 shrink-0 rounded-[1.5rem] overflow-hidden border-2 border-white dark:border-[#222] shadow-sm relative">
                             <div className="w-full h-full grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1000ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
                                 <BlurImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Deep Patel" className="w-full h-full object-cover" />
@@ -358,7 +292,7 @@ export default function AboutUsPage() {
 
             {/* VISION STATEMENT */}
             <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section relative z-10">
-                <div className="connect-card bg-[#ccff00] text-black border border-black/10 rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
+                <div className="bg-[#ccff00] text-black border border-black/10 rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
                     {/* Interactive background blobbiness simulation on hover */}
                     <div className="absolute top-0 left-0 w-full h-full bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("https://www.transparenttextures.com/patterns/noise-lines.png")'}}></div>
                     

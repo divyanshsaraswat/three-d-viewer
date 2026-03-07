@@ -926,7 +926,7 @@ export default function LandingPage() {
 
                     <TestimonialVideo />
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-section text-left px-8">
+                    {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-section text-left px-8">
                         {[1, 2, 3].map((_, i) => (
                             <div key={i} className="bg-white dark:bg-[#1a1a1a] p-8 rounded-3xl shadow-sm border border-gray-200 dark:border-white/5 transition-colors duration-500">
                                 <div className="flex items-center gap-4 mb-6">
@@ -957,7 +957,7 @@ export default function LandingPage() {
                         <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-10 py-4 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
                             View All
                         </button>
-                    </div>
+                    </div> */}
                 </section>
             </div>
     );

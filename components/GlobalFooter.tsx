@@ -8,7 +8,7 @@ export default function GlobalFooter() {
     const { theme, setTheme } = useGlobalContext();
 
     return (
-        <footer className="relative pt-32 pb-12 px-4 md:px-8 mt-12 bg-gray-100 dark:bg-[#0a0a0a] transition-colors duration-500 overflow-hidden">
+        <footer className="relative  pb-12 px-4 md:px-8 mt-12 bg-gray-100 dark:bg-[#0a0a0a] transition-colors duration-500 overflow-hidden">
             {/* Background subtle lines */}
             <div className="absolute inset-0 opacity-10 dark:opacity-5 mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.1) 4px, rgba(0,0,0,0.1) 5px)' }}></div>
 

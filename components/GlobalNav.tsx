@@ -21,8 +21,8 @@ export default function GlobalNav() {
                         <Link href="/landing" className="hover:opacity-70 transition-opacity">Home</Link>
                         <Link href="/about-us" className="hover:opacity-70 transition-opacity">About Us</Link>
                         {/* <a href="#" className="hover:opacity-70 transition-opacity">Project</a> */}
-                        <a href="#" className="hover:opacity-70 transition-opacity">Products</a>
-                        <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
+                        <Link href="/products" className="hover:opacity-70 transition-opacity">Products</Link>
+                        <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link>
                     </div>
                     <div className="flex items-center gap-6 text-white transition-colors">
                         <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
@@ -44,8 +44,8 @@ export default function GlobalNav() {
                         <Link href="/landing" className="hover:opacity-70 transition-opacity">Home</Link>
                         <Link href="/about-us" className="hover:opacity-70 transition-opacity">About Us</Link>
                         {/* <a href="#" className="hover:opacity-70 transition-opacity">Project</a> */}
-                        <a href="#" className="hover:opacity-70 transition-opacity">Products</a>
-                        <a href="#" className="hover:opacity-70 transition-opacity">Blog</a>
+                        <Link href="/products" className="hover:opacity-70 transition-opacity">Products</Link>
+                        <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link>
                     </div>
                     <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
                         <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
