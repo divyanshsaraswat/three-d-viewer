@@ -1,90 +1,138 @@
 import React from 'react';
 import BlurImage from '@/components/BlurImage';
+import { ShoppingBag, Smartphone, RefreshCcw, Truck } from 'lucide-react';
 
 export default function AboutUsPage() {
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] pt-[15vh] pb-32 px-4 md:px-8 overflow-hidden font-geist">
+        <main className="min-h-screen bg-white dark:bg-[#0a0a0a] pt-[15vh] pb-32 px-4 md:px-8 overflow-hidden font-sans">
             {/* Ambient Background Glows */}
-            <div className="absolute top-0 left-[20%] w-[60vw] h-[60vh] bg-[#ccff00] rounded-[100%] blur-[150px] opacity-[0.03] dark:opacity-[0.05] pointer-events-none" />
+            <div className="absolute top-0 left-[20%] w-[60vw] h-[60vh] bg-[#2E8B57] rounded-[100%] blur-[150px] opacity-[0.05] dark:opacity-[0.08] pointer-events-none" />
             
-            <div className="max-w-7xl mx-auto relative z-10">
+            <div className="max-w-5xl mx-auto relative z-10 text-black dark:text-white transition-colors duration-500">
                 
-                {/* 1. UMBRELLA ORGANIZATION HERO */}
-                <section className="mb-32 md:mb-48 text-center max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[50vh]">
-                    <span className="inline-block py-2 px-4 rounded-full border border-black/10 dark:border-white/10 text-xs font-bold tracking-widest uppercase mb-8 text-black/60 dark:text-white/60 bg-white/50 dark:bg-black/50 backdrop-blur-sm">
-                        Our Genesis
+                {/* 1. HERO & INTRO */}
+                <section className="mb-24 text-center flex flex-col items-center justify-center">
+                    <span className="inline-block py-2 px-4 rounded-full border border-black/10 dark:border-white/10 text-xs font-bold tracking-widest uppercase mb-8 text-black/60 dark:text-white/60 bg-gray-50 dark:bg-black/50 backdrop-blur-sm">
+                        About Us
                     </span>
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-black dark:text-white leading-[1.1] mb-8">
-                        Powered by <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#ccff00] to-[#88aa00]">
-                            Umbrella Org.
-                        </span>
+                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-8">
+                        Re-verse: <span className="text-[#2E8B57] font-serif italic font-normal">The Operating System for Circular Fashion</span>
                     </h1>
-                    <p className="text-lg md:text-xl text-black/70 dark:text-white/70 leading-relaxed font-medium max-w-2xl mx-auto">
-                        We are an initiative born from the vision of Umbrella Org, dedicated to proving that premium quality and absolute sustainability are not mutually exclusive. 
-                        We reimagine waste into uncompromising luxury.
+                    <p className="text-lg md:text-xl text-black/70 dark:text-white/70 max-w-3xl mx-auto leading-relaxed">
+                        A circular economy driven sustainable fashion marketplace tracking apparel from production to end-of-life—creating transparency, accountability, and real residual value.
                     </p>
                 </section>
 
-                {/* 2. FOUNDERS SECTION */}
-                <section>
-                    <div className="flex flex-col md:flex-row items-center justify-between mb-16 md:mb-24">
-                        <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-black dark:text-white">
-                            The Visionaries
-                        </h2>
-                        <span className="text-[#ccff00] font-bold tracking-widest uppercase text-sm mt-4 md:mt-0">
-                            Leadership Team
-                        </span>
+                {/* 2. CORE PILLARS GRID */}
+                <section className="mb-32">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        {/* Pillar 1 */}
+                        <div className="bg-gray-50 dark:bg-[#111] border border-black/5 dark:border-white/5 rounded-3xl p-8 md:p-10 transition-colors">
+                            <div className="w-12 h-12 bg-[#2E8B57] rounded-full flex items-center justify-center mb-6 text-[#2E8B57]">
+                                <ShoppingBag strokeWidth={2} color='white' />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Traceable Marketplace</h3>
+                            <p className="text-black/70 dark:text-white/70 leading-relaxed text-balance">
+                                Every product sold is traceable. Its material origin, production journey, and ownership history are recorded from day one. Apparel is treated as a managed asset, not a disposable good.
+                            </p>
+                        </div>
+
+                        {/* Pillar 2 */}
+                        <div className="bg-gray-50 dark:bg-[#111] border border-black/5 dark:border-white/5 rounded-3xl p-8 md:p-10 transition-colors">
+                            <div className="w-12 h-12 bg-[#2E8B57] rounded-full flex items-center justify-center mb-6 text-[#2E8B57]">
+                                <Smartphone strokeWidth={2} color='white' />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Digital Wardrobe</h3>
+                            <p className="text-black/70 dark:text-white/70 leading-relaxed text-balance">
+                                A personal management system to catalog and verify your apparel. Proprietary valuation algorithms assign a base value, presenting a real-time assessment of your entire wardrobe's economic value.
+                            </p>
+                        </div>
+
+                        {/* Pillar 3 */}
+                        <div className="bg-gray-50 dark:bg-[#111] border border-black/5 dark:border-white/5 rounded-3xl p-8 md:p-10 transition-colors">
+                            <div className="w-12 h-12 bg-[#2E8B57] rounded-full flex items-center justify-center mb-6 text-[#2E8B57]">
+                                <RefreshCcw strokeWidth={2} color='white' />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Decentralized Trade Layer</h3>
+                            <p className="text-black/70 dark:text-white/70 leading-relaxed text-balance">
+                                Items become anonymously discoverable. Buyers place offers and transactions settle seamlessly via our integrated FinTech wallet, ensuring provenance, ownership integrity, and liquidity.
+                            </p>
+                        </div>
+
+                        {/* Pillar 4 */}
+                        <div className="bg-gray-50 dark:bg-[#111] border border-black/5 dark:border-white/5 rounded-3xl p-8 md:p-10 transition-colors bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#111] dark:to-[#1a1a1a]">
+                            <div className="w-12 h-12 bg-[#2E8B57] rounded-full flex items-center justify-center mb-6 text-white shadow-lg">
+                                <Truck strokeWidth={2} color='white' />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Waste Procurement</h3>
+                            <p className="text-black/70 dark:text-white/70 leading-relaxed text-balance">
+                                A gig-based logistics network absorbs large volumes of post-consumer clothing. We route collected waste to hubs where it is repurposed into secondary commodities, ensuring minimal landfill dependency.
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+                    <div className="mt-16 text-center max-w-4xl mx-auto">
+                        <p className="text-xl md:text-3xl font-serif text-black dark:text-white leading-relaxed">
+                            "Re-verse is not positioned as a fashion marketplace alone, but as an <span className="text-[#2E8B57] italic">infrastructure layer</span> for sustainable ownership, value preservation, and circular trade."
+                        </p>
+                    </div>
+                </section>
+
+                {/* 3. FOUNDERS SECTION */}
+                <section className="max-w-4xl mx-auto">
+                    <div className="mb-16">
+                        <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-black dark:text-white font-serif">
+                            Leadership
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-16">
                         
-                        {/* Founder 1 */}
-                        <div className="group flex flex-col items-start w-full">
-                            <div className="relative w-full aspect-[4/5] md:aspect-square mb-8 overflow-hidden rounded-[2rem] bg-gray-200 dark:bg-[#1a1a1a]">
-                                <div className="absolute inset-0 border border-black/5 dark:border-white/5 rounded-[2rem] z-20 pointer-events-none" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                
-                                {/* Wrap BlurImage in an animating div so it doesn't fight Tailwind transitions */}
-                                <div className="w-full h-full transform group-hover:scale-105 transition-transform duration-[1200ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
-                                    <BlurImage 
-                                        src="mesh.png" // Placeholder - Update with actual founder image
-                                        alt="Founder One"
-                                        className="w-full h-full object-cover"
-                                    />
+                        {/* Founder 1: Laksh Sharma */}
+                        <div className="flex flex-col md:flex-row gap-8 items-center group">
+                            <div className="w-full sm:w-2/3 md:w-1/3 shrink-0 mx-auto">
+                                <div className="relative w-full aspect-[3/4] overflow-hidden rounded-[1rem] bg-gray-100 dark:bg-[#1a1a1a] shadow-xl">
+                                    <div className="w-full h-full transform-gpu group-hover:scale-[1.05] transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,1,0.5,1)] will-change-transform">
+                                        <BlurImage 
+                                            src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=800&auto=format&fit=crop" 
+                                            alt="Laksh Sharma"
+                                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-700 ease-in-out"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div className="px-2">
-                                <h3 className="text-3xl font-bold text-black dark:text-white mb-2">Jane Doe</h3>
-                                <p className="text-[#ccff00] font-bold text-sm uppercase tracking-widest mb-6">Co-Founder & CEO</p>
-                                <p className="text-black/70 dark:text-white/70 leading-relaxed max-w-md">
-                                    With over 15 years in sustainable material sciences, Jane pioneered the weaving techniques that allow us to transform rescued fibers into textiles that rival Egyptian cotton in softness and durability.
+                            <div className="flex-1 text-center md:text-left pt-4">
+                                <h3 className="text-3xl font-bold text-black dark:text-white mb-2">Laksh Sharma</h3>
+                                <p className="text-[#2E8B57] font-bold text-sm uppercase tracking-widest mb-6">Co-Founder & CEO</p>
+                                <p className="text-black/70 dark:text-white/70 leading-relaxed text-lg max-w-xl mx-auto md:mx-0">
+                                    With deep roots in the clothing industry, Laksh brings hands-on exposure to manufacturing processes rather than surface-level retail. His long-term vision is to drive manufacturing toward a net-zero future by redesigning how apparel is produced and reused—making sustainability economically viable.
                                 </p>
                             </div>
                         </div>
 
-                        {/* Founder 2 (Offset structurally for aesthetic cascade) */}
-                        <div className="group flex flex-col items-start w-full md:mt-32">
-                            <div className="relative w-full aspect-[4/5] md:aspect-square mb-8 overflow-hidden rounded-[2rem] bg-gray-200 dark:bg-[#1a1a1a]">
-                                <div className="absolute inset-0 border border-black/5 dark:border-white/5 rounded-[2rem] z-20 pointer-events-none" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                
-                                <div className="w-full h-full transform group-hover:scale-105 transition-transform duration-[1200ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
-                                    <BlurImage 
-                                        src="weaving-1.webp" // Placeholder - Update with actual founder image
-                                        alt="Founder Two"
-                                        className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div className="px-2">
-                                <h3 className="text-3xl font-bold text-black dark:text-white mb-2">John Smith</h3>
-                                <p className="text-[#ccff00] font-bold text-sm uppercase tracking-widest mb-6">Co-Founder & CCO</p>
-                                <p className="text-black/70 dark:text-white/70 leading-relaxed max-w-md">
-                                    John's background in Parisian luxury fashion houses drives the meticulous design and branding of Weinix. He ensures every seam, stitch, and pixel reflects uncompromising quality.
+                        <div className="w-full h-px bg-black/10 dark:bg-white/10 my-4 hidden md:block" />
+
+                        {/* Founder 2: Deep Patel */}
+                        <div className="flex flex-col-reverse md:flex-row gap-8 items-center group">
+                            <div className="flex-1 text-center md:text-right pt-4">
+                                <h3 className="text-3xl font-bold text-black dark:text-white mb-2">Deep Patel</h3>
+                                <p className="text-[#2E8B57] font-bold text-sm uppercase tracking-widest mb-6">Co-Founder & COO</p>
+                                <p className="text-black/70 dark:text-white/70 leading-relaxed text-lg max-w-xl mx-auto md:ml-auto md:mr-0">
+                                    With a background in mechanical engineering, Deep brings a strong systems-oriented mindset. He leads day-to-day operations, translating the Re-verse vision into structured, highly optimized workflows. He enables the complex gig-based logistical models to scale with ruthless efficiency.
                                 </p>
+                            </div>
+
+                            <div className="w-full sm:w-2/3 md:w-1/3 shrink-0 mx-auto">
+                                <div className="relative w-full aspect-[3/4] overflow-hidden rounded-[1rem] bg-gray-100 dark:bg-[#1a1a1a] shadow-xl">
+                                    <div className="w-full h-full transform-gpu group-hover:scale-[1.05] transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,1,0.5,1)] will-change-transform">
+                                        <BlurImage 
+                                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" 
+                                            alt="Deep Patel"
+                                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-700 ease-in-out"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

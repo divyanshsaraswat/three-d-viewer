@@ -15,26 +15,26 @@ export default function GlobalFooter() {
             <div className="max-w-[1200px] mx-auto relative z-10">
 
                 {/* CTA Floating Card */}
-                <div className="bg-white dark:bg-[#111111] rounded-[3rem] p-10 md:p-16 mb-24 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-12 border border-black/5 dark:border-white/5 transition-colors">
-                    <div className="flex-1 max-w-2xl">
-                        <h3 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-black dark:text-white leading-[1.1] mb-10 transition-colors">
+                <div className="bg-white dark:bg-[#111111] rounded-[2rem] md:rounded-[3rem] p-6 sm:p-10 md:p-16 mb-24 shadow-2xl flex flex-col-reverse lg:flex-row items-center justify-between gap-8 md:gap-12 border border-black/5 dark:border-white/5 transition-colors overflow-hidden">
+                    <div className="flex-1 w-full max-w-2xl text-center lg:text-left">
+                        <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-black dark:text-white leading-[1.1] mb-8 md:mb-10 transition-colors">
                             Let&apos;s Turn Big Ideas Into Extraordinary Realities – Together
                         </h3>
-                        <div className="flex flex-wrap items-center gap-4">
-                            <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
+                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                            <button className="w-full sm:w-auto bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
                                 Contact Sales
                             </button>
-                            <button className="bg-transparent border border-black/20 dark:border-white/20 hover:border-black dark:hover:border-white text-black dark:text-white px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase flex items-center gap-2 transition-colors">
+                            <button className="w-full sm:w-auto justify-center bg-transparent border border-black/20 dark:border-white/20 hover:border-black dark:hover:border-white text-black dark:text-white px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase flex items-center gap-2 transition-colors">
                                 <ArrowRight size={16} /> Book a Consultation
                             </button>
                         </div>
                     </div>
 
                     {/* Abstract Brand Graphic */}
-                    <div className="shrink-0 relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
-                        <div className="absolute inset-0 rounded-full border-[1.5rem] md:border-[2rem] border-[#ccff00]"></div>
-                        <div className="absolute w-20 h-20 md:w-28 md:h-28 bg-[#ccff00] rounded-full"></div>
-                        <div className="absolute top-0 right-1/2 translate-x-12 -translate-y-4 md:translate-x-16 md:-translate-y-6 w-10 h-10 md:w-14 md:h-14 bg-[#ccff00] rounded-full"></div>
+                    <div className="shrink-0 relative w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 flex items-center justify-center mt-4 lg:mt-0">
+                        <div className="absolute inset-0 rounded-full border-[1rem] sm:border-[1.5rem] md:border-[2rem] border-[#ccff00]"></div>
+                        <div className="absolute w-14 h-14 sm:w-20 sm:h-20 md:w-28 md:h-28 bg-[#ccff00] rounded-full"></div>
+                        <div className="absolute top-0 right-1/2 translate-x-8 -translate-y-2 sm:translate-x-12 sm:-translate-y-4 md:translate-x-16 md:-translate-y-6 w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 bg-[#ccff00] rounded-full"></div>
                     </div>
                 </div>
 

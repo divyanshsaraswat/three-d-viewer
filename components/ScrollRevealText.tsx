@@ -85,49 +85,66 @@ export default function ScrollRevealText() {
             force3D: true // Force GPU acceleration
         });
 
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: containerRef.current,
-                start: "top top",
-                end: "+=120%", // Slightly reduced scroll length so it feels more responsive
-                scrub: 1.5, // Added smoothing to the scrub so it catches up gracefully
-                pin: true,
-                anticipatePin: 1,
-                fastScrollEnd: true, // Optimizes fast scrolling
-                onRefresh: () => {
-                    if (containerRef.current?.parentElement?.classList.contains('pin-spacer')) {
-                        containerRef.current.parentElement.style.pointerEvents = 'none';
-                    }
-                }
-            }
-        });
-
         const totalItems = items.length;
 
-        // Batch processing the timeline creation significantly reduces JS overhead
-        items.forEach((item: any, i) => {
-            const isIcon = item.classList.contains('icon-item');
-            const isHighlight = item.classList.contains('highlight-item');
+        // Use matchMedia to separate mobile (not sticky) vs desktop (sticky)
+        let mm = gsap.matchMedia();
 
-            // Map staggering proportionally to scroll height
-            const startTime = (i / totalItems) * 1.0; 
+        mm.add({
+            isDesktop: "(min-width: 768px)",
+            isMobile: "(max-width: 767px)"
+        }, (context) => {
+            let { isDesktop } = context.conditions as { isDesktop: boolean, isMobile: boolean };
 
-            if (isIcon) {
-                const wrapper = item.closest('.icon-wrapper');
-                tl.to(wrapper, { opacity: 1, duration: 0.1, ease: "none", force3D: true }, startTime)
-                  .to(item, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(2)", force3D: true }, startTime);
-            } else {
-                tl.to(item, { opacity: 1, duration: 0.1, ease: "none", force3D: true }, startTime);
-            }
-
-            if (isHighlight) {
-                tl.to(item, { scale: 1, duration: 0.15, ease: "back.out(1.5)", force3D: true }, startTime);
-                const overlay = item.querySelector('.highlight-overlay');
-                if (overlay) {
-                    tl.to(overlay, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(1.5)", force3D: true }, startTime);
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: containerRef.current,
+                    start: isDesktop ? "top top" : "top 60%", // Pin from top on desktop, trigger lower down on mobile
+                    end: isDesktop ? "+=150%" : "bottom top", 
+                    scrub: isDesktop ? 1.5 : false, // Scrub only on desktop
+                    pin: isDesktop, // Pin only on desktop
+                    anticipatePin: isDesktop ? 1 : 0,
+                    toggleActions: isDesktop ? "play none none none" : "play none none reverse", // Mobile relies on toggleActions
+                    fastScrollEnd: true, 
+                    onRefresh: () => {
+                        if (isDesktop && containerRef.current?.parentElement?.classList.contains('pin-spacer')) {
+                            containerRef.current.parentElement.style.pointerEvents = 'none';
+                        }
+                    }
                 }
-            }
+            });
+
+            // Batch processing the timeline creation significantly reduces JS overhead
+            items.forEach((item: any, i) => {
+                const isIcon = item.classList.contains('icon-item');
+                const isHighlight = item.classList.contains('highlight-item');
+
+                // On desktop, stagger across the total scroll distance (0 to ~1.0 timeline progress)
+                // On mobile, play at a fixed quick speed
+                const startTime = isDesktop ? (i / totalItems) * 1.0 : i * 0.08; 
+
+                if (isIcon) {
+                    const wrapper = item.closest('.icon-wrapper');
+                    tl.to(wrapper, { opacity: 1, duration: 0.1, ease: "none", force3D: true }, startTime)
+                      .to(item, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(2)", force3D: true }, startTime);
+                } else {
+                    tl.to(item, { opacity: 1, duration: 0.1, ease: "none", force3D: true }, startTime);
+                }
+
+                if (isHighlight) {
+                    tl.to(item, { scale: 1, duration: 0.15, ease: "back.out(1.5)", force3D: true }, startTime);
+                    const overlay = item.querySelector('.highlight-overlay');
+                    if (overlay) {
+                        tl.to(overlay, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(1.5)", force3D: true }, startTime);
+                    }
+                }
+            });
+            
+            return () => {
+                // Cleanup tl if needed. MatchMedia handles most of it automatically.
+            };
         });
+
     }, { scope: containerRef });
 
     // Grouping adjacent pure words drastically reduces DOM count
@@ -186,7 +203,7 @@ export default function ScrollRevealText() {
     });
 
     return (
-        <section ref={containerRef} className="relative w-full h-[100vh] flex items-center justify-center overflow-hidden pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500" style={{ contain: 'paint' }}>
+        <section ref={containerRef} className="relative w-full min-h-[100vh] py-24 flex items-center justify-center overflow-hidden pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500" style={{ contain: 'paint' }}>
             {/* Background Ribbons */}
             <div className="absolute inset-0 z-10 pointer-events-none">
                 <AnimatedRibbons />
