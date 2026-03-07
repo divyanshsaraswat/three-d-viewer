@@ -42,7 +42,7 @@ export default function LandingPage() {
           </button>
 
           <Link
-            href="/landing"
+            href="/home"
             className="px-8 py-3 bg-black/5 dark:bg-white/5 text-black dark:text-white font-semibold rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-all border border-black/10 dark:border-white/10 flex items-center gap-2 backdrop-blur-sm"
           >
             View Landing Page

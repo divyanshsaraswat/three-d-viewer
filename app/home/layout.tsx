@@ -8,12 +8,12 @@ export const metadata: Metadata = {
   title: "Architecture Landing",
   description: landingDescription,
   alternates: {
-    canonical: "/landing",
+    canonical: "/home",
   },
   openGraph: {
     title: `Architecture Landing | ${siteConfig.name}`,
     description: landingDescription,
-    url: "/landing",
+    url: "/home",
     images: [
       {
         url: "/build-1.png",

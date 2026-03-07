@@ -8,7 +8,7 @@ import { useGlobalContext } from '@/context/GlobalContext';
 // Map routes to display titles
 function getPageTitle(pathname: string): string {
     const map: Record<string, string> = {
-        '/landing': 'HOME',
+        '/home': 'HOME',
         '/about-us': 'ABOUT US',
         '/': 'HOME',
     };

@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/landing`,
+      url: `${siteUrl}/home`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.7,

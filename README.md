@@ -40,7 +40,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 This project features a fully integrated frontend built on responsive TailwindCSS and GSAP animations, supporting Light/Dark themes contextually.
 
 Core public routes include:
-- `/landing`: The primary experiential homepage featuring 3D reveals and scroll-driven messaging.
+- `/home`: The primary experiential homepage featuring 3D reveals and scroll-driven messaging.
 - `/about-us`: Corporate philosophy page highlighting impact metrics and recovery hubs.
 - `/products` & `/products/[id]`: A dynamic high-end storefront (Bento Grid layout + Carousel) and individual product configuration views supporting variations and details.
 - `/blog` & `/blog/[id]`: The Weinix Journal. Features a frosted glass UI post grid and distraction-free Medium-style individual reading environments tailored for long-form content.
