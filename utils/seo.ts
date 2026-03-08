@@ -9,21 +9,21 @@ function normalizeSiteUrl(value: string): string {
 }
 
 export const siteConfig = {
-  name: "3D Model Viewer",
+  name: "WEINIX",
   description:
-    "View, inspect, and share OBJ, FBX, GLTF, and STL 3D models directly in your browser with fast loading and interactive controls.",
+    "Revolutionizing building materials through circularity. We craft structural-grade architectural surfaces from recycled textiles, merging environmental conscience with premium design.",
   creator: "Divyansh Saraswat",
   keywords: [
-    "3D model viewer",
-    "online 3D viewer",
-    "GLTF viewer",
-    "OBJ viewer",
-    "FBX viewer",
-    "STL viewer",
-    "Three.js viewer",
-    "React Three Fiber",
-    "3D asset inspection",
-    "web-based 3D editor",
+    "WEINIX",
+    "sustainable building materials",
+    "recycled textile panels",
+    "circular economy architecture",
+    "eco-friendly construction",
+    "structural textile surfaces",
+    "green building technology",
+    "sustainable architectural design",
+    "recycled materials in construction",
+    "3D material inspection tool",
   ],
 } as const;
 

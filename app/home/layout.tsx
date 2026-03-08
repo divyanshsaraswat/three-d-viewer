@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/utils/seo";
 
 const landingDescription =
-  "Explore a high-impact architecture landing experience with bold visuals, animated storytelling, and modern design sections.";
+  "Revolutionary building materials crafted from recycled textiles. Structural strength meets environmental conscience. Build sustainable with WEINIX.";
 
 export const metadata: Metadata = {
-  title: "Architecture Landing",
+  title: "Live Purposeful",
   description: landingDescription,
   alternates: {
     canonical: "/home",
   },
   openGraph: {
-    title: `Architecture Landing | ${siteConfig.name}`,
+    title: `Live Purposeful | ${siteConfig.name}`,
     description: landingDescription,
     url: "/home",
     images: [
@@ -19,13 +19,13 @@ export const metadata: Metadata = {
         url: "/build-1.png",
         width: 1200,
         height: 630,
-        alt: "Architecture landing page preview",
+        alt: "WEINIX - Sustainable Architectural Surfaces",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Architecture Landing | ${siteConfig.name}`,
+    title: `Live Purposeful | ${siteConfig.name}`,
     description: landingDescription,
     images: ["/build-1.png"],
   },

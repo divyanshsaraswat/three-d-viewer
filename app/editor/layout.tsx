@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/utils/seo";
 
 const editorDescription =
-  "Upload and inspect 3D files in the browser, adjust scene settings, and save your preferred viewer configuration.";
+  "High-fidelity 3D material inspection. Upload, view, and analyze your architectural surfaces with precision using the WEINIX Material Editor.";
 
 export const metadata: Metadata = {
-  title: "3D Editor",
+  title: "Material Editor | Inspect Circularity",
   description: editorDescription,
   alternates: {
     canonical: "/editor",
   },
   openGraph: {
-    title: `3D Editor | ${siteConfig.name}`,
+    title: `Material Editor | ${siteConfig.name}`,
     description: editorDescription,
     url: "/editor",
     images: [
@@ -19,13 +19,13 @@ export const metadata: Metadata = {
         url: "/build-1.png",
         width: 1200,
         height: 630,
-        alt: "3D editor interface preview",
+        alt: "WEINIX Material Editor - 3D Surface Inspection",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `3D Editor | ${siteConfig.name}`,
+    title: `Material Editor | ${siteConfig.name}`,
     description: editorDescription,
     images: ["/build-1.png"],
   },

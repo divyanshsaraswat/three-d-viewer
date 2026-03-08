@@ -17,7 +17,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${siteConfig.name} | Online 3D Viewer`,
+    default: `${siteConfig.name} | Circular Building Materials`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: `${siteConfig.name} | Online 3D Viewer for OBJ, FBX, GLTF, and STL`,
+    title: `${siteConfig.name} | Future of Circular Architecture`,
     description: siteConfig.description,
     url: "/",
     siteName: siteConfig.name,
@@ -51,13 +51,13 @@ export const metadata: Metadata = {
         url: "/build-1.png",
         width: 1200,
         height: 630,
-        alt: "3D Model Viewer preview",
+        alt: "WEINIX - Sustainable Building Materials",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} | Online 3D Viewer`,
+    title: `${siteConfig.name} | Circular Architectural Surfaces`,
     description: siteConfig.description,
     images: ["/build-1.png"],
   },

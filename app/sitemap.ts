@@ -13,22 +13,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${siteUrl}/editor`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
       url: `${siteUrl}/home`,
       lastModified,
       changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${siteUrl}/about-us`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 1,
     },
     {
       url: `${siteUrl}/products`,
@@ -37,10 +25,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${siteUrl}/editor`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/about-us`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${siteUrl}/blog`,
       lastModified,
       changeFrequency: "daily",
-      priority: 0.8,
+      priority: 0.6,
     },
   ];
 }
