@@ -6,6 +6,7 @@ import GlobalNav from '@/components/GlobalNav';
 import GlobalFooter from '@/components/GlobalFooter';
 import FullScreenMenu from '@/components/FullScreenMenu';
 import CustomCursor from '@/components/CustomCursor';
+import AuthModal from '@/components/AuthModal';
 import { usePathname } from 'next/navigation';
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
@@ -13,7 +14,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
     // Pages where we show the landing-style layout (nav + footer)
-    const isLandingStyle = pathname === '/home' || pathname === '/about-us' || pathname.startsWith('/products') || pathname.startsWith('/blog');
+    const isLandingStyle = pathname === '/home' || pathname === '/about-us' || pathname.startsWith('/products') || pathname.startsWith('/blog') || pathname === '/profile';
 
     return (
         <>
@@ -29,6 +30,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
             </div>
 
             <FullScreenMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+            <AuthModal />
         </>
     );
 }

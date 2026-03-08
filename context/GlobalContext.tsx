@@ -14,6 +14,10 @@ interface GlobalContextType {
     isDarkMode: boolean;
     audioRef: React.RefObject<HTMLAudioElement | null>;
     isScrolled: boolean;
+    isAuthModalOpen: boolean;
+    setIsAuthModalOpen: (v: boolean) => void;
+    user: { mobileNumber: string; firstName?: string; lastName?: string; email?: string } | null;
+    setUser: (user: { mobileNumber: string; firstName?: string; lastName?: string; email?: string } | null) => void;
 }
 
 const GlobalContext = createContext<GlobalContextType | null>(null);
@@ -31,6 +35,8 @@ export default function GlobalProvider({ children }: { children: React.ReactNode
     const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [user, setUser] = useState<{ mobileNumber: string; firstName?: string; lastName?: string; email?: string } | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
@@ -60,6 +66,8 @@ export default function GlobalProvider({ children }: { children: React.ReactNode
             isDarkMode,
             audioRef,
             isScrolled,
+            isAuthModalOpen, setIsAuthModalOpen,
+            user, setUser,
         }}>
             <div className={isDarkMode ? 'dark' : ''}>
                 {children}

@@ -1,17 +1,18 @@
 "use client";
 
 import React from 'react';
-import { Search, Menu } from 'lucide-react';
+import { Menu, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useGlobalContext } from '@/context/GlobalContext';
 
 export default function GlobalNav() {
-    const { isScrolled, setIsMenuOpen } = useGlobalContext();
+    const { isScrolled, setIsMenuOpen, setIsAuthModalOpen, user } = useGlobalContext();
     const pathname = usePathname();
     
     const isLanding = pathname === '/home';
-    const textColorClass = isLanding ? 'text-white' : 'text-black dark:text-white';
+    const isProfile = pathname === '/profile';
+    const textColorClass = isLanding || isProfile ? 'text-white' : 'text-black dark:text-white';
 
     return (
         <>
@@ -30,7 +31,25 @@ export default function GlobalNav() {
                         <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link>
                     </div>
                     <div className={`flex items-center gap-6 ${textColorClass} transition-colors`}>
-                        <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
+                        {user ? (
+                            <Link href="/profile" className="group relative flex items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
+                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                <span className="relative flex items-center gap-2">
+                                    {user.firstName || 'Profile'}
+                                </span>
+                            </Link>
+                        ) : (
+                            <button 
+                                onClick={() => setIsAuthModalOpen(true)}
+                                className="group relative flex items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
+                            >
+                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                <span className="relative flex items-center gap-2">
+                                    Join Now
+                                    <ArrowRight size={14} strokeWidth={3} className="transition-transform duration-300 group-hover:translate-x-1" />
+                                </span>
+                            </button>
+                        )}
                         <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
                             <Menu size={22} />
                         </button>
@@ -53,7 +72,25 @@ export default function GlobalNav() {
                         <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link>
                     </div>
                     <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
-                        <button className="hover:opacity-70 transition-opacity cursor-pointer"><Search size={18} /></button>
+                        {user ? (
+                            <Link href="/profile" className="group relative flex items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
+                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                <span className="relative flex items-center gap-2">
+                                    {user.firstName || 'Profile'}
+                                </span>
+                            </Link>
+                        ) : (
+                            <button 
+                                onClick={() => setIsAuthModalOpen(true)}
+                                className="group relative flex items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
+                            >
+                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                <span className="relative flex items-center gap-2">
+                                    Join Now
+                                    <ArrowRight size={14} strokeWidth={3} className="transition-transform duration-300 group-hover:translate-x-1" />
+                                </span>
+                            </button>
+                        )}
                         <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
                             <Menu size={22} />
                         </button>
