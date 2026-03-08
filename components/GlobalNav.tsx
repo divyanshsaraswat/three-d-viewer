@@ -12,7 +12,7 @@ export default function GlobalNav() {
     
     const isLanding = pathname === '/home';
     const isProfile = pathname === '/profile';
-    const textColorClass = isLanding || isProfile ? 'text-white' : 'text-black dark:text-white';
+    const textColorClass = isLanding ? 'text-white' : 'text-black dark:text-white';
 
     return (
         <>

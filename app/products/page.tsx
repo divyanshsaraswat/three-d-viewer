@@ -114,7 +114,7 @@ export default function ProductsPage() {
                 {/* BENTO GRID (First Row) */}
                 <div className="grid-container grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[400px]">
                     {products.slice(0, 3).map((item, i) => (
-                        <Link href={`/products/${item.id}`} key={item.id} className={`product-card bg-white dark:bg-[#111] border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none rounded-[2rem] overflow-hidden relative group cursor-pointer ${item.span} block`}>
+                        <Link href={`/products/${item.id}`} key={item.id} className={`product-card bg-white dark:bg-[#111] border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none rounded-[2rem] overflow-hidden relative group cursor-pointer ${item.span} block hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]`}>
                             {/* Inset Shadow for Premium Blending */}
                             <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/5 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-1000 pointer-events-none"></div>
                             
@@ -148,7 +148,7 @@ export default function ProductsPage() {
                         <div className="md:hidden shrink-0 w-4"></div>
                         
                         {[...products.slice(3), ...products.slice(0, 3)].map((item, i) => (
-                            <Link href={`/products/${item.id}`} key={`${item.id}-${i}`} className="product-card shrink-0 w-[85vw] md:w-[400px] h-[400px] bg-white dark:bg-[#111] border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none rounded-[2rem] overflow-hidden relative group cursor-pointer snap-center md:snap-start block">
+                            <Link href={`/products/${item.id}`} key={`${item.id}-${i}`} className="product-card shrink-0 w-[85vw] md:w-[400px] h-[400px] bg-white dark:bg-[#111] border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none rounded-[2rem] overflow-hidden relative group cursor-pointer snap-center md:snap-start block hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
                                 <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/5 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-1000 pointer-events-none"></div>
                             
                             <BlurImage 
