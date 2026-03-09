@@ -24,9 +24,9 @@ export default function GlobalFooter() {
                             <button className="w-full sm:w-auto bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
                                 Contact Sales
                             </button>
-                            <button className="w-full sm:w-auto justify-center bg-transparent border border-black/20 dark:border-white/20 hover:border-black dark:hover:border-white text-black dark:text-white px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase flex items-center gap-2 transition-colors">
+                            {/* <button className="w-full sm:w-auto justify-center bg-transparent border border-black/20 dark:border-white/20 hover:border-black dark:hover:border-white text-black dark:text-white px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase flex items-center gap-2 transition-colors">
                                 <ArrowRight size={16} /> Book a Consultation
-                            </button>
+                            </button> */}
                         </div>
                     </div>
 

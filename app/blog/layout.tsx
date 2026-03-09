@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     url: "/blog",
     images: [
       {
-        url: "/build-1.png",
+        url: "/og-img.webp",
         width: 1200,
         height: 630,
         alt: "WEINIX Journal - Insights into Circularity",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Journal | ${siteConfig.name}`,
     description: blogDescription,
-    images: ["/build-1.png"],
+    images: ["/og-img.webp"],
   },
 };
 

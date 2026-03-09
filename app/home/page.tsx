@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { ArrowRight, ArrowUpRight, Play, Star, ArrowDown } from 'lucide-react';
 
-import ProductCarousel from '@/components/ProductCarousel';
+import GlobeGallery from '@/components/GlobeGallery';
 import BlurImage from '@/components/BlurImage';
 import { useRouter } from 'next/navigation';
 import ScrollRevealText from '@/components/ScrollRevealText';
@@ -850,8 +850,18 @@ export default function LandingPage() {
             {/* ---------- OUR SPECIALIZATION ---------- */}
             <SpecializationCarousel />
 
-            {/* ---------- PRODUCT SHOWCASE (3D CAROUSEL) ---------- */}
-            <ProductCarousel />
+            {/* ---------- PRODUCT SHOWCASE (3D GLOBE GALLERY) ---------- */}
+            {/* ---------- PRODUCT SHOWCASE (3D GLOBE GALLERY) ---------- */}
+            <section className="relative w-full h-[100svh] min-h-[900px] bg-white dark:bg-[#0a0a0a] border-t border-gray-100 dark:border-[#1a1a1a] text-black dark:text-white py-24 flex flex-col items-center overflow-hidden transition-colors duration-500">
+                <div className="mb-2 text-center z-10 pointer-events-none shrink-0">
+                    <h2 className="text-4xl md:text-6xl font-extrabold uppercase tracking-tighter mb-4 shrink-0">PRODUCT SHOWCASE</h2>
+                    <p className="text-sm tracking-widest uppercase opacity-60">Interact to Explore</p>
+                </div>
+                <div className="w-full flex-1 relative z-[5] [--overlay-blur-color:white] dark:[--overlay-blur-color:#0a0a0a]">
+                    {/* We adjust maxRadius so the gallery fits beautifully within the window bounds */}
+                    <GlobeGallery maxRadius={900} fit={0.8} />
+                </div>
+            </section>
 
             {/* ---------- SELECTED WORKS (VIDEO BLOCK) ---------- */}
             {/* <section className="py-32 px-4 md:px-8 bg-gray-50 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
@@ -883,7 +893,7 @@ export default function LandingPage() {
                 </section> */}
 
             {/* ---------- GENERAL PURPOSE BUILDINGS ---------- */}
-            <section className="py-32 px-4 md:px-8 max-w-[1200px] mx-auto relative animate-section text-black dark:text-white transition-colors duration-500">
+            <section className="py-20 pb-28 px-4 md:px-8 max-w-[1200px] mx-auto relative animate-section text-black dark:text-white transition-colors duration-500">
                 <div className="flex flex-col md:flex-row h-[600px] gap-8 relative z-0">
                     <div className="w-full md:w-1/2 h-full rounded-3xl overflow-hidden bg-[#007090]">
                         <BlurImage src="https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover mix-blend-overlay opacity-80" alt="White Architecture" />

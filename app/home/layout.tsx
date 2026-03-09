@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     url: "/home",
     images: [
       {
-        url: "/build-1.png",
+        url: "/og-img.webp",
         width: 1200,
         height: 630,
         alt: "WEINIX - Sustainable Architectural Surfaces",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Live Purposeful | ${siteConfig.name}`,
     description: landingDescription,
-    images: ["/build-1.png"],
+    images: ["/og-img.webp"],
   },
 };
 

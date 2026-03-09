@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     url: "/editor",
     images: [
       {
-        url: "/build-1.png",
+        url: "/og-img.webp",
         width: 1200,
         height: 630,
         alt: "WEINIX Material Editor - 3D Surface Inspection",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Material Editor | ${siteConfig.name}`,
     description: editorDescription,
-    images: ["/build-1.png"],
+    images: ["/og-img.webp"],
   },
 };
 

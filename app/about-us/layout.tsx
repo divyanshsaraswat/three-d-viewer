@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     url: "/about-us",
     images: [
       {
-        url: "/build-1.png",
+        url: "/og-img.webp",
         width: 1200,
         height: 630,
         alt: "About WEINIX - Mission and Vision",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `About Us | ${siteConfig.name}`,
     description: aboutDescription,
-    images: ["/build-1.png"],
+    images: ["/og-img.webp"],
   },
 };
 
