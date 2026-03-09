@@ -61,6 +61,12 @@ export default function AboutUsPage() {
 
             {/* HERO SECTION */}
             <section className="relative w-full max-w-[1000px] mx-auto flex flex-col items-center justify-center text-center px-4 md:px-8 mb-32 z-10">
+                {/* Animated Subtle Gradient Background */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] sm:w-full min-w-[500px] max-w-[800px] aspect-square -z-10 pointer-events-none opacity-60 md:opacity-40 dark:opacity-40 md:dark:opacity-20 blur-[60px] md:blur-[120px] saturate-200 transition-opacity duration-1000 overflow-hidden">
+                    <div className="absolute top-[10%] left-[10%] md:left-[20%] w-[60%] md:w-[50%] h-[60%] md:h-[50%] bg-[#ccff00] rounded-full mix-blend-multiply dark:mix-blend-screen filter animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite]"></div>
+                    <div className="absolute bottom-[10%] right-[10%] md:right-[20%] w-[60%] md:w-[50%] h-[60%] md:h-[50%] bg-[#88aa00] rounded-full mix-blend-multiply dark:mix-blend-screen filter animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite]" style={{ animationDelay: '1s' }}></div>
+                </div>
+
                 <span className="hero-badge bg-black/5 dark:bg-white/10 text-black dark:text-white border border-black/10 dark:border-white/20 font-semibold tracking-widest text-[10px] sm:text-xs px-6 py-2 rounded-full uppercase mb-8">
                     About Us
                 </span>

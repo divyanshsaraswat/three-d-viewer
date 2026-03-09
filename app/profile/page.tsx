@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 import { LogOut, Package, Clock, CheckCircle2, MapPin, Phone, Mail, ShieldCheck, X } from 'lucide-react';
 import Image from 'next/image';
 
@@ -30,7 +31,7 @@ const BOUGHT_HISTORY_FULL = [
 // -----------------
 
 export default function ProfilePage() {
-    const { user, setUser } = useGlobalContext();
+    const { data: session, status } = useSession();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
@@ -63,16 +64,17 @@ export default function ProfilePage() {
 
     useEffect(() => {
         setMounted(true);
-        if (!user) {
+        if (status === 'unauthenticated') {
             router.push('/home');
         }
-    }, [user, router]);
+    }, [status, router]);
 
-    if (!mounted || !user) return null;
+    if (!mounted || status === 'loading' || !session?.user) return null;
 
-    const handleLogout = () => {
-        setUser(null);
-        router.push('/home');
+    const user = session.user as any;
+
+    const handleLogout = async () => {
+        await signOut({ callbackUrl: '/home' });
     };
 
     return (
@@ -87,7 +89,7 @@ export default function ProfilePage() {
                 <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-5">
                     <div>
                         <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-2">
-                            Welcome back, <span className="text-[#8aab00] dark:text-[#ccff00]">{user.firstName}</span>.
+                            Welcome back, <span className="text-[#8aab00] dark:text-[#ccff00]">{user.name?.split(' ')[0] || user.firstName}</span>.
                         </h1>
                         <p className="text-black/50 dark:text-white/40 text-[13px] md:text-[14px] font-medium tracking-wide">
                             Manage your account, track ongoing modular builds, and view your purchase history.

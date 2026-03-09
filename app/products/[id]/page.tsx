@@ -11,92 +11,88 @@ import Link from 'next/link';
 import { use } from 'react';
 
 const productsData: Record<string, any> = {
-    tshirt: {
-        name: "Weinix Circles T-Shirt",
-        price: "$20.00",
-        image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=1200",
-        colors: ["Black", "White"],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        description: "Part of our core collection, this t-shirt is made entirely from secondary commodities recovered from post-consumer waste. Its classic profile features a crew neckline and a relaxed fit. Additional details include a ribbed collar, sustainable stitching, and a bold circular design.",
+    pack_wall_base: {
+        name: "Wall Base Texture Pack",
+        price: "$45.00",
+        image: "/textures/wall/7.png",
+        colors: ["Light", "Dark", "Cream"],
+        sizes: ["2K", "4K", "8K"],
+        description: "Plaster, painted walls, and interior surfaces. High-resolution grunge and clean wall textures perfect for architectural visualization and game environments.",
         features: [
-            "100% Recovered Fiber Construction",
-            "Relaxed Core Fit",
-            "Ribbed Crew Neckline",
-            "Sustainable Stitching",
-            "Zero Virgin Materials Used",
-            "Machine Wash Cold"
+            "Seamlessly Tileable",
+            "PBR Material Ready",
+            "Diffuse, Normal, and Roughness Maps",
+            "Multiple Variations Included"
         ]
     },
-    cup: {
-        name: "Weinix Stainless Cup",
-        price: "$15.00",
-        image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=800",
-        colors: ["Steel", "Matte Black"],
-        sizes: ["12oz", "16oz"],
-        description: "Engineered from recycled industrial steel, this cup is virtually indestructible. Double-walled vacuum insulation keeps your drinks hot or cold for hours. The ultimate zero-waste companion for construction sites or the office.",
+    pack_brick_masonry: {
+        name: "Brick & Masonry Pack",
+        price: "$28.00",
+        image: "/textures/brick/4.png",
+        colors: ["Yellow Brick", "Red Brick"],
+        sizes: ["2K", "4K", "8K"],
+        description: "Structured masonry and classic brick patterns. Ideal for exterior rendering, urban environments, and industrial scenes.",
         features: [
-            "Recycled Industrial Steel",
-            "Double-Wall Vacuum Insulation",
-            "Matte Powder Coat Finish",
-            "Sweat-Free Exterior",
-            "BPA-Free Lid Included"
+            "Seamlessly Tileable",
+            "PBR Material Ready",
+            "Diffuse, Normal, and Displacement Maps",
+            "Real-World Scale"
         ]
     },
-    mug: {
-        name: "Weinix Industrial Mug",
-        price: "$15.00",
-        image: "https://images.unsplash.com/photo-1574226516831-2f54b73241ae?auto=format&fit=crop&q=80&w=800",
-        colors: ["Black/Cork", "Gray/Wood"],
-        sizes: ["10oz", "14oz"],
-        description: "A ceramic-coated industrial mug featuring a natural cork base to protect surfaces and provide insulation. Designed for the toughest environments but styled for executive desks.",
+    pack_stone_mineral: {
+        name: "Stone & Marble Pack",
+        price: "$85.00",
+        image: "/textures/stone/22.png",
+        colors: ["White Marble", "Concrete", "Black Stone"],
+        sizes: ["2K", "4K", "8K"],
+        description: "Hard surfaces and premium architectural materials. Includes high-end marble, rough concrete, and stylized glowing stones.",
         features: [
-            "Ceramic Coating",
-            "Natural Cork Base",
-            "Ergonomic Handle",
-            "Heat-Resistant Retainer"
+            "Seamlessly Tileable",
+            "PBR Material Ready",
+            "High-Detail Micro-Surface",
+            "Subsurface Scattering Maps Included"
         ]
     },
-    bag: {
-        name: "Weinix Drawstring Bag",
-        price: "$12.00",
-        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800",
-        colors: ["Canvas Black"],
-        sizes: ["Standard"],
-        description: "A rugged drawstring bag spun from entirely recycled fabrics. Perfect for gym equipment, rapid travel, or carrying secondary commodities. Contains interior compartments for organization.",
+    pack_fabric_cloth: {
+        name: "Fabric & Cloth Pack",
+        price: "$22.00",
+        image: "/textures/fabric/10.png",
+        colors: ["Green Canvas", "Beige Cloth", "Dark Textile"],
+        sizes: ["1K", "2K", "4K"],
+        description: "Grain, fiber, and woven fabric textures. Perfect for interior furniture, clothing simulation references, and close-up detail work.",
         features: [
-            "Recycled Woven Canvas",
-            "Heavy Duty Drawstrings",
-            "Reinforced Corner Anchors",
-            "Water Resistant Interior"
+            "Seamlessly Tileable",
+            "Micro-fiber Details",
+            "Opacity Maps for Weaves",
+            "Color Variances"
         ]
     },
-    hoodie: {
-        name: "Weinix Heavy Hoodie",
-        price: "$50.00",
-        image: "https://images.unsplash.com/photo-1556821840-0062c3fdb1e2?auto=format&fit=crop&q=80&w=800",
-        colors: ["Charcoal", "Onyx Black"],
-        sizes: ["M", "L", "XL", "XXL"],
-        description: "A heavyweight zip-up hoodie designed for absolute comfort and warmth. Woven using our proprietary recovered polyester threads, this hoodie feels incredibly dense. Features a full metal zipper and reinforced kangaroo pockets.",
+    pack_lava_fire: {
+        name: "Lava & Fire Pack",
+        price: "$18.00",
+        image: "/textures/lava/3.png",
+        colors: ["Molten", "Bright Veins", "Intense"],
+        sizes: ["2K", "4K"],
+        description: "Stylized lava, molten, and fire VFX textures. Create dynamic, glowing environments with animated-ready emission maps.",
         features: [
-            "400GSM Heavyweight Fleece",
-            "Recovered Polyester Core",
-            "Industrial Metal Zipper",
-            "Reinforced Kangaroo Pockets",
-            "Drawstring Lock Eyelets"
+            "Seamlessly Tileable",
+            "High-Contrast Emission Maps",
+            "Flow Maps Included",
+            "Game-Ready Optimization"
         ]
     },
-    onesie: {
-        name: "Weinix Baby Onesie",
-        price: "$10.00",
-        image: "https://images.unsplash.com/photo-1522771930-78848d528717?auto=format&fit=crop&q=80&w=800",
-        colors: ["Sand", "Olive"],
-        sizes: ["0-3M", "3-6M", "6-12M"],
-        description: "Incredibly soft, chemical-free organic apparel engineered for the next generation. We purify our recovered cotton fibers repeatedly to ensure an entirely hypoallergenic experience.",
+    pack_scifi_energy: {
+        name: "Sci-Fi & Energy Pack",
+        price: "$25.00",
+        image: "/textures/scifi/2.png",
+        colors: ["Blue Electric", "Orange Energy"],
+        sizes: ["2K", "4K"],
+        description: "Cool-toned electric and cyberpunk tech textures. Add futuristic glowing details and cybernetic surfaces to any mesh.",
         features: [
-            "Hypoallergenic Restored Cotton",
-            "Chemical-Free Processing",
-            "Easy Snap Closures",
-            "Ultra-Soft Breathability"
+            "Seamlessly Tileable",
+            "Emission and Panel Maps",
+            "Cyberpunk Aesthetics",
+            "Sci-Fi Material Ready"
         ]
     }
 };
@@ -114,16 +110,16 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
 
     // Provide a generic fallback if product is missing
     const product = productsData[id] || {
-        name: "Weinix Essential Gear",
+        name: "Weinix Essential Texture",
         price: "$35.00",
-        image: "https://images.unsplash.com/photo-1556821840-0062c3fdb1e2?auto=format&fit=crop&q=80&w=800",
-        colors: ["Black", "Charcoal"],
-        sizes: ["One Size"],
-        description: "Standard industrial grade gear rebuilt from secondary commodities. Designed for absolute utility and zero compromise. Engineered to last multiple lifetimes.",
+        image: "/textures/wall/9.png",
+        colors: ["Standard"],
+        sizes: ["4K"],
+        description: "Standard industrial grade texture rebuilt for maximum fidelity.",
         features: [
-            "Zero Landfill Impact",
-            "Industrial Grade Assembly",
-            "Weinix Certified Recovery",
+            "Seamlessly Tileable",
+            "PBR Material Ready",
+            "Weinix Certified Quality",
             "100% Tracking Available"
         ]
     };
@@ -153,29 +149,13 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
                             <BlurImage 
                                 src={product.image}
                                 alt={product.name}
-                                className="w-[85%] h-[85%] object-contain mix-blend-multiply dark:mix-blend-normal z-10 transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.03] drop-shadow-2xl"
+                                className="w-[85%] h-[85%] object-contain mix-blend-multiply dark:mix-blend-normal z-10 transition-all duration-500 group-hover:scale-105 drop-shadow-2xl"
                             />
 
-                            {/* Image Controls Overlay */}
-                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 bg-white/80 dark:bg-[#222]/80 backdrop-blur-md rounded-full px-6 py-3 border border-black/10 dark:border-white/10 shadow-xl opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
-                                <button className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors active:scale-95"><ArrowLeft size={18} /></button>
-                                <div className="w-px h-6 bg-black/10 dark:bg-white/10 mx-2"></div>
-                                <button className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors active:scale-95"><ArrowRight size={18} /></button>
-                            </div>
+
                         </div>
 
-                        {/* Thumbnails */}
-                        <div className="flex gap-4 mt-6 overflow-x-auto hide-scrollbar snap-x pb-4">
-                            {[1, 2, 3, 4, 5].map((_, idx) => (
-                                <div key={idx} className={`w-20 h-20 md:w-24 md:h-24 shrink-0 rounded-2xl bg-gray-50 dark:bg-[#111] border ${idx === 0 ? 'border-[#ccff00] ring-1 ring-[#ccff00]/50' : 'border-black/5 dark:border-white/5'} p-2 cursor-pointer transition-colors snap-start hover:border-black/20 dark:hover:border-white/20 shadow-sm`}>
-                                     <BlurImage 
-                                        src={product.image}
-                                        alt="Thumbnail"
-                                        className="w-full h-full object-cover rounded-xl grayscale-[0.5] hover:grayscale-0 transition-all"
-                                    />
-                                </div>
-                            ))}
-                        </div>
+
                     </div>
 
                     {/* RIGHT COLUMN: Product Config */}
@@ -196,7 +176,7 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
                         {/* Colors */}
                         <div className="mb-10 anim-text">
                             <h3 className="text-[10px] font-bold uppercase tracking-widest text-black/50 dark:text-white/50 mb-4 flex items-center gap-2">
-                                Color <div className="h-px bg-black/10 dark:bg-white/10 flex-1 ml-2"></div>
+                                Variation <div className="h-px bg-black/10 dark:bg-white/10 flex-1 ml-2"></div>
                             </h3>
                             <div className="flex flex-wrap gap-3">
                                 {product.colors.map((color: string, i: number) => (
@@ -214,7 +194,7 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
                         {/* Sizes */}
                         <div className="mb-10 anim-text">
                             <h3 className="text-[10px] font-bold uppercase tracking-widest text-black/50 dark:text-white/50 mb-4 flex items-center gap-2">
-                                Size <div className="h-px bg-black/10 dark:bg-white/10 flex-1 ml-2"></div>
+                                Resolution <div className="h-px bg-black/10 dark:bg-white/10 flex-1 ml-2"></div>
                             </h3>
                             <div className="flex flex-wrap gap-2">
                                 {product.sizes.map((size: string, i: number) => (

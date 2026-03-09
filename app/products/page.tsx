@@ -13,50 +13,50 @@ if (typeof window !== "undefined") {
 
 const products = [
     {
-        id: "tshirt",
-        name: "Weinix Circles T-Shirt",
+        id: "pack_wall_base",
+        name: "Wall Base Texture Pack",
         price: "$45.00",
-        image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=1200",
+        image: "/textures/wall/7.png",
         span: "md:col-span-2 md:row-span-2",
         objectPosition: "center"
     },
     {
-        id: "bag",
-        name: "Weinix Drawstring Bag",
+        id: "pack_brick_masonry",
+        name: "Brick & Masonry Pack",
         price: "$28.00",
-        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800",
+        image: "/textures/brick/4.png",
         span: "md:col-span-1 md:row-span-1",
         objectPosition: "center"
     },
     {
-        id: "cup",
-        name: "Weinix Stainless Cup",
-        price: "$18.00",
-        image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=800",
-        span: "md:col-span-1 md:row-span-1",
-        objectPosition: "center"
-    },
-    {
-        id: "mug",
-        name: "Weinix Industrial Mug",
-        price: "$22.00",
-        image: "https://images.unsplash.com/photo-1574226516831-2f54b73241ae?auto=format&fit=crop&q=80&w=800",
-        span: "md:col-span-1 md:row-span-1",
-        objectPosition: "center"
-    },
-    {
-        id: "hoodie",
-        name: "Weinix Heavy Hoodie",
+        id: "pack_stone_mineral",
+        name: "Stone & Marble Pack",
         price: "$85.00",
-        image: "https://images.unsplash.com/photo-1556821840-0062c3fdb1e2?auto=format&fit=crop&q=80&w=800",
+        image: "/textures/stone/22.png",
         span: "md:col-span-1 md:row-span-1",
         objectPosition: "center"
     },
     {
-        id: "onesie",
-        name: "Weinix Essential Onesie",
+        id: "pack_fabric_cloth",
+        name: "Fabric & Cloth Pack",
+        price: "$22.00",
+        image: "/textures/fabric/10.png",
+        span: "md:col-span-1 md:row-span-1",
+        objectPosition: "center"
+    },
+    {
+        id: "pack_lava_fire",
+        name: "Lava & Fire Pack",
+        price: "$18.00",
+        image: "/textures/lava/3.png",
+        span: "md:col-span-1 md:row-span-1",
+        objectPosition: "center"
+    },
+    {
+        id: "pack_scifi_energy",
+        name: "Sci-Fi & Energy Pack",
         price: "$25.00",
-        image: "https://images.unsplash.com/photo-1522771930-78848d528717?auto=format&fit=crop&q=80&w=800",
+        image: "/textures/scifi/2.png",
         span: "md:col-span-1 md:row-span-1",
         objectPosition: "center top"
     }
@@ -114,19 +114,19 @@ export default function ProductsPage() {
                 {/* BENTO GRID (First Row) */}
                 <div className="grid-container grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[400px]">
                     {products.slice(0, 3).map((item, i) => (
-                        <Link href={`/products/${item.id}`} key={item.id} className={`product-card bg-white dark:bg-[#111] border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none rounded-[2rem] overflow-hidden relative group cursor-pointer ${item.span} block hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]`}>
+                        <Link href={`/products/${item.id}`} key={item.id} className={`product-card bg-white dark:bg-[#111] border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none rounded-[2rem] overflow-hidden relative group cursor-pointer ${item.span} block hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 ease-out`}>
                             {/* Inset Shadow for Premium Blending */}
                             <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/5 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-1000 pointer-events-none"></div>
                             
                             <BlurImage 
                                 src={item.image} 
                                 alt={item.name}
-                                className={`w-full h-full object-cover origin-center group-hover:scale-[1.04] transition-transform duration-[2s] ease-[cubic-bezier(0.25,1,0.5,1)] grayscale-[0.2] group-hover:grayscale-0 ${item.objectPosition ? 'object-' + item.objectPosition.split(' ').join('-') : ''}`}
+                                className={`w-full h-full object-cover origin-center group-hover:scale-105 transition-all duration-500 grayscale-[0.2] group-hover:grayscale-0 items-center ${item.objectPosition ? 'object-' + item.objectPosition.split(' ').join('-') : ''}`}
                                 style={{ objectPosition: item.objectPosition }}
                             />
 
                             {/* Floating Price Pill */}
-                            <div className="absolute left-6 bottom-6 md:left-8 md:bottom-8 z-20 flex items-center group-hover:-translate-y-2 transition-transform duration-[1s] ease-[cubic-bezier(0.25,1,0.5,1)]">
+                            <div className="absolute left-6 bottom-6 md:left-8 md:bottom-8 z-20 flex items-center group-hover:-translate-y-2 transition-transform duration-500 ease-out">
                                 <div className="bg-[#111]/90 backdrop-blur-md border border-white/10 text-white/90 text-[10px] sm:text-xs font-semibold px-4 py-2.5 rounded-full flex items-center shadow-2xl tracking-wide">
                                     {item.name}
                                 </div>
@@ -141,24 +141,23 @@ export default function ProductsPage() {
 
                 {/* HORIZONTAL CAROUSEL (Second Row) */}
                 <div className="mt-8 w-full overflow-hidden">
-                    <div className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory pb-6 pt-2 w-[100vw] relative left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] px-4 md:px-safe max-w-none">
-                        <div className="hidden md:block w-[calc((100vw-1400px)/2)] shrink-0"></div> {/* Left Spacer for massive screens */}
+                    <div className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory pb-6 pt-2 w-[100vw] relative left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] max-w-none">
                         
                         {/* Ensure the first item lines up with the Grid on desktop by calculating the container margin */}
-                        <div className="md:hidden shrink-0 w-4"></div>
+                        <div className="shrink-0 w-4 md:w-[max(2rem,calc((100vw-1400px)/2))]"></div>
                         
                         {[...products.slice(3), ...products.slice(0, 3)].map((item, i) => (
-                            <Link href={`/products/${item.id}`} key={`${item.id}-${i}`} className="product-card shrink-0 w-[85vw] md:w-[400px] h-[400px] bg-white dark:bg-[#111] border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none rounded-[2rem] overflow-hidden relative group cursor-pointer snap-center md:snap-start block hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                            <Link href={`/products/${item.id}`} key={`${item.id}-${i}`} className="product-card shrink-0 w-[85vw] md:w-[400px] h-[400px] bg-white dark:bg-[#111] border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none rounded-[2rem] overflow-hidden relative group cursor-pointer snap-center md:snap-start block hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 ease-out">
                                 <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/5 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-1000 pointer-events-none"></div>
                             
                             <BlurImage 
                                 src={item.image} 
                                 alt={item.name}
-                                className="w-full h-full object-cover origin-center group-hover:scale-[1.04] transition-transform duration-[2s] ease-[cubic-bezier(0.25,1,0.5,1)] grayscale-[0.2] group-hover:grayscale-0"
+                                className="w-full h-full object-cover origin-center group-hover:scale-105 transition-all duration-500 grayscale-[0.2] group-hover:grayscale-0 items-center"
                                 style={{ objectPosition: item.objectPosition }}
                             />
 
-                            <div className="absolute left-6 bottom-6 md:left-8 md:bottom-8 z-20 flex items-center group-hover:-translate-y-2 transition-transform duration-[1s] ease-[cubic-bezier(0.25,1,0.5,1)]">
+                            <div className="absolute left-6 bottom-6 md:left-8 md:bottom-8 z-20 flex items-center group-hover:-translate-y-2 transition-transform duration-500 ease-out">
                                 <div className="bg-[#111]/90 backdrop-blur-md border border-white/10 text-white/90 text-[10px] sm:text-xs font-semibold px-4 py-2.5 rounded-full flex items-center shadow-2xl tracking-wide">
                                     {item.name}
                                 </div>
@@ -170,7 +169,7 @@ export default function ProductsPage() {
                         </Link>
                     ))}
                         
-                        <div className="shrink-0 w-8 md:w-[calc((100vw-1400px)/2)]"></div> {/* Right Padding */}
+                        <div className="shrink-0 w-4 md:w-[max(2rem,calc((100vw-1400px)/2))]"></div> {/* Right Padding */}
                     </div>
                 </div>
 

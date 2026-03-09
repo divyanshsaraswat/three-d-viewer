@@ -7,6 +7,10 @@ import { useGlobalContext } from '@/context/GlobalContext';
 
 // Map routes to display titles
 function getPageTitle(pathname: string): string {
+    if (pathname.startsWith('/editor')) {
+        return '3D EXPERIENCE';
+    }
+
     const map: Record<string, string> = {
         '/home': 'HOME',
         '/about-us': 'ABOUT US',

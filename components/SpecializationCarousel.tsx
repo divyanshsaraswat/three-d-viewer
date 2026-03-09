@@ -13,26 +13,26 @@ if (typeof window !== "undefined") {
 const specs = [
     {
         id: 1,
-        tag: "ARCHITECTURE",
-        title: "Translating vision into highly curated design",
-        date: "2024 / OVER 50 PROJECTS",
-        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200",
+        tag: "BRICK",
+        title: "Engineering strength from what the world discarded",
+        date: "2026 / DIVERTS 1.2KG TEXTILE WASTE PER BRICK",
+        image: "/weinix_brick.png",
         colorClass: "dark:bg-[#111111]"
     },
     {
         id: 2,
         tag: "INTERIOR",
-        title: "Crafting spaces that breathe life and elegance",
-        date: "2024 / 30+ PROJECTS",
-        image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1200",
+        title: "Crafting surfaces that carry a story within",
+        date: "THERMAL INSULATION / NOISE REDUCTION / CERTIFIED SAFE",
+        image: "/weinix_interior.png",
         colorClass: "dark:bg-[#16120e]"
     },
     {
         id: 3,
-        tag: "MASTERPLAN",
-        title: "Designing sustainable cities for future generations",
-        date: "ONGOING",
-        image: "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=1200",
+        tag: "EXTERIOR",
+        title: "Designing facades built to last and built to mean more",
+        date: "WEATHER RESISTANT / UV STABLE / ZERO TOXIC EMISSIONS",
+        image: "/weinix_exterior.png",
         colorClass: "dark:bg-[#0e1610]"
     },
     {
@@ -40,7 +40,7 @@ const specs = [
         tag: "CONSTRUCTION",
         title: "Building with precision, durability, and art",
         date: "AVERAGE 18 MO",
-        image: "https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=1200",
+        image: "/weinix_construction.png",
         colorClass: "dark:bg-[#160e0e]"
     },
     {
@@ -48,7 +48,7 @@ const specs = [
         tag: "DOCUMENTATION",
         title: "Preserving architectural heritage properly",
         date: "ARCHIVE",
-        image: "https://images.unsplash.com/photo-1455390582262-044cdead27d8?q=80&w=1200",
+        image: "/weinix_documentation.png",
         colorClass: "dark:bg-[#0f0e16]"
     }
 ];

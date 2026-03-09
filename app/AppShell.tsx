@@ -7,7 +7,21 @@ import GlobalFooter from '@/components/GlobalFooter';
 import FullScreenMenu from '@/components/FullScreenMenu';
 import CustomCursor from '@/components/CustomCursor';
 import AuthModal from '@/components/AuthModal';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
+
+function AuthModalTrigger() {
+    const searchParams = useSearchParams();
+    const { setIsAuthModalOpen } = useGlobalContext();
+
+    useEffect(() => {
+        if (searchParams?.get('callbackUrl') || searchParams?.get('error')) {
+            setIsAuthModalOpen(true);
+        }
+    }, [searchParams, setIsAuthModalOpen]);
+
+    return null;
+}
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
     const { hasEntered, isMenuOpen, setIsMenuOpen } = useGlobalContext();
@@ -31,6 +45,9 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
             <FullScreenMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
             <AuthModal />
+            <Suspense fallback={null}>
+                <AuthModalTrigger />
+            </Suspense>
         </>
     );
 }

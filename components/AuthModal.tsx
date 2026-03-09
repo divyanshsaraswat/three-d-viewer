@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Mail, Phone, Loader2, ChevronDown } from 'lucide-react';
 import { useGlobalContext } from '@/context/GlobalContext';
+import { signIn } from 'next-auth/react';
 
 // Simple SVG for Google and Apple Icons
 const GoogleIcon = () => (
@@ -36,7 +37,7 @@ const IndiaFlag = () => (
 
 
 export default function AuthModal() {
-    const { isAuthModalOpen, setIsAuthModalOpen, setUser } = useGlobalContext();
+    const { isAuthModalOpen, setIsAuthModalOpen } = useGlobalContext();
     
     const [mode, setMode] = useState<'signup' | 'signin'>('signin');
     const [step, setStep] = useState<1 | 2>(1); // 1: Details, 2: OTP
@@ -141,17 +142,25 @@ export default function AuthModal() {
         }
 
         setIsLoading(true);
-        // Simulate OTP Verification
-        setTimeout(() => {
+        // OTP Verification using NextAuth Credentials Provider
+        signIn('credentials', {
+            mobileNumber,
+            otp: codeToVerify,
+            firstName,
+            lastName,
+            email,
+            redirect: false,
+        }).then((result) => {
             setIsLoading(false);
-            setUser({ 
-                mobileNumber,
-                firstName: mode === 'signup' ? firstName : 'User', // Mock fallback for sign-in
-                lastName: mode === 'signup' ? lastName : undefined,
-                email: mode === 'signup' ? email : undefined
-            });
-            handleClose();
-        }, 1500);
+            if (result?.error) {
+                setError('Invalid OTP code');
+            } else if (result?.ok) {
+                handleClose();
+            }
+        }).catch((err) => {
+            setIsLoading(false);
+            setError('An unexpected error occurred');
+        });
     };
 
     const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {

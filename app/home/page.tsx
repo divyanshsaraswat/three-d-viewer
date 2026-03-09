@@ -13,6 +13,7 @@ import ScrollRevealText from '@/components/ScrollRevealText';
 import SpecializationCarousel from '@/components/SpecializationCarousel';
 import TestimonialVideo from '@/components/TestimonialVideo';
 import { useGlobalContext } from '@/context/GlobalContext';
+import { useSession } from 'next-auth/react';
 
 const AnimatedWord = ({ text, highlight }: { text: string; highlight?: boolean }) => (
     <span className={`inline-block whitespace-nowrap px-1 ${highlight ? 'font-light italic font-serif tracking-normal' : ''}`}>
@@ -224,10 +225,15 @@ export default function LandingPage() {
     const [isVideoEnded, setIsVideoEnded] = useState(false);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
     const [isExitingLoader, setIsExitingLoader] = useState(false);
+
+    const router = useRouter();
+    const [imagesLoaded, setImagesLoaded] = useState(0);
     const [mediaProgress, setMediaProgress] = useState(0);
     const [isAllMediaLoaded, setIsAllMediaLoaded] = useState(false);
+    const { data: session } = useSession();
 
-    const { hasEntered, setHasEntered, isMuted, setIsMuted, audioRef } = useGlobalContext();
+    const { hasEntered, setHasEntered, isMuted, setIsMuted, audioRef, setIsAuthModalOpen } = useGlobalContext();
+    const hasAnimated = useRef(false);
 
     useEffect(() => {
         if (hasEntered) {
@@ -318,7 +324,6 @@ export default function LandingPage() {
             setHasEntered(true);
         }
     };
-    const router = useRouter();
 
     const specializations = [
         "Architecture",
@@ -395,6 +400,9 @@ export default function LandingPage() {
     // --- 2. Post-Entry Page Animations (Triggered once exit begins or if already entered) ---
     useGSAP(() => {
         if (!isExitingLoader && !hasEntered) return;
+        if (hasAnimated.current) return;
+        
+        hasAnimated.current = true;
 
         console.log("Starting hero animation. hasEntered:", hasEntered, "isExitingLoader:", isExitingLoader);
 
@@ -463,9 +471,19 @@ export default function LandingPage() {
             ease: "linear"
         });
 
-        return () => clearTimeout(safetyTimer);
+        return () => {
+            clearTimeout(safetyTimer);
+            heroTl.kill(); // Kill the timeline on cleanup
+        };
 
     }, { scope: containerRef, dependencies: [isExitingLoader, hasEntered] });
+
+    // Reset animation flag on component unmount so returning to the page plays it again
+    useEffect(() => {
+        return () => {
+            hasAnimated.current = false;
+        };
+    }, []);
 
     return (
         <div ref={containerRef}>
@@ -617,7 +635,13 @@ export default function LandingPage() {
                             Shop Sustainable Bricks
                         </button>
                         <button
-                            onClick={() => window.location.assign('/editor')}
+                            onClick={() => {
+                                if (session?.user) {
+                                    window.location.assign('/editor/interior-2');
+                                } else {
+                                    setIsAuthModalOpen(true);
+                                }
+                            }}
                             className="bg-[#ccff00] text-black font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto border border-[#ccff00]">
                             Experience in 3D
                         </button>

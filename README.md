@@ -44,7 +44,10 @@ Core public routes include:
 - `/about-us`: Corporate philosophy page highlighting impact metrics and recovery hubs.
 - `/products` & `/products/[id]`: A dynamic high-end storefront (Bento Grid layout + Carousel) and individual product configuration views supporting variations and details.
 - `/blog` & `/blog/[id]`: The Weinix Journal. Features a frosted glass UI post grid and distraction-free Medium-style individual reading environments tailored for long-form content.
+
+Protected routes include:
 - `/editor`: A WebGL interactive canvas for 3D model viewing and editing.
+- `/profile`: User profiles and personal configuration.
 
 ## 3D Model Optimization Pipeline
 

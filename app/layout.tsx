@@ -74,6 +74,8 @@ export const metadata: Metadata = {
   },
 };
 
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -84,7 +86,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${inter.variable} antialiased`}
       >
-        <AppShell>{children}</AppShell>
+        <SessionProviderWrapper>
+          <AppShell>{children}</AppShell>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
