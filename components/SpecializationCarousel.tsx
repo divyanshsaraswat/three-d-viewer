@@ -70,27 +70,17 @@ export default function SpecializationCarousel() {
         const wideVW = isMobile ? 85 : 55;
         const gapVW = isMobile ? 4 : 2;
 
-        // Ensure active card is aligned to padding.
-        // px-8 on desktop = 32px ~ 2.2vw. Let's strictly use window measurements to push left accurately.
         const paddingPx = isMobile ? 16 : 32;
 
-        const getXForIndex = (i: number) => {
-            return `calc(${paddingPx}px - ${i * (narrowVW + gapVW)}vw)`;
-        };
-
         const cards = gsap.utils.toArray('.spec-card') as HTMLElement[];
-        const titles = gsap.utils.toArray('.title-text') as HTMLElement[];
-
-        // Initial Layout Reset
-        gsap.set(wrapperRef.current, { x: getXForIndex(0), gap: `${gapVW}vw` });
+        
+        // Initial Layout Reset via gsap.set ensures ScrollTrigger correctly calculates the pinned container's
+        // actual scrollable footprint size on mount before the inline React CSS fully hydrates
+        gsap.set(wrapperRef.current, { paddingLeft: `${paddingPx}px`, gap: `${gapVW}vw` });
         gsap.set(cards, { width: `${narrowVW}vw` });
-        gsap.set(cards[0], { width: `${wideVW}vw` });
+        if (cards[0]) gsap.set(cards[0], { width: `${wideVW}vw` });
 
-        // Initial Font Scaling to prevent truncation
-        gsap.set(titles, { fontSize: isMobile ? "1.25rem" : "1.75rem" });
-        gsap.set(titles[0], { fontSize: isMobile ? "2.25rem" : "3.5rem" });
-
-        // Build scrubbing timeline
+        // Build snapping timeline simply to calculate activeIdx without visually scrubbing DOM directly
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: rootRef.current,
@@ -99,40 +89,37 @@ export default function SpecializationCarousel() {
                 pin: true,
                 scrub: 1,
                 anticipatePin: 1,
+                snap: {
+                    snapTo: 1 / (specs.length - 1),
+                    duration: { min: 0.2, max: 0.4 },
+                    ease: "back.out(1.5)"
+                },
                 onUpdate: (self) => {
-                    const progress = self.progress;
-                    const newIdx = Math.min(Math.floor(progress * specs.length), specs.length - 1);
-                    if (newIdx !== activeIdx) {
-                        setActiveIdx(newIdx);
+                    const currentProgress = self.progress;
+                    const segment = 1 / (specs.length - 1);
+                    const exact = currentProgress / segment;
+                    
+                    let newIdx = Math.round(exact);
+                    if (self.direction === 1) {
+                        // Scrolling down - trigger when 15% into the next segment
+                        newIdx = Math.floor(exact + 0.85); 
+                    } else if (self.direction === -1) {
+                        // Scrolling up - trigger when 15% backwards into the previous segment
+                        newIdx = Math.ceil(exact - 0.85);
                     }
+
+                    const finalIdx = Math.min(Math.max(newIdx, 0), specs.length - 1);
+                    setActiveIdx(finalIdx);
                 }
             }
         });
 
         stRef.current = tl.scrollTrigger || null;
 
-        // Sequence animations for each card transition
-        for (let i = 0; i < specs.length - 1; i++) {
-            const currentCard = cards[i];
-            const nextCard = cards[i + 1];
-
-            // Width transition (takes 80% of the step)
-            tl.to(currentCard, { width: `${narrowVW}vw`, ease: "power2.inOut", duration: 0.8 }, i)
-                .to(nextCard, { width: `${wideVW}vw`, ease: "power2.inOut", duration: 0.8 }, i)
-                .to(wrapperRef.current, { x: getXForIndex(i + 1), ease: "power2.inOut", duration: 0.8 }, i)
-                // Fade out and shrink current card's text early so it isn't squeezed
-                .to(titles[i], { fontSize: isMobile ? "1.25rem" : "1.75rem", ease: "power2.inOut", duration: 0.5 }, i)
-                .to(currentCard.querySelectorAll('.hide-on-narrow'), { opacity: 0, duration: 0.5, ease: "power2.out" }, i)
-                // Animate next card's text to pop in ONLY AFTER width transition is done (last 20% of the step)
-                .to(titles[i + 1], { fontSize: isMobile ? "2.25rem" : "3.5rem", ease: "power2.inOut", duration: 0.2 }, i + 0.8)
-                .to(nextCard.querySelectorAll('.hide-on-narrow'), { opacity: 1, duration: 0.2, ease: "power2.in" }, i + 0.8);
-        }
-
         return () => {
             if (stRef.current) stRef.current.kill();
             tl.kill();
         };
-
     }, { scope: rootRef, dependencies: [] });
 
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -175,33 +162,47 @@ export default function SpecializationCarousel() {
             className={`min-h-[100vh] w-full relative transition-colors duration-1000 ease-in-out bg-gray-100 ${specs[activeIdx].colorClass} overflow-hidden flex flex-col`}
         >
             {/* Header Content & Navigation locked to top */}
-            <div className="pt-22 pb-8 px-4 md:px-8 z-20 shrink-0 flex flex-col items-center text-center w-full max-w-[1200px] mx-auto text-black dark:text-white transition-colors duration-1000">
+            <div className="pt-28 md:pt-32 pb-4 px-4 md:px-8 z-20 shrink-0 flex flex-col items-center text-center w-full max-w-[1200px] mx-auto text-black dark:text-white transition-colors duration-1000">
                 <div className="mb-0">
-                    <h2 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter mb-6 transition-colors">OUR SPECIALIZATION</h2>
-                    <p className="opacity-60 max-w-xl mx-auto text-sm uppercase tracking-widest leading-loose transition-colors mb-8">
+                    <h2 className="text-4xl md:text-[3.5rem] font-bold uppercase tracking-tighter mb-2 transition-colors">OUR SPECIALIZATION</h2>
+                    <p className="opacity-60 max-w-xl mx-auto text-xs md:text-sm uppercase tracking-widest leading-loose transition-colors mb-2">
                         We translate our client&apos;s vision into highly curated design <br className="hidden md:block" />
                         across diverse typologies
                     </p>
                 </div>
             </div>
 
-            {/* The structural middle track */}
+                {/* The structural middle track */}
             <div className="flex-grow w-full relative flex items-center overflow-hidden" style={{ contain: "layout style" }}>
                 <div
                     ref={wrapperRef}
-                    className="flex h-[60vh] md:h-[65vh] w-fit items-center cursor-grab select-none will-change-transform pb-12"
+                    className="flex h-[50vh] md:h-[55vh] w-fit items-center cursor-grab select-none pb-8 transition-transform duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)]"
                     onPointerDown={handlePointerDown}
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
                     onPointerCancel={handlePointerUp}
                     // Prevent default touch drag on mobile so our custom pointer handler can drive scroll directly
-                    style={{ touchAction: 'none' }}
+                    style={{ 
+                        touchAction: 'none',
+                        gap: `${typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 2}vw`,
+                        paddingLeft: `${typeof window !== 'undefined' && window.innerWidth < 768 ? 16 : 32}px`,
+                        transform: `translateX(-${activeIdx * (typeof window !== 'undefined' && window.innerWidth < 768 ? 45 + 4 : 24 + 2)}vw)`
+                    }}
                 >
-                    {specs.map((spec, i) => (
+                    {specs.map((spec, i) => {
+                        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+                        const narrowVW = isMobile ? 45 : 24;
+                        const wideVW = isMobile ? 85 : 55;
+                        const isActive = i === activeIdx;
+                        
+                        return (
                         <div
                             key={spec.id}
-                            className="spec-card h-full rounded-[2rem] overflow-hidden relative shrink-0 shadow-lg group pointer-events-none bg-black/50"
-                            style={{ willChange: "width, transform", contain: "layout" }}
+                            className="spec-card h-full rounded-[2rem] overflow-hidden relative shrink-0 shadow-lg group pointer-events-none bg-black/50 transition-all duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)]"
+                            style={{ 
+                                width: `${isActive ? wideVW : narrowVW}vw`,
+                                contain: "layout" 
+                            }}
                         >
                             <div className="card-inner absolute top-0 left-0 h-full w-full">
                                 <img
@@ -214,26 +215,31 @@ export default function SpecializationCarousel() {
                                 />
 
                                 {/* Base gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10 pointer-events-none"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10 pointer-events-none transition-opacity duration-700" style={{ opacity: isActive ? 1 : 0.6 }}></div>
 
                                 {/* Texts constraint - responsive padding for proper text wrap constraints */}
                                 <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-between pointer-events-none">
                                     <div className="flex justify-between items-start">
-                                        <span className="bg-[#ccff00] text-black text-[10px] md:text-xs uppercase tracking-widest font-bold px-3 py-1.5 rounded">
+                                        <span className="bg-[#ccff00] text-black text-[10px] md:text-xs uppercase tracking-widest font-bold px-3 py-1.5 rounded transition-transform duration-700" style={{ transform: isActive ? 'scale(1)' : 'scale(0.9)', transformOrigin: 'top left' }}>
                                             {spec.tag}
                                         </span>
                                     </div>
 
                                     <div className="mt-auto max-w-lg mb-2">
-                                        <h3 className="title-text text-white font-bold leading-[1.1] tracking-tight mb-4 drop-shadow-md pb-2 break-words">
+                                        <h3 className="title-text text-white font-bold leading-[1.1] tracking-tight mb-4 drop-shadow-md pb-2 break-words transition-all duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)]"
+                                            style={{ 
+                                                fontSize: isActive 
+                                                    ? (isMobile ? "1.5rem" : "3.5rem") 
+                                                    : (isMobile ? "1rem" : "1.75rem") 
+                                            }}>
                                             {spec.title}
                                         </h3>
 
-                                        <div className="hide-on-narrow flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4 opacity-0" style={{ opacity: i === 0 ? 1 : 0 }}>
+                                        <div className="hide-on-narrow flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4 transition-opacity duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" style={{ opacity: isActive ? 1 : 0, transitionDelay: isActive ? "200ms" : "0ms" }}>
                                             <p className="text-[#ccff00] md:text-white/90 text-xs md:text-sm font-bold tracking-widest uppercase">
                                                 {spec.date}
                                             </p>
-                                            <button className="flex items-center gap-2 text-[#ccff00] md:text-white md:group-hover:text-[#ccff00] transition-colors group/btn pointer-events-auto cursor-pointer">
+                                            <button className="hidden md:flex items-center gap-2 text-[#ccff00] md:text-white md:group-hover:text-[#ccff00] transition-colors group/btn pointer-events-auto cursor-pointer">
                                                 <span className="text-sm font-bold uppercase tracking-widest hidden md:inline-block">Learn More</span>
                                                 <div className="w-10 h-10 rounded-full border border-current flex items-center justify-center md:group-hover/btn:-rotate-45 transition-transform duration-300">
                                                     <ArrowUpRight size={18} />
@@ -244,12 +250,12 @@ export default function SpecializationCarousel() {
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    )})}
                 </div>
             </div>
 
             {/* Carousel Indicators Below the Cards */}
-            <div className="flex justify-center items-center gap-3 pb-8 pt-4 z-20 shrink-0">
+            <div className="flex justify-center items-center gap-3 pb-6 pt-2 z-20 shrink-0">
                 {specs.map((_, i) => (
                     <button
                         key={i}

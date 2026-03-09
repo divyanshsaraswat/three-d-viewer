@@ -32,7 +32,7 @@ export default function GlobalNav() {
                     </div>
                     <div className={`flex items-center gap-6 ${textColorClass} transition-colors`}>
                         {user ? (
-                            <Link href="/profile" className="group relative flex items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
+                            <Link href="/profile" className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
                                 <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                                 <span className="relative flex items-center gap-2">
                                     {user.firstName || 'Profile'}
@@ -41,7 +41,7 @@ export default function GlobalNav() {
                         ) : (
                             <button 
                                 onClick={() => setIsAuthModalOpen(true)}
-                                className="group relative flex items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
+                                className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
                             >
                                 <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                                 <span className="relative flex items-center gap-2">
@@ -73,7 +73,7 @@ export default function GlobalNav() {
                     </div>
                     <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
                         {user ? (
-                            <Link href="/profile" className="group relative flex items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
+                            <Link href="/profile" className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
                                 <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                                 <span className="relative flex items-center gap-2">
                                     {user.firstName || 'Profile'}
@@ -82,7 +82,7 @@ export default function GlobalNav() {
                         ) : (
                             <button 
                                 onClick={() => setIsAuthModalOpen(true)}
-                                className="group relative flex items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
+                                className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
                             >
                                 <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                                 <span className="relative flex items-center gap-2">
