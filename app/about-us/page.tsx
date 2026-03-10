@@ -266,12 +266,12 @@ export default function AboutUsPage() {
                     <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
                         <div className="w-32 h-32 md:w-32 md:h-32 shrink-0 rounded-[1.5rem] overflow-hidden border-2 border-white dark:border-[#222] shadow-sm relative">
                             <div className="w-full h-full grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1000ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
-                                <BlurImage src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=800&auto=format&fit=crop" alt="Laksh Sharma" className="w-full h-full object-cover" />
+                                <BlurImage src="laksh sharma.webp" alt="Laksh Sharma" className="w-full h-full object-cover" />
                             </div>
                         </div>
                         <div className="text-center sm:text-left flex-1">
                             <h3 className="text-2xl font-bold mb-1 tracking-tight">Laksh Sharma</h3>
-                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 drop-shadow-sm">Co-Founder</p>
+                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 drop-shadow-sm">CEO & Co-Founder</p>
                             <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed font-medium transition-colors">
                                 With deep roots in apparel manufacturing, Laksh brings firsthand knowledge of material production cycles. His mission is to make end-of-life material recovery as economically compelling as first-use manufacturing.
                             </p>
@@ -282,12 +282,12 @@ export default function AboutUsPage() {
                     <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
                         <div className="w-32 h-32 md:w-32 md:h-32 shrink-0 rounded-[1.5rem] overflow-hidden border-2 border-white dark:border-[#222] shadow-sm relative">
                             <div className="w-full h-full grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1000ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
-                                <BlurImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Deep Patel" className="w-full h-full object-cover" />
+                                <BlurImage src="deeppatel.webp" alt="Deep Patel" className="w-full h-full object-cover" />
                             </div>
                         </div>
                         <div className="text-center sm:text-left flex-1">
                             <h3 className="text-2xl font-bold mb-1 tracking-tight">Deep Patel</h3>
-                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 drop-shadow-sm">Co-Founder</p>
+                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 drop-shadow-sm">COO</p>
                             <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed font-medium transition-colors">
                                 With a mechanical engineering background, Deep architects the processing workflows and systems that make high-volume waste recovery operationally viable. He ensures Weinix scales without compromising output.
                             </p>

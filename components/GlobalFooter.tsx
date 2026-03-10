@@ -61,31 +61,36 @@ export default function GlobalFooter() {
                         </div>
                     </div>
 
-                    {/* Col 2: Nav Items */}
+                    {/* Col 2: Navigation */}
                     <div className="lg:col-span-2">
-                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Nav Item</h4>
+                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00]">Discovery</h4>
                         <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
+                            <li><a href="/home" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Home</a></li>
                             <li><a href="/about-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">About</a></li>
-                            <li><a href="#" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Our Architect</a></li>
-                            <li><a href="#" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Process</a></li>
+                            <li><a href="/products" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Products</a></li>
+                            <li><a href="/blog" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Blog</a></li>
                         </ul>
                     </div>
 
                     {/* Col 3: Contact */}
                     <div className="lg:col-span-3">
-                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Contact</h4>
+                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00]">Contact</h4>
                         <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
                             <li className="flex gap-3">
                                 <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                <a href="mailto:hello@axiombuild.com" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">hello@axiombuild.com</a>
+                                <a href="mailto:contact@re-verse.in" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">contact@re-verse.in</a>
                             </li>
                             <li className="flex gap-3">
                                 <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                                <span>+1 (123) 985 789</span>
+                                <span>+91 9898458583</span>
                             </li>
                             <li className="flex justify-start gap-3">
                                 <svg className="w-4 h-4 mt-1 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                <span>213 West Orchard Street<br />Kings Mountain, NC 28086</span>
+                                <span className="text-xs leading-relaxed">
+                                    B-911, Titanium City Center (Corporate Building),<br />
+                                    Prahlad Nagar Road, Ahmedabad,<br />
+                                    Gujarat - 380015, India
+                                </span>
                             </li>
                         </ul>
                     </div>
@@ -112,7 +117,7 @@ export default function GlobalFooter() {
 
                 {/* Footer Bottom Bar */}
                 <div className="pt-8 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center text-xs opacity-60 text-black dark:text-white transition-colors">
-                    <p>© {new Date().getFullYear()} WEINIX. All Rights Reserved.</p>
+                    <p>© {new Date().getFullYear()} WEINIX by Re-Verse Green Clothing Pvt. Ltd. All Rights Reserved.</p>
 
                     {/* Theme Toggle Pill */}
                     <div className="flex items-center justify-center rounded-[2rem] p-1.5 shadow-inner mt-4 md:mt-0 transition-colors">
