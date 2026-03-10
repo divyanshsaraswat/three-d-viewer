@@ -17,6 +17,28 @@ const VerticalBipolarSlider = () => {
         setValue(tourHeight);
     }, [tourHeight]);
 
+    // Keyboard shortcuts for Z (up) and X (down)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Don't trigger if user is typing in an input
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+            const step = 4.0;
+            if (e.key.toLowerCase() === 'z') {
+                const newValue = Math.min(140.0, value + step); // Hardcoded MAX temporarily for scope
+                setValue(newValue);
+                updateSetting('tourHeight', newValue);
+            } else if (e.key.toLowerCase() === 'x') {
+                const newValue = Math.max(-140.0, value - step); // Hardcoded MIN temporarily for scope
+                setValue(newValue);
+                updateSetting('tourHeight', newValue);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [value, updateSetting]);
+
     // Only render the component if the modern-villa is actively loaded and finished loading
     if (isModelLoading || !models.length || models[0].id !== 'modern-villa') {
         return null;
@@ -64,8 +86,13 @@ const VerticalBipolarSlider = () => {
             onTouchMove={blockEvent}
             onTouchEnd={blockEvent}
         >
-            {/* Top Number (Maximum Sky) */}
-            <div className="text-[10px] opacity-60 mb-2">+{MAX}</div>
+            <div className="flex flex-col items-center gap-1.5 mb-3">
+                <div className="flex items-center gap-1.5 text-[8.5px] uppercase font-bold tracking-widest whitespace-nowrap opacity-80">
+                    <kbd className="bg-black/50 border border-white/20 text-[#ccff00] px-1.5 py-[1px] rounded-[3px] shadow-[0_1.5px_0_rgba(255,255,255,0.15)] leading-none flex items-center justify-center font-sans tracking-normal">Z</kbd>
+                    <span className="text-white">UP</span>
+                </div>
+                <div className="text-[10px] font-mono opacity-50">+{MAX}</div>
+            </div>
 
             {/* The actual native vertical slider */}
             <input
@@ -73,7 +100,7 @@ const VerticalBipolarSlider = () => {
                 min={MIN}
                 max={MAX}
                 value={value}
-                step={4}
+                step={0.1}
                 onChange={handleSliderChange}
                 className="cursor-pointer"
                 style={{
@@ -86,11 +113,16 @@ const VerticalBipolarSlider = () => {
                 {...{ orient: "vertical" }}
             />
 
-            {/* Bottom Number (Minimum Subsurface) */}
-            <div className="text-[10px] opacity-60 mt-2">{MIN}</div>
+            <div className="flex flex-col items-center gap-1.5 mt-3">
+                <div className="text-[10px] font-mono opacity-50">{MIN}</div>
+                <div className="flex items-center gap-1.5 text-[8.5px] uppercase font-bold tracking-widest whitespace-nowrap opacity-80">
+                    <kbd className="bg-black/50 border border-white/20 text-[#ccff00] px-1.5 py-[1px] rounded-[3px] shadow-[0_1.5px_0_rgba(255,255,255,0.15)] leading-none flex items-center justify-center font-sans tracking-normal">X</kbd>
+                    <span className="text-white">DN</span>
+                </div>
+            </div>
 
             {/* Displaying the exact active value */}
-            <div className="mt-3 text-[12px] font-bold text-[#ccff00]">
+            <div className="mt-3 text-[12px] font-bold text-[#ccff00] tabular-nums">
                 {Number(value).toFixed(1)}
             </div>
         </div>

@@ -303,7 +303,7 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
                     </div>
 
                     {/* Vertical Elevation Slider (Bottom Left, above text) */}
-                    <div className={`transition-all duration-700 ease-in-out delay-100 ${isModelLoading ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
+                    <div className={`transition-all duration-700 ease-in-out delay-100 relative z-[9999] ${isModelLoading ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
                         <VerticalBipolarSlider />
                     </div>
 

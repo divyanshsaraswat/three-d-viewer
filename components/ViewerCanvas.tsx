@@ -112,7 +112,15 @@ export default function ViewerCanvas() {
             app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
             app.setCanvasResolution(pc.RESOLUTION_AUTO);
             app.graphicsDevice.maxPixelRatio = Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2);
-            window.addEventListener('resize', () => app?.resizeCanvas());
+            
+            const handleResize = () => {
+                if (app && app.graphicsDevice) {
+                    app.resizeCanvas();
+                }
+            };
+            window.addEventListener('resize', handleResize);
+            // Store the handler on the app object for easy cleanup
+            (app as any)._handleResize = handleResize;
 
             appRef.current = app;
             app.start();
@@ -478,6 +486,10 @@ export default function ViewerCanvas() {
 
         return () => {
             if (appRef.current) {
+                const handler = (appRef.current as any)._handleResize;
+                if (handler) {
+                    window.removeEventListener('resize', handler);
+                }
                 appRef.current.destroy();
                 appRef.current = null;
             }
