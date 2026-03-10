@@ -48,10 +48,11 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-img.webp",
+        url: "/og-img.jpg",
         width: 1200,
         height: 630,
         alt: "WEINIX - Sustainable Building Materials",
+        type: "image/jpeg",
       },
     ],
   },
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${siteConfig.name} | Circular Architectural Surfaces`,
     description: siteConfig.description,
-    images: ["/og-img.webp"],
+    images: ["/og-img.jpg"],
   },
   robots: {
     index: true,
