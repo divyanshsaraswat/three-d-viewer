@@ -31,6 +31,7 @@ export default function GlobalNav() {
                         {/* <a href="#" className="hover:opacity-70 transition-opacity">Project</a> */}
                         <Link href="/products" className="hover:opacity-70 transition-opacity">Products</Link>
                         <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link>
+                        <Link href="/contact-us" className="hover:opacity-70 transition-opacity">Contact</Link>
                     </div>
                     <div className={`flex items-center gap-6 ${textColorClass} transition-colors`}>
                         {session?.user ? (
@@ -72,6 +73,7 @@ export default function GlobalNav() {
                         {/* <a href="#" className="hover:opacity-70 transition-opacity">Project</a> */}
                         <Link href="/products" className="hover:opacity-70 transition-opacity">Products</Link>
                         <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link>
+                        <Link href="/contact-us" className="hover:opacity-70 transition-opacity">Contact</Link>
                     </div>
                     <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
                         {session?.user ? (

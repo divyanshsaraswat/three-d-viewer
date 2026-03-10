@@ -21,9 +21,9 @@ export default function GlobalFooter() {
                             Let&apos;s Turn Big Ideas Into Extraordinary Realities – Together
                         </h3>
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                            <button className="w-full sm:w-auto bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
+                            <a href="/contact-us" className="w-full sm:w-auto bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors inline-block text-center">
                                 Contact Sales
-                            </button>
+                            </a>
                             {/* <button className="w-full sm:w-auto justify-center bg-transparent border border-black/20 dark:border-white/20 hover:border-black dark:hover:border-white text-black dark:text-white px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase flex items-center gap-2 transition-colors">
                                 <ArrowRight size={16} /> Book a Consultation
                             </button> */}
@@ -68,6 +68,7 @@ export default function GlobalFooter() {
                             <li><a href="/about-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">About</a></li>
                             <li><a href="/products" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Products</a></li>
                             <li><a href="/blog" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Blog</a></li>
+                            <li><a href="/contact-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Contact</a></li>
                         </ul>
                     </div>
 

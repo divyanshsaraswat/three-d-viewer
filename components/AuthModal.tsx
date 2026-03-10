@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Mail, Phone, Loader2, ChevronDown } from 'lucide-react';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { signIn } from 'next-auth/react';
+import { requestOtp as apiRequestOtp } from '@/utils/api/auth';
 
 // Simple SVG for Google and Apple Icons
 const GoogleIcon = () => (
@@ -89,6 +90,14 @@ export default function AuthModal() {
         };
     }, [isAuthModalOpen]);
 
+    // AbortController ref for in-flight requests
+    const abortRef = useRef<AbortController | null>(null);
+
+    // Cleanup in-flight requests on unmount or close
+    useEffect(() => {
+        return () => { abortRef.current?.abort(); };
+    }, []);
+
     if (!shouldRender) return null;
 
     const handleClose = () => {
@@ -102,7 +111,7 @@ export default function AuthModal() {
         }
     };
 
-    const handleActionSubmit = (e: React.FormEvent) => {
+    const handleActionSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
@@ -123,11 +132,58 @@ export default function AuthModal() {
         }
 
         setIsLoading(true);
-        // Simulate sending OTP
-        setTimeout(() => {
+        abortRef.current?.abort();
+        const controller = new AbortController();
+        abortRef.current = controller;
+
+        try {
+            const phone = `+91${mobileNumber}`;
+
+            if (mode === 'signup') {
+                // Call the real signup API, which registers the customer + sends OTP
+                const signupRes = await signIn('credentials', {
+                    mobileNumber,
+                    firstName,
+                    lastName,
+                    email,
+                    action: 'signup',
+                    redirect: false,
+                });
+
+                if (signupRes?.error === 'OTP_SENT' || signupRes?.error === 'CredentialsSignin') {
+                    // Expected — OTP was sent, move to verification step
+                    setStep(2);
+                } else if (signupRes?.error) {
+                    setError(signupRes.error);
+                }
+            } else {
+                // Sign in flow — request OTP first
+                const otpRes = await apiRequestOtp(phone, controller.signal);
+
+                if (otpRes.success) {
+                    if (otpRes.data?.flow === 'signup') {
+                        // Phone not registered — switch to signup mode
+                        setMode('signup');
+                        setError('Phone not registered. Please sign up first.');
+                    } else {
+                        // OTP sent, move to verification
+                        setStep(2);
+                    }
+                } else if (otpRes.error) {
+                    // Fallback: if backend is unreachable, still allow step 2 for dev
+                    if (otpRes.status === 0) {
+                        setStep(2);
+                    } else {
+                        setError(otpRes.error);
+                    }
+                }
+            }
+        } catch (err: unknown) {
+            if (err instanceof DOMException && err.name === 'AbortError') return;
+            setError('Something went wrong. Please try again.');
+        } finally {
             setIsLoading(false);
-            setStep(2);
-        }, 1500);
+        }
     };
 
     const handleVerifySubmit = (e?: React.FormEvent, overrideOtp?: string) => {

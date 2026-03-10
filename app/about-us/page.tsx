@@ -271,7 +271,7 @@ export default function AboutUsPage() {
                         </div>
                         <div className="text-center sm:text-left flex-1">
                             <h3 className="text-2xl font-bold mb-1 tracking-tight">Laksh Sharma</h3>
-                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 drop-shadow-sm">CEO & Co-Founder</p>
+                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 dark:drop-shadow-sm">CEO & Co-Founder</p>
                             <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed font-medium transition-colors">
                                 With deep roots in apparel manufacturing, Laksh brings firsthand knowledge of material production cycles. His mission is to make end-of-life material recovery as economically compelling as first-use manufacturing.
                             </p>
@@ -287,7 +287,7 @@ export default function AboutUsPage() {
                         </div>
                         <div className="text-center sm:text-left flex-1">
                             <h3 className="text-2xl font-bold mb-1 tracking-tight">Deep Sanghani</h3>
-                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 drop-shadow-sm">COO & Co-Founder</p>
+                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 dark:drop-shadow-sm">COO & Co-Founder</p>
                             <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed font-medium transition-colors">
                                 With a mechanical engineering background, Deep architects the processing workflows and systems that make high-volume waste recovery operationally viable. He ensures Weinix scales without compromising output.
                             </p>
