@@ -28,7 +28,11 @@ export const siteConfig = {
 } as const;
 
 export function getSiteUrl(): string {
-  const envSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL;
+  const envSiteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.SITE_URL ??
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ??
+    process.env.VERCEL_URL;
 
   if (!envSiteUrl) {
     return FALLBACK_SITE_URL;
