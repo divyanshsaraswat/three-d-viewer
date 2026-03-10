@@ -1,4 +1,4 @@
-const FALLBACK_SITE_URL = "http://localhost:3000";
+const FALLBACK_SITE_URL = "https://test.weinix.com";
 
 function normalizeSiteUrl(value: string): string {
   const trimmed = value.trim();

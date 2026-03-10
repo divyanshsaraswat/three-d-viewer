@@ -151,8 +151,8 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                         <span className="text-black dark:text-white">Socials</span>
                         <div className="flex flex-wrap gap-6">
                             <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Instagram size={16} /> Instagram</a>
-                            <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Linkedin size={16} /> LinkedIn</a>
-                            <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Twitter size={16} /> X/Twitter</a>
+                            {/* <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Linkedin size={16} /> LinkedIn</a>
+                            <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Twitter size={16} /> X/Twitter</a> */}
                         </div>
                     </div>
                 </div>

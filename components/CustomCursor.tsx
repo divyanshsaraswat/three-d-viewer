@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import gsap from 'gsap';
 
 export default function CustomCursor() {
@@ -9,10 +10,13 @@ export default function CustomCursor() {
     const [isHovering, setIsHovering] = useState(false);
     const [isClicking, setIsClicking] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    
+    const pathname = usePathname();
+    const isEditorRoute = pathname?.startsWith('/editor');
 
     useEffect(() => {
-        // Only run on desktop/devices with fine pointer
-        if (window.matchMedia("(pointer: coarse)").matches) return;
+        // Only run on desktop/devices with fine pointer, and NOT on editor routes
+        if (window.matchMedia("(pointer: coarse)").matches || isEditorRoute) return;
 
         // Ensure body has the class to hide default cursor
         document.body.classList.add('custom-cursor-active');

@@ -675,6 +675,15 @@ export default function ViewerCanvas() {
                 });
             }
 
+            // PRE-LOAD Brand Logo (using PNG instead of SVG for reliable canvas drawing)
+            let loadedLogo: HTMLImageElement | null = null;
+            loadedLogo = new Image();
+            loadedLogo.src = '/icon-weinix.png';
+            await new Promise((resolve) => {
+                loadedLogo!.onload = resolve;
+                loadedLogo!.onerror = resolve;
+            });
+
             // 2. Wait for next frame to ensure WebGL buffer is ready
             app.on('postrender', function takeScreenshot() {
                 app.off('postrender', takeScreenshot);
@@ -726,17 +735,28 @@ export default function ViewerCanvas() {
                 const titleSize = 36 * dpr;
                 const subSize = 12 * dpr;
                 const gap = 4 * dpr;
+                const logoSize = 48 * dpr; // Approx height of title + gap + sub
+                const logoGap = 16 * dpr;
 
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'top';
 
-                // Drop shadow to match UI
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-                ctx.shadowBlur = 10 * dpr;
+                // Heavy drop shadow to match UI contrast improvements
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 12 * dpr;
                 ctx.shadowOffsetX = 0;
                 ctx.shadowOffsetY = 4 * dpr;
 
                 const startY = height - bottom - titleSize - gap - subSize;
+                let textLeft = left;
+
+                // Draw Logo if loaded
+                if (loadedLogo && loadedLogo.complete && loadedLogo.width > 0) {
+                    const logoRatio = loadedLogo.width / loadedLogo.height;
+                    const logoDrawWidth = logoSize * logoRatio;
+                    ctx.drawImage(loadedLogo, left, startY + (titleSize + gap + subSize - logoSize) / 2, logoDrawWidth, logoSize);
+                    textLeft += logoDrawWidth + logoGap;
+                }
 
                 // "WEINIX"
                 ctx.font = `900 ${titleSize}px system-ui, -apple-system, sans-serif`;
@@ -744,15 +764,15 @@ export default function ViewerCanvas() {
                     (ctx as any).letterSpacing = '-2px';
                 }
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.fillText('WEINIX', left, startY);
+                ctx.fillText('WEINIX', textLeft, startY);
 
-                // "A 3D EXPERIENCE"
+                // "3D WALKTHROUGH"
                 ctx.font = `bold ${subSize}px system-ui, -apple-system, sans-serif`;
                 if ('letterSpacing' in ctx) {
                     (ctx as any).letterSpacing = '0.3em';
                 }
                 ctx.fillStyle = '#ccff00';
-                ctx.fillText('A 3D EXPERIENCE', left, startY + titleSize + gap);
+                ctx.fillText('3D WALKTHROUGH', textLeft, startY + titleSize + gap);
 
                 // 7. Export and Download
                 const dataUrl = tempCanvas.toDataURL('image/png', 1.0);
@@ -942,7 +962,7 @@ export default function ViewerCanvas() {
     }, [pendingTextureOptions, clearPendingTextureOptions]);
 
     return (
-        <canvas ref={canvasRef} className="w-full h-full block" />
+        <canvas ref={canvasRef} className="w-full h-full block cursor-grab active:cursor-grabbing" />
     );
 }
 

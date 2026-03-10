@@ -222,7 +222,7 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
                 {/* Back to Home Button (Top Left) */}
                 <button
                     onClick={() => window.location.assign('/home')}
-                    className={`absolute top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-black/40 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-full text-black/80 dark:text-white/80 hover:text-black dark:hover:text-white hover:bg-white dark:hover:bg-black/60 hover:border-black/30 dark:hover:border-white/30 transition-all duration-700 shadow-lg group ${selectedMeshId || isModelLoading ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'}`}
+                    className={`absolute top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-black/40 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-full text-black/80 dark:text-white/80 hover:text-black dark:hover:text-white hover:bg-white dark:hover:bg-black/60 hover:border-black/30 dark:hover:border-white/30 transition-all duration-700 shadow-lg group ${selectedMeshId || isModelLoading ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} cursor-pointer`}
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform text-[#88aa00] dark:text-[#ccff00]">
                         <path d="m15 18-6-6 6-6"/>
@@ -308,13 +308,16 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
                     </div>
 
                     {/* WEINIX Branding Watermark */}
-                    <div className={`absolute bottom-6 left-6 md:bottom-8 md:left-8 z-40 pointer-events-none flex flex-col items-start select-none drop-shadow-lg transition-all duration-700 delay-200 ${isModelLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-                        <h1 className="text-2xl md:text-4xl font-black tracking-tighter text-black/90 dark:text-white/90 leading-none transition-colors duration-500">
-                            WEINIX
-                        </h1>
-                        <p className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase text-[#88aa00] dark:text-[#ccff00] mt-1 pl-0.5 transition-colors duration-500">
-                            3D Walkthrough
-                        </p>
+                    <div className={`absolute bottom-6 left-6 md:bottom-8 md:left-8 z-40 pointer-events-none flex flex-row items-center gap-4 select-none transition-all duration-700 delay-200 ${isModelLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+                        <img src="/icon-weinix.svg" alt="Weinix Logo" className="h-10 md:h-12 w-auto drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]" />
+                        <div className="flex flex-col items-start gap-1">
+                            <h1 className="text-2xl md:text-4xl font-black tracking-tighter text-black/90 dark:text-white/90 leading-none transition-colors duration-500 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                                WEINIX
+                            </h1>
+                            <p className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase text-[#88aa00] dark:text-[#ccff00] pl-0.5 transition-colors duration-500 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                                3D Walkthrough
+                            </p>
+                        </div>
                     </div>
 
                     {/* Texture Carousel Overlay */}

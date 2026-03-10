@@ -500,7 +500,6 @@ export default function LandingPage() {
 
                         {/* WEINIX text and logo */}
                         <div id="loading-weinix-logo" className="text-white transition-colors duration-500 text-3xl md:text-5xl font-bold tracking-tighter flex items-center gap-4 mb-16 will-change-transform">
-                            <div className="w-8 h-8 bg-[#ccff00] transform rotate-45 rounded-sm" />
                             <span>WEINIX</span>
                         </div>
 

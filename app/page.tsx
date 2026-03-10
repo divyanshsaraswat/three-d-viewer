@@ -25,9 +25,12 @@ export default function LandingPage() {
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.05),transparent)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05),transparent)] pointer-events-none" />
 
       <div className="z-10 text-center space-y-8 p-4">
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter bg-gradient-to-br from-black to-black/60 dark:from-white dark:to-neutral-500 bg-clip-text text-transparent pb-2 uppercase italic">
-          WEINIX
-        </h1>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-6">
+          <img src="/icon-weinix.svg" alt="Weinix Logo" className="w-20 h-20 md:w-32 md:h-32 object-contain drop-shadow-2xl" />
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter bg-gradient-to-br from-black to-black/60 dark:from-white dark:to-neutral-500 bg-clip-text text-transparent pb-2 uppercase">
+            WEINIX
+          </h1>
+        </div>
         <p className="text-black/60 dark:text-white/60 text-xl max-w-xl mx-auto font-medium leading-relaxed">
           The future of circular architecture. High-performance building materials engineered from post-consumer textiles. <span className="text-black dark:text-[#ccff00]">Zero waste, zero compromise.</span>
         </p>

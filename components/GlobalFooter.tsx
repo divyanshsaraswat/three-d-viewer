@@ -31,10 +31,8 @@ export default function GlobalFooter() {
                     </div>
 
                     {/* Abstract Brand Graphic */}
-                    <div className="shrink-0 relative w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 flex items-center justify-center mt-4 lg:mt-0">
-                        <div className="absolute inset-0 rounded-full border-[1rem] sm:border-[1.5rem] md:border-[2rem] border-[#ccff00]"></div>
-                        <div className="absolute w-14 h-14 sm:w-20 sm:h-20 md:w-28 md:h-28 bg-[#ccff00] rounded-full"></div>
-                        <div className="absolute top-0 right-1/2 translate-x-8 -translate-y-2 sm:translate-x-12 sm:-translate-y-4 md:translate-x-16 md:-translate-y-6 w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 bg-[#ccff00] rounded-full"></div>
+                    <div className="shrink-0 relative w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 flex items-center justify-center mt-4 lg:mt-0 opacity-80 mix-blend-luminosity dark:mix-blend-normal">
+                        <img src="/icon-weinix.svg" alt="Weinix Logo" className="w-full h-full object-contain drop-shadow-2xl" />
                     </div>
                 </div>
 
@@ -44,8 +42,7 @@ export default function GlobalFooter() {
                     {/* Col 1: Brand */}
                     <div className="lg:col-span-4">
                         <div className="flex items-center gap-3 font-bold text-2xl tracking-tighter mb-6">
-                            <div className="w-5 h-5 bg-[#ccff00] transform -skew-x-12" />
-                            <div className="w-2 h-5 bg-[#171717] dark:bg-white transform -skew-x-12 -ml-2 transition-colors" />
+                            <img src="/icon-weinix.svg" alt="Weinix Logo" className="w-8 h-8 object-contain" />
                             <span>WEINIX</span>
                         </div>
                         <p className="text-sm max-w-[280px] leading-relaxed mb-8 opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
@@ -146,12 +143,9 @@ export default function GlobalFooter() {
                 </div>
 
                 {/* Antimetal Brand Footer */}
-                <div className="mt-16 flex items-center justify-center gap-8 opacity-60 hover:opacity-100 transition-opacity cursor-pointer text-black dark:text-[#a0a0a0]">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-10 bg-[#ccff00] transform -skew-x-12" />
-                        <div className="w-5 h-10 bg-[#171717] dark:bg-white transform -skew-x-12 -ml-2 transition-colors" />
-                    </div>
-                    <span className="text-8xl font-medium tracking-wide bg-clip-text text-transparent bg-gradient-to-b from-black to-black/60 dark:from-[#cfcfcf] dark:to-[#555]">
+                <div className="mt-16 flex items-center justify-center gap-6 md:gap-8 opacity-60 hover:opacity-100 transition-opacity cursor-pointer text-black dark:text-[#a0a0a0]">
+                    <img src="/icon-weinix.svg" alt="Weinix Logo" className="w-24 h-24 md:w-32 md:h-32 object-contain drop-shadow-2xl" />
+                    <span className="text-6xl md:text-8xl font-medium tracking-wide bg-clip-text text-transparent bg-gradient-to-b from-black to-black/60 dark:from-[#cfcfcf] dark:to-[#555]">
                         WEINIX
                     </span>
                 </div>
