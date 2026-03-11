@@ -49,6 +49,12 @@ const API_PROXY = "/api";
 export const API_V1 = API_PROXY;
 
 // ---------------------------------------------------------------------------
+// Dev-mode logging
+// ---------------------------------------------------------------------------
+
+const IS_DEV = process.env.NEXT_PUBLIC_EDITOR_MODE !== "prod";
+
+// ---------------------------------------------------------------------------
 // Core fetcher
 // ---------------------------------------------------------------------------
 
@@ -100,12 +106,21 @@ export async function apiFetch<T = unknown>(
     try {
       json = await res.json();
     } catch {
+      if (IS_DEV) {
+        console.log(
+          `[API ${method}] ${url} → HTTP ${res.status} (unparseable body)`
+        );
+      }
       return {
         data: null,
         error: `Unexpected response (HTTP ${res.status})`,
         success: false,
         status: res.status,
       };
+    }
+
+    if (IS_DEV) {
+      console.log(`[API ${method}] ${url} → HTTP ${res.status}`, json);
     }
 
     if (!res.ok || !json.success) {
@@ -131,6 +146,10 @@ export async function apiFetch<T = unknown>(
 
     const message =
       err instanceof Error ? err.message : "Network error — please try again.";
+
+    if (IS_DEV) {
+      console.log(`[API ${method}] ${url} → NETWORK ERROR:`, message);
+    }
 
     return { data: null, error: message, success: false, status: 0 };
   }

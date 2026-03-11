@@ -137,7 +137,7 @@ export default function AuthModal() {
         abortRef.current = controller;
 
         try {
-            const phone = `+91${mobileNumber}`;
+            const phone = `${mobileNumber}`;
 
             if (mode === 'signup') {
                 // Call the real signup API, which registers the customer + sends OTP
