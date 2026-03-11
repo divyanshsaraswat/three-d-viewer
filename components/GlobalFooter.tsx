@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { ArrowRight, Sun, Moon, Monitor } from 'lucide-react';
+import { ArrowRight, Sun, Moon, Monitor, Instagram } from 'lucide-react';
 import { useGlobalContext } from '@/context/GlobalContext';
 
 export default function GlobalFooter() {
@@ -51,11 +51,9 @@ export default function GlobalFooter() {
                             We are a multidisciplinary architecture studio crafting bold, purposeful spaces that stand the test of time.
                         </p>
                         <div className="flex gap-4">
-                            <a href="#" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-[#ccff00] hover:text-black transition-colors">
-                                <span className="font-serif font-bold text-sm">f</span>
-                            </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-[#ccff00] hover:text-black transition-colors">
-                                <span className="font-bold text-xs uppercase tracking-widest">in</span>
+
+                            <a href="https://www.instagram.com/weinix.in" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-[#ccff00] hover:text-black transition-colors">
+                                <span className="font-bold text-xs uppercase tracking-widest"><Instagram size={16} /></span>
                             </a>
                         </div>
                     </div>

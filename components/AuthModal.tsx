@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Mail, Phone, Loader2, ChevronDown } from 'lucide-react';
 import { useGlobalContext } from '@/context/GlobalContext';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { requestOtp as apiRequestOtp } from '@/utils/api/auth';
+
+const IS_DEV = process.env.NEXT_PUBLIC_EDITOR_MODE !== "prod";
 
 // Simple SVG for Google and Apple Icons
 const GoogleIcon = () => (
@@ -206,11 +208,20 @@ export default function AuthModal() {
             lastName,
             email,
             redirect: false,
-        }).then((result) => {
+        }).then(async (result) => {
             setIsLoading(false);
             if (result?.error) {
-                setError('Invalid OTP code');
+                // NextAuth wraps the authorize() thrown error message into result.error
+                // Show backend message directly (e.g. "Invalid OTP", "OTP verification failed")
+                const msg = result.error === 'CredentialsSignin'
+                    ? 'Invalid OTP code. Please try again.'
+                    : result.error;
+                setError(msg);
             } else if (result?.ok) {
+                if (IS_DEV) {
+                    const session = await getSession();
+                    console.log('[AUTH] Session stored after authentication:', session);
+                }
                 handleClose();
             }
         }).catch((err) => {

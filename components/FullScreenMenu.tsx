@@ -14,8 +14,8 @@ const navLinks = [
     { title: "HOME", num: "01" },
     { title: "ABOUT US", num: "02" },
     { title: "PRODUCTS", num: "03" },
-    { title: "BLOG", num: "04" },
-    { title: "CONTACT US", num: "05" },
+    // { title: "BLOG", num: "04" },
+    { title: "CONTACT US", num: "04" },
 ];
 
 export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps) {
@@ -150,7 +150,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                     <div className="flex flex-col gap-4 text-xs font-bold uppercase tracking-widest text-gray-500 mt-auto border-t border-black/10 dark:border-white/10 pt-8">
                         <span className="text-black dark:text-white">Socials</span>
                         <div className="flex flex-wrap gap-6">
-                            <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Instagram size={16} /> Instagram</a>
+                            <a href="https://www.instagram.com/weinix.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Instagram size={16} /> Instagram</a>
                             {/* <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Linkedin size={16} /> LinkedIn</a>
                             <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Twitter size={16} /> X/Twitter</a> */}
                         </div>

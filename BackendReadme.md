@@ -1,4 +1,4 @@
-<![CDATA[# 🧱 Weinix Backend — CRM + Customer Portal API
+# 🧱 Weinix Backend — CRM + Customer Portal API
 
 > **Scalable Node.js/Express backend** for the Weinix sustainable-brick e-commerce platform.
 > Handles admin CRM operations (users, customers, products, tickets, audits) **and** a customer-facing self-service portal — all behind JWT-based, Redis-backed session management.

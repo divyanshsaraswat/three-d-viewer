@@ -1,96 +1,86 @@
-/**
- * Portal ticket API functions.
- *
- * Authenticated routes → `/api/v1/portal/tickets/*`
- * All require the customer's JWT (accessToken).
- */
-
-import { apiFetch, qs, type ApiResult, type PaginationMeta } from "./apiClient";
+import { apiFetch, type ApiResult, type PaginationMeta } from "./apiClient";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export interface ProductInterest {
-  productId: string;
+export type TicketType = "sales" | "support" | "inquiry" | "complaint";
+export type TicketPriority = "low" | "medium" | "high" | "urgent";
+export type TicketStatus = "open" | "awaiting_customer" | "awaiting_staff" | "closed" | "resolved";
+
+export interface TicketMessage {
+  sender: "customer" | "admin" | "rag" | "system";
+  message: string;
+  timestamp: string;
+  isRead?: boolean;
+}
+
+export interface TicketProductInterest {
+  productId: string | any; // Could be populated
   variantSku?: string;
   quantity?: number;
   notes?: string;
 }
 
-export interface CreateTicketPayload {
-  type: "sales" | "support" | "inquiry" | "complaint";
-  businessType: "b2b" | "d2c";
-  subject: string;
-  message: string;
-  priority?: "low" | "medium" | "high" | "urgent";
-  productInterest?: ProductInterest[];
-}
-
-export interface TicketSummary {
+export interface Ticket {
   ticketId: string;
-  type: string;
+  type: TicketType;
+  businessType: "b2b" | "d2c" | "both";
   subject: string;
-  priority: string;
-  status: string;
+  priority: TicketPriority;
+  status: TicketStatus;
+  productInterest?: TicketProductInterest[];
+  messages?: TicketMessage[];
   unreadCount?: number;
-  latestMessage?: {
-    sender: string;
-    message: string;
-    timestamp: string;
-  };
-  createdAt: string;
-}
-
-export interface TicketMessage {
-  sender: "customer" | "admin" | "rag";
-  senderId?: string;
-  senderModel?: string;
-  message: string;
-  attachments?: unknown[];
-  timestamp: string;
-  isRead: boolean;
-}
-
-export interface TicketDetail {
-  ticketId: string;
-  customer: unknown;
-  type: string;
-  businessType: string;
-  subject: string;
-  priority: string;
-  status: string;
-  messages: TicketMessage[];
-  assignedTo?: unknown;
-  productInterest?: unknown[];
+  latestMessage?: TicketMessage;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface TicketsListData {
-  tickets: TicketSummary[];
-  pagination: PaginationMeta;
+export interface CreateTicketPayload {
+  type: TicketType;
+  businessType: "b2b" | "d2c" | "both";
+  subject: string;
+  message: string;
+  priority?: TicketPriority;
+  productInterest?: TicketProductInterest[];
 }
 
-export interface TicketsQueryParams {
-  page?: number;
-  limit?: number;
-  status?: string;
+export interface ReplyTicketPayload {
+  message: string;
+}
+
+export interface GetTicketsResponse {
+  tickets: Ticket[];
+  pagination: PaginationMeta;
 }
 
 // ---------------------------------------------------------------------------
 // API calls
 // ---------------------------------------------------------------------------
 
-/**
- * Create a new support / inquiry ticket.
- */
-export function createTicket(
-  data: CreateTicketPayload,
+export function getTickets(
   token: string,
+  params: { page?: number; limit?: number; status?: string } = {},
   signal?: AbortSignal
-): Promise<ApiResult<TicketSummary>> {
-  return apiFetch<TicketSummary>("/portal/tickets", {
+): Promise<ApiResult<GetTicketsResponse>> {
+  const query = new URLSearchParams();
+  if (params.page) query.append("page", String(params.page));
+  if (params.limit) query.append("limit", String(params.limit));
+  if (params.status) query.append("status", params.status);
+
+  return apiFetch<GetTicketsResponse>(`/portal/tickets?${query.toString()}`, {
+    token,
+    signal,
+  });
+}
+
+export function createTicket(
+  token: string,
+  data: CreateTicketPayload,
+  signal?: AbortSignal
+): Promise<ApiResult<Ticket>> {
+  return apiFetch<Ticket>("/portal/tickets", {
     method: "POST",
     body: data,
     token,
@@ -98,60 +88,37 @@ export function createTicket(
   });
 }
 
-/**
- * List the authenticated customer's tickets (paginated).
- */
-export function listMyTickets(
-  params: TicketsQueryParams = {},
+export function getTicketById(
   token: string,
+  ticketId: string,
   signal?: AbortSignal
-): Promise<ApiResult<TicketsListData>> {
-  return apiFetch<TicketsListData>(`/portal/tickets${qs(params as Record<string, unknown>)}`, {
+): Promise<ApiResult<Ticket>> {
+  return apiFetch<Ticket>(`/portal/tickets/${encodeURIComponent(ticketId)}`, {
     token,
     signal,
   });
 }
 
-/**
- * Get full detail (with messages) for a single ticket.
- */
-export function getTicketDetail(
-  ticketId: string,
-  token: string,
-  signal?: AbortSignal
-): Promise<ApiResult<TicketDetail>> {
-  return apiFetch<TicketDetail>(
-    `/portal/tickets/${encodeURIComponent(ticketId)}`,
-    { token, signal }
-  );
-}
-
-/**
- * Reply to an existing ticket thread.
- */
 export function replyToTicket(
-  ticketId: string,
-  message: string,
   token: string,
+  ticketId: string,
+  data: ReplyTicketPayload,
   signal?: AbortSignal
 ): Promise<ApiResult<{ ticketId: string; status: string; message: TicketMessage }>> {
   return apiFetch<{ ticketId: string; status: string; message: TicketMessage }>(
     `/portal/tickets/${encodeURIComponent(ticketId)}/messages`,
     {
       method: "POST",
-      body: { message },
+      body: data,
       token,
       signal,
     }
   );
 }
 
-/**
- * Close a ticket from the customer side.
- */
 export function closeTicket(
-  ticketId: string,
   token: string,
+  ticketId: string,
   signal?: AbortSignal
 ): Promise<ApiResult<{ ticketId: string; status: string }>> {
   return apiFetch<{ ticketId: string; status: string }>(

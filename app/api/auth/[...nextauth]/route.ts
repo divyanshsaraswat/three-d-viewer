@@ -1,6 +1,47 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { requestOtp, verifyOtp, signup } from "@/utils/api/auth";
+
+const IS_DEV = process.env.NEXT_PUBLIC_EDITOR_MODE !== "prod";
+const API_BASE = (
+  process.env.API_ENDPOINT || "http://localhost:8000"
+).replace(/\/+$/, "");
+
+// ---------------------------------------------------------------------------
+// Direct backend helpers (server-side only — absolute URLs required)
+// ---------------------------------------------------------------------------
+
+async function backendPost<T = unknown>(
+  path: string,
+  body: Record<string, unknown>
+): Promise<{ success: boolean; data: T | null; message?: string }> {
+  try {
+    const url = `${API_BASE}${path}`;
+    if (IS_DEV) console.log(`[AUTH-BACKEND] POST ${url}`, JSON.stringify(body));
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const json = await res.json();
+    if (IS_DEV) console.log(`[AUTH-BACKEND] Response (${res.status}):`, JSON.stringify(json, null, 2));
+
+    return {
+      success: res.ok && json.success !== false,
+      data: json.data ?? null,
+      message: json.message,
+    };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Backend unreachable";
+    if (IS_DEV) console.log(`[AUTH-BACKEND] NETWORK ERROR:`, msg);
+    return { success: false, data: null, message: msg };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// NextAuth config
+// ---------------------------------------------------------------------------
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,17 +59,20 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.mobileNumber) return null;
 
-        const phone = `+91${credentials.mobileNumber}`;
+        const phone = credentials.mobileNumber;
         const action = credentials.action || "verify-otp";
 
         // -----------------------------------------------------------------
         // Step 1: Request OTP (called from the first form step)
         // -----------------------------------------------------------------
         if (action === "request-otp") {
-          const res = await requestOtp(phone);
+          const res = await backendPost<{ phone: string; flow: "login" | "signup" }>(
+            "/api/v1/portal/auth/request-otp",
+            { phone }
+          );
 
           if (!res.success) {
-            throw new Error(res.error || "Failed to send OTP");
+            throw new Error(res.message || "Failed to send OTP");
           }
 
           // If backend says "signup", the user doesn't exist yet
@@ -37,8 +81,6 @@ export const authOptions: NextAuthOptions = {
           }
 
           // OTP was sent — we can't return a user yet (need OTP verification)
-          // NextAuth authorize must return null or a user, so we throw a
-          // special error that the frontend will catch to move to step 2.
           throw new Error("OTP_SENT");
         }
 
@@ -51,14 +93,13 @@ export const authOptions: NextAuthOptions = {
               ? `${credentials.firstName} ${credentials.lastName}`
               : credentials.firstName || "User";
 
-          const res = await signup(
-            phone,
-            name,
-            credentials.email || "",
+          const res = await backendPost(
+            "/api/v1/portal/auth/signup",
+            { phone, name, email: credentials.email || "" }
           );
 
           if (!res.success) {
-            throw new Error(res.error || "Failed to register");
+            throw new Error(res.message || "Failed to register");
           }
 
           // OTP sent after signup — move to step 2
@@ -72,13 +113,26 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const verifyRes = await verifyOtp(phone, credentials.otp);
+        const verifyRes = await backendPost<{
+          customer: {
+            id: string;
+            phone: string;
+            name: string;
+            email: string;
+            isPhoneVerified: boolean;
+            businessType: string;
+          };
+          accessToken: string;
+          refreshToken: string;
+          sessionId: string;
+          expiresIn: string;
+        }>("/api/v1/portal/auth/verify-otp", { phone, otp: credentials.otp });
 
         if (verifyRes.success && verifyRes.data) {
           const { customer, accessToken, refreshToken, sessionId } =
             verifyRes.data;
 
-          return {
+          const userObj = {
             id: customer.id,
             name: customer.name,
             email: customer.email,
@@ -89,27 +143,17 @@ export const authOptions: NextAuthOptions = {
             sessionId,
             businessType: customer.businessType,
             customerId: customer.id,
-          } as any;
+          };
+
+          if (IS_DEV) {
+            console.log("[AUTH-AUTHORIZE] Returning user object:", JSON.stringify(userObj, null, 2));
+          }
+
+          return userObj as any;
         }
 
-        // ---------------------------------------------------------------
-        // Fallback mock — when backend is unreachable keep dev working
-        // ---------------------------------------------------------------
-        if (verifyRes.status === 0 && credentials.otp.length === 6) {
-          return {
-            id: credentials.mobileNumber,
-            name:
-              credentials.firstName && credentials.lastName
-                ? `${credentials.firstName} ${credentials.lastName}`
-                : "User",
-            email:
-              credentials.email ||
-              `${credentials.mobileNumber}@mock.phone`,
-            mobileNumber: credentials.mobileNumber,
-          } as any;
-        }
-
-        return null;
+        // Backend returned an error — surface it to the client
+        throw new Error(verifyRes.message || "OTP verification failed");
       },
     }),
   ],
@@ -125,6 +169,10 @@ export const authOptions: NextAuthOptions = {
         token.businessType = u.businessType;
         token.firstName = u.name?.split(" ")[0];
         token.lastName = u.name?.split(" ").slice(1).join(" ");
+
+        if (IS_DEV) {
+          console.log("[AUTH-JWT] Token assembled from user:", JSON.stringify(token, null, 2));
+        }
       }
       return token;
     },
@@ -139,6 +187,9 @@ export const authOptions: NextAuthOptions = {
         u.businessType = token.businessType;
         u.firstName = token.firstName;
         u.lastName = token.lastName;
+      }
+      if (IS_DEV) {
+        console.log("[AUTH-SESSION] Session callback — stored session object:", JSON.stringify(session, null, 2));
       }
       return session;
     },
@@ -157,3 +208,4 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+
