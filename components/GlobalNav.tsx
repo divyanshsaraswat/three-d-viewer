@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Menu, ArrowRight } from 'lucide-react';
+import { Menu, ArrowRight, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useGlobalContext } from '@/context/GlobalContext';
@@ -33,25 +33,39 @@ export default function GlobalNav() {
                         {/* <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link> */}
                         <Link href="/contact-us" className="hover:opacity-70 transition-opacity">Contact</Link>
                     </div>
-                    <div className={`flex items-center gap-6 ${textColorClass} transition-colors`}>
+                    <div className={`flex items-center gap-4 md:gap-6 ${textColorClass} transition-colors`}>
                         {session?.user ? (
-                            <Link href="/profile" className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
-                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                                <span className="relative flex items-center gap-2">
-                                    {session.user.name?.split(' ')[0] || 'Profile'}
-                                </span>
-                            </Link>
+                            <>
+                                <Link href="/profile" className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
+                                    <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                    <span className="relative flex items-center gap-2">
+                                        {session.user.name?.split(' ')[0] || 'Profile'}
+                                    </span>
+                                </Link>
+                                <Link href="/profile" className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-[#ccff00] text-black hover:scale-105 active:scale-95 transition-all shadow-[0_0_10px_rgba(204,255,0,0.3)]">
+                                    <User size={18} strokeWidth={2.5} />
+                                </Link>
+                            </>
                         ) : (
-                            <button 
-                                onClick={() => setIsAuthModalOpen(true)}
-                                className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
-                            >
-                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                                <span className="relative flex items-center gap-2">
-                                    Join Now
-                                    <ArrowRight size={14} strokeWidth={3} className="transition-transform duration-300 group-hover:translate-x-1" />
-                                </span>
-                            </button>
+                            <>
+                                <button 
+                                    onClick={() => setIsAuthModalOpen(true)}
+                                    className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
+                                >
+                                    <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                    <span className="relative flex items-center gap-2">
+                                        Join Now
+                                        <ArrowRight size={14} strokeWidth={3} className="transition-transform duration-300 group-hover:translate-x-1" />
+                                    </span>
+                                </button>
+                                <button 
+                                    onClick={() => setIsAuthModalOpen(true)}
+                                    className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-[#ccff00] text-black hover:scale-105 active:scale-95 transition-all shadow-[0_0_10px_rgba(204,255,0,0.3)] cursor-pointer"
+                                    aria-label="Join Now"
+                                >
+                                    <User size={18} strokeWidth={2.5} />
+                                </button>
+                            </>
                         )}
                         <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
                             <Menu size={22} />
@@ -75,25 +89,39 @@ export default function GlobalNav() {
                         {/* <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link> */}
                         <Link href="/contact-us" className="hover:opacity-70 transition-opacity">Contact</Link>
                     </div>
-                    <div className="flex items-center gap-6 text-black dark:text-white transition-colors">
+                    <div className="flex items-center gap-4 md:gap-6 text-black dark:text-white transition-colors">
                         {session?.user ? (
-                            <Link href="/profile" className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
-                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                                <span className="relative flex items-center gap-2">
-                                    {session.user.name?.split(' ')[0] || 'Profile'}
-                                </span>
-                            </Link>
+                            <>
+                                <Link href="/profile" className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer">
+                                    <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                    <span className="relative flex items-center gap-2">
+                                        {session.user.name?.split(' ')[0] || 'Profile'}
+                                    </span>
+                                </Link>
+                                <Link href="/profile" className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-[#ccff00] text-black hover:scale-105 active:scale-95 transition-all shadow-[0_0_10px_rgba(204,255,0,0.3)]">
+                                    <User size={18} strokeWidth={2.5} />
+                                </Link>
+                            </>
                         ) : (
-                            <button 
-                                onClick={() => setIsAuthModalOpen(true)}
-                                className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
-                            >
-                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                                <span className="relative flex items-center gap-2">
-                                    Join Now
-                                    <ArrowRight size={14} strokeWidth={3} className="transition-transform duration-300 group-hover:translate-x-1" />
-                                </span>
-                            </button>
+                            <>
+                                <button 
+                                    onClick={() => setIsAuthModalOpen(true)}
+                                    className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
+                                >
+                                    <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                    <span className="relative flex items-center gap-2">
+                                        Join Now
+                                        <ArrowRight size={14} strokeWidth={3} className="transition-transform duration-300 group-hover:translate-x-1" />
+                                    </span>
+                                </button>
+                                <button 
+                                    onClick={() => setIsAuthModalOpen(true)}
+                                    className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-[#ccff00] text-black hover:scale-105 active:scale-95 transition-all shadow-[0_0_10px_rgba(204,255,0,0.3)] cursor-pointer"
+                                    aria-label="Join Now"
+                                >
+                                    <User size={18} strokeWidth={2.5} />
+                                </button>
+                            </>
                         )}
                         <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
                             <Menu size={22} />
