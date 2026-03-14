@@ -74,15 +74,18 @@ export default function Template({ children }: { children: React.ReactNode }) {
                     </div>
 
                     {/* Large animated page title */}
-                    <div ref={titleRef} className="overflow-hidden flex items-center justify-center">
-                        <h1 className="text-black dark:text-white transition-colors duration-500 text-7xl md:text-[9rem] lg:text-[12rem] font-bold tracking-tighter leading-none text-center flex">
-                            {pageTitle.split('').map((char, i) => (
-                                <span
-                                    key={i}
-                                    className="page-title-char inline-block"
-                                    style={{ display: char === ' ' ? 'inline' : 'inline-block' }}
-                                >
-                                    {char === ' ' ? '\u00A0' : char}
+                    <div ref={titleRef} className="overflow-hidden flex items-center justify-center w-full px-4">
+                        <h1 className="text-black dark:text-white transition-colors duration-500 text-5xl sm:text-6xl md:text-[9rem] lg:text-[12rem] font-bold tracking-tighter leading-[1.1] md:leading-none text-center flex flex-wrap justify-center gap-x-[0.3em] gap-y-2 md:gap-y-0">
+                            {pageTitle.split(' ').map((word, wIdx) => (
+                                <span key={wIdx} className="inline-flex overflow-hidden">
+                                    {word.split('').map((char, cIdx) => (
+                                        <span
+                                            key={cIdx}
+                                            className="page-title-char inline-block"
+                                        >
+                                            {char}
+                                        </span>
+                                    ))}
                                 </span>
                             ))}
                         </h1>
