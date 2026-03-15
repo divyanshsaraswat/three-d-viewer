@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 const specs = [
@@ -85,27 +86,32 @@ export default function SpecializationCarousel() {
             scrollTrigger: {
                 trigger: rootRef.current,
                 start: "top top",
-                end: `+=${window.innerHeight * specs.length * 0.8}`,
+                end: () => `+=${window.innerHeight * specs.length * (isMobile ? 1.2 : 0.8)}`, // More scroll runway on mobile
                 pin: true,
-                scrub: 1,
+                pinSpacing: true, // Explicitly keep spacing to prevent collapse on fast scroll
+                fastScrollEnd: true, // Protects against high-velocity touch skips
+                scrub: isMobile ? 0.5 : 1, // Add very slight scrub smoothing back for mobile momentum
                 anticipatePin: 1,
                 snap: {
                     snapTo: 1 / (specs.length - 1),
-                    duration: { min: 0.2, max: 0.4 },
-                    ease: "back.out(1.5)"
+                    duration: isMobile ? { min: 0.1, max: 0.2 } : { min: 0.1, max: 0.3 }, 
+                    delay: isMobile ? 0.05 : 0, // Very slight delay on mobile allows Lenis to settle
+                    ease: "power1.inOut" 
                 },
-                onUpdate: (self) => {
+                onUpdate: (self: any) => {
                     const currentProgress = self.progress;
                     const segment = 1 / (specs.length - 1);
                     const exact = currentProgress / segment;
                     
                     let newIdx = Math.round(exact);
-                    if (self.direction === 1) {
-                        // Scrolling down - trigger when 15% into the next segment
-                        newIdx = Math.floor(exact + 0.85); 
-                    } else if (self.direction === -1) {
-                        // Scrolling up - trigger when 15% backwards into the previous segment
-                        newIdx = Math.ceil(exact - 0.85);
+                    if (!isMobile) {
+                        if (self.direction === 1) {
+                            // Scrolling down - trigger when 15% into the next segment
+                            newIdx = Math.floor(exact + 0.85); 
+                        } else if (self.direction === -1) {
+                            // Scrolling up - trigger when 15% backwards into the previous segment
+                            newIdx = Math.ceil(exact - 0.85);
+                        }
                     }
 
                     const finalIdx = Math.min(Math.max(newIdx, 0), specs.length - 1);
@@ -123,6 +129,7 @@ export default function SpecializationCarousel() {
     }, { scope: rootRef, dependencies: [] });
 
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (e.pointerType === 'touch' || (typeof window !== 'undefined' && window.innerWidth < 768)) return;
         isDragging.current = true;
         dragStart.current = { x: e.clientX, scroll: window.scrollY };
         e.currentTarget.setPointerCapture(e.pointerId);
@@ -131,6 +138,7 @@ export default function SpecializationCarousel() {
 
     const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
         if (!isDragging.current || !stRef.current) return;
+        if (e.pointerType === 'touch' || (typeof window !== 'undefined' && window.innerWidth < 768)) return;
         const deltaX = e.clientX - dragStart.current.x;
         // Drag horizontally -> Scroll vertically
         const multiplier = 2.5;
@@ -138,6 +146,7 @@ export default function SpecializationCarousel() {
     };
 
     const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (e.pointerType === 'touch' || (typeof window !== 'undefined' && window.innerWidth < 768)) return;
         isDragging.current = false;
         e.currentTarget.releasePointerCapture(e.pointerId);
         e.currentTarget.style.cursor = 'grab';
@@ -181,9 +190,9 @@ export default function SpecializationCarousel() {
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
                     onPointerCancel={handlePointerUp}
-                    // Prevent default touch drag on mobile so our custom pointer handler can drive scroll directly
+                    // Prevent default touch drag on non-mobile so our custom pointer handler can drive scroll directly
                     style={{ 
-                        touchAction: 'none',
+                        touchAction: typeof window !== 'undefined' && window.innerWidth < 768 ? 'pan-y' : 'none',
                         gap: `${typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 2}vw`,
                         paddingLeft: `${typeof window !== 'undefined' && window.innerWidth < 768 ? 16 : 32}px`,
                         transform: `translateX(-${activeIdx * (typeof window !== 'undefined' && window.innerWidth < 768 ? 45 + 4 : 24 + 2)}vw)`

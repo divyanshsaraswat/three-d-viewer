@@ -230,6 +230,11 @@ export default function LandingPage() {
     const [imagesLoaded, setImagesLoaded] = useState(0);
     const [mediaProgress, setMediaProgress] = useState(0);
     const [isAllMediaLoaded, setIsAllMediaLoaded] = useState(false);
+    
+    // Explicit waiting for specific structural heavy components
+    const [isGlobeGalleryLoaded, setIsGlobeGalleryLoaded] = useState(false);
+    const [isScrollRevealLoaded, setIsScrollRevealLoaded] = useState(false);
+    
     const { data: session } = useSession();
 
     const { hasEntered, setHasEntered, isMuted, setIsMuted, audioRef, setIsAuthModalOpen } = useGlobalContext();
@@ -238,6 +243,8 @@ export default function LandingPage() {
     useEffect(() => {
         if (hasEntered) {
             setIsAllMediaLoaded(true);
+            setIsGlobeGalleryLoaded(true);
+            setIsScrollRevealLoaded(true);
             setMediaProgress(100);
             return;
         }
@@ -293,7 +300,30 @@ export default function LandingPage() {
         }, 100);
 
         return () => clearTimeout(timer);
-    }, [hasEntered]);
+    }, [hasEntered, isAllMediaLoaded]);
+
+    // Independent event listeners for component sub-systems
+    useEffect(() => {
+        const handleGlobeReady = () => setIsGlobeGalleryLoaded(true);
+        const handleRevealReady = () => setIsScrollRevealLoaded(true);
+
+        window.addEventListener('globeGalleryReady', handleGlobeReady);
+        window.addEventListener('scrollRevealReady', handleRevealReady);
+
+        // Fail-safe to force them loaded after max 6 seconds
+        const safetyTimer = setTimeout(() => {
+             setIsGlobeGalleryLoaded(true);
+             setIsScrollRevealLoaded(true);
+        }, 6000);
+
+        return () => {
+            window.removeEventListener('globeGalleryReady', handleGlobeReady);
+            window.removeEventListener('scrollRevealReady', handleRevealReady);
+            clearTimeout(safetyTimer);
+        };
+    }, []);
+
+    const isEverythingReady = isAllMediaLoaded && isGlobeGalleryLoaded && isScrollRevealLoaded;
 
     const handleEnter = () => {
         if (audioRef.current) {
@@ -351,12 +381,13 @@ export default function LandingPage() {
             });
 
             gsap.to("#loading-bar-fill", {
-                width: `${mediaProgress}%`,
+                // If media is loaded but we're waiting for heavy components, stick progress near 90%
+                width: isEverythingReady ? '100%' : `${Math.min(mediaProgress, 90)}%`,
                 duration: 1.2,
                 ease: "power2.out",
             });
 
-            if (isAllMediaLoaded) {
+            if (isEverythingReady) {
                 const morphTl = gsap.timeline();
                 morphTl.to(["#loading-percentage", "#loading-weinix-logo"], {
                     yPercent: -50,
@@ -395,7 +426,7 @@ export default function LandingPage() {
                     }, 1.6);
             }
         }
-    }, [hasEntered, mediaProgress, isAllMediaLoaded]);
+    }, [hasEntered, mediaProgress, isEverythingReady]);
 
     // --- 2. Post-Entry Page Animations (Triggered once exit begins or if already entered) ---
     useGSAP(() => {
@@ -508,7 +539,7 @@ export default function LandingPage() {
                             {/* The background line wrapper - handles the morph */}
                             <div id="loading-bar-bg" className="absolute w-48 h-[2px] bg-white/20 dark:bg-white/20 bg-black/20 rounded-none overflow-hidden flex items-center justify-center pointer-events-auto cursor-pointer"
                                 onClick={(e) => {
-                                    if (isAllMediaLoaded) {
+                                    if (isEverythingReady) {
                                         handleEnter();
                                     }
                                 }}>

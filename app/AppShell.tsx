@@ -9,6 +9,7 @@ import CustomCursor from '@/components/CustomCursor';
 import AuthModal from '@/components/AuthModal';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
+import { ReactLenis } from '@studio-freight/react-lenis';
 
 function AuthModalTrigger() {
     const searchParams = useSearchParams();
@@ -55,7 +56,15 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 export default function AppShell({ children }: { children: React.ReactNode }) {
     return (
         <GlobalProvider>
-            <AppShellInner>{children}</AppShellInner>
+            <ReactLenis root options={{
+                lerp: 0.1,
+                duration: 1.2,
+                smoothWheel: true,
+                wheelMultiplier: 1,
+                touchMultiplier: 1.5, // Standardize touch scrolling
+            }}>
+                <AppShellInner>{children}</AppShellInner>
+            </ReactLenis>
         </GlobalProvider>
     );
 }

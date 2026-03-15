@@ -145,6 +145,12 @@ export default function ScrollRevealText() {
             };
         });
 
+        // Notify main loading page that text reveal DOM structuring & timeline setup is complete
+        if (typeof window !== 'undefined') {
+            const evt = new CustomEvent('scrollRevealReady');
+            window.dispatchEvent(evt);
+        }
+
     }, { scope: containerRef });
 
     // Grouping adjacent pure words drastically reduces DOM count

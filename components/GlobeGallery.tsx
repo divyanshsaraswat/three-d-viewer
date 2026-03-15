@@ -325,6 +325,14 @@ export default function DomeGallery({
 
   const items = useMemo(() => buildItems(images, segments), [images, segments]);
 
+  useEffect(() => {
+    // Notify the main loading page that GlobeGallery mesh calculations are finished
+    if (typeof window !== 'undefined') {
+        const evt = new CustomEvent('globeGalleryReady');
+        window.dispatchEvent(evt);
+    }
+  }, [items]);
+
   const applyTransform = (xDeg: number, yDeg: number) => {
     const el = sphereRef.current;
     if (el) {
@@ -470,8 +478,9 @@ export default function DomeGallery({
 
         const evt = event as PointerEvent;
         pointerTypeRef.current = (evt.pointerType as any) || 'mouse';
-        if (pointerTypeRef.current === 'touch') evt.preventDefault();
-        if (pointerTypeRef.current === 'touch') lockScroll();
+        const isMobileOrTouch = pointerTypeRef.current === 'touch' || (typeof window !== 'undefined' && window.innerWidth < 768);
+        if (pointerTypeRef.current === 'touch' && !isMobileOrTouch) evt.preventDefault();
+        if (pointerTypeRef.current === 'touch' && !isMobileOrTouch) lockScroll();
         draggingRef.current = true;
         cancelTapRef.current = false;
         movedRef.current = false;
@@ -488,13 +497,15 @@ export default function DomeGallery({
 
         const dxTotal = evt.clientX - startPosRef.current.x;
         const dyTotal = evt.clientY - startPosRef.current.y;
+        
+        const isMobileOrTouch = pointerTypeRef.current === 'touch' || (typeof window !== 'undefined' && window.innerWidth < 768);
 
         if (!movedRef.current) {
           const dist2 = dxTotal * dxTotal + dyTotal * dyTotal;
           if (dist2 > 16) movedRef.current = true;
         }
 
-        const nextX = clamp(
+        const nextX = isMobileOrTouch ? startRotRef.current.x : clamp(
           startRotRef.current.x - dyTotal / dragSensitivity,
           -maxVerticalRotationDeg,
           maxVerticalRotationDeg
@@ -948,7 +959,7 @@ export default function DomeGallery({
           ref={mainRef}
           className="absolute inset-0 grid place-items-center overflow-hidden select-none bg-transparent"
           style={{
-            touchAction: 'none',
+            touchAction: typeof window !== 'undefined' && window.innerWidth < 768 ? 'pan-y' : 'none',
             WebkitUserSelect: 'none'
           }}
         >
