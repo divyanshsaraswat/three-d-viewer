@@ -160,16 +160,7 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
 
                     {/* RIGHT COLUMN: Product Config */}
                     <div className="lg:col-span-5 flex flex-col justify-center">
-                        <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black uppercase tracking-tighter mb-4 anim-text text-balance">
-                            {product.name}
-                        </h1>
-                        
-                        <div className="anim-text mb-10">
-                            <div className="inline-flex bg-[#ccff00] text-black text-[10px] sm:text-xs font-bold px-4 py-2.5 rounded-full shadow-[0_0_20px_rgba(204,255,0,0.15)] border border-[#ccff00]/50 tracking-wide">
-                                {product.price}
-                                <span className="ml-1 opacity-50 text-[9px]">USD</span>
-                            </div>
-                        </div>
+
 
                         <div className="w-full h-px bg-black/10 dark:bg-white/5 mb-10 anim-text shadow-[0_1px_0_rgba(255,255,255,0.02)]"></div>
 
@@ -215,7 +206,7 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
                                 {product.description}
                             </p>
                             
-                            <ul className="space-y-3">
+                            <ul className="space-y-3 mb-10">
                                 {product.features.map((feature: string, i: number) => (
                                     <li key={i} className="flex items-center text-[11px] text-black/70 dark:text-white/60 font-medium tracking-wide">
                                         <div className="w-1 h-1 bg-[#ccff00] rounded-full mr-3 shrink-0 shadow-[0_0_8px_rgba(204,255,0,0.8)]"></div>
@@ -223,6 +214,17 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
                                     </li>
                                 ))}
                             </ul>
+
+                            <Link
+                                href="/contact-us"
+                                className="group relative inline-flex items-center justify-center px-8 py-4 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(204,255,0,0.2)] hover:shadow-[0_0_40px_rgba(204,255,0,0.5)] border border-[#ccff00]/50"
+                            >
+                                <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                <span className="relative flex items-center gap-2">
+                                    Enquire for Sale
+                                    <ArrowRight size={14} strokeWidth={3} className="transition-transform duration-300 group-hover:translate-x-1" />
+                                </span>
+                            </Link>
                         </div>
 
                     </div>

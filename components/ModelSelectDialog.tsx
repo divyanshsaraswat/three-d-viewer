@@ -115,7 +115,7 @@ export default function ModelSelectDialog({ isOpen, onClose }: { isOpen: boolean
                         Select a Model
                     </h2>
                     <p className={`text-[13px] text-black/50 dark:text-white/40 font-medium transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] delay-100 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                        Choose a 3D scene to explore in the Editor.
+                        Choose a 3D scene to explore in our environment.
                     </p>
                 </div>
 

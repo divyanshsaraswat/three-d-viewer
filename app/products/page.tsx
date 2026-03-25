@@ -125,16 +125,7 @@ export default function ProductsPage() {
                                 style={{ objectPosition: item.objectPosition }}
                             />
 
-                            {/* Floating Price Pill */}
-                            <div className="absolute left-6 bottom-6 md:left-8 md:bottom-8 z-20 flex items-center group-hover:-translate-y-2 transition-transform duration-500 ease-out">
-                                <div className="bg-[#111]/90 backdrop-blur-md border border-white/10 text-white/90 text-[10px] sm:text-xs font-semibold px-4 py-2.5 rounded-full flex items-center shadow-2xl tracking-wide">
-                                    {item.name}
-                                </div>
-                                <div className="bg-[#ccff00] text-black text-[10px] sm:text-xs font-bold px-4 py-2.5 rounded-full flex items-center -ml-4 shadow-[0_0_20px_rgba(204,255,0,0.15)] z-10 border border-[#ccff00]/50 tracking-wide">
-                                    {item.price}
-                                    <span className="ml-1 opacity-50 text-[9px]">USD</span>
-                                </div>
-                            </div>
+
                         </Link>
                     ))}
                 </div>
@@ -157,15 +148,7 @@ export default function ProductsPage() {
                                 style={{ objectPosition: item.objectPosition }}
                             />
 
-                            <div className="absolute left-6 bottom-6 md:left-8 md:bottom-8 z-20 flex items-center group-hover:-translate-y-2 transition-transform duration-500 ease-out">
-                                <div className="bg-[#111]/90 backdrop-blur-md border border-white/10 text-white/90 text-[10px] sm:text-xs font-semibold px-4 py-2.5 rounded-full flex items-center shadow-2xl tracking-wide">
-                                    {item.name}
-                                </div>
-                                <div className="bg-[#ccff00] text-black text-[10px] sm:text-xs font-bold px-4 py-2.5 rounded-full flex items-center -ml-4 shadow-[0_0_20px_rgba(204,255,0,0.15)] z-10 border border-[#ccff00]/50 tracking-wide">
-                                    {item.price}
-                                    <span className="ml-1 opacity-50 text-[9px]">USD</span>
-                                </div>
-                            </div>
+
                         </Link>
                     ))}
                         
