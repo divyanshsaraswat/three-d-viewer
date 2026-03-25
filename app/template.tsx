@@ -30,6 +30,9 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
     // Page transition animation
     useEffect(() => {
+        // Reset scroll position on every route change
+        window.scrollTo(0, 0);
+
         if (!containerRef.current || !bgRef.current) return;
 
         const tl = gsap.timeline();
