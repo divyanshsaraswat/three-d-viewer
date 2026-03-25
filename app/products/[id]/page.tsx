@@ -158,47 +158,13 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
 
                     </div>
 
-                    {/* RIGHT COLUMN: Product Config */}
+                    {/* RIGHT COLUMN: Product Info */}
                     <div className="lg:col-span-5 flex flex-col justify-center">
-
+                        <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black uppercase tracking-tighter mb-4 anim-text text-balance">
+                            {product.name}
+                        </h1>
 
                         <div className="w-full h-px bg-black/10 dark:bg-white/5 mb-10 anim-text shadow-[0_1px_0_rgba(255,255,255,0.02)]"></div>
-
-                        {/* Colors */}
-                        <div className="mb-10 anim-text">
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-black/50 dark:text-white/50 mb-4 flex items-center gap-2">
-                                Variation <div className="h-px bg-black/10 dark:bg-white/10 flex-1 ml-2"></div>
-                            </h3>
-                            <div className="flex flex-wrap gap-3">
-                                {product.colors.map((color: string, i: number) => (
-                                    <button 
-                                        key={color} 
-                                        onClick={() => setActiveColor(i)}
-                                        className={`px-6 py-2 rounded-full text-[11px] font-semibold tracking-wide border transition-all duration-300 ${activeColor === i ? 'bg-[#111] text-[#ccff00] border-[#111] dark:bg-white dark:text-black dark:border-white shadow-md' : 'bg-transparent text-black dark:text-white/80 border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30'}`}
-                                    >
-                                        {color}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Sizes */}
-                        <div className="mb-10 anim-text">
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-black/50 dark:text-white/50 mb-4 flex items-center gap-2">
-                                Resolution <div className="h-px bg-black/10 dark:bg-white/10 flex-1 ml-2"></div>
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {product.sizes.map((size: string, i: number) => (
-                                    <button 
-                                        key={size}
-                                        onClick={() => setActiveSize(i)}
-                                        className={`px-5 py-2.5 rounded-full text-[11px] font-semibold tracking-wider border transition-all duration-300 min-w-[3rem] text-center ${activeSize === i ? 'bg-[#ccff00] text-black border-[#ccff00] shadow-md' : 'bg-transparent text-black dark:text-white/80 border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30'}`}
-                                    >
-                                        {size}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
 
                         {/* Description */}
                         <div className="anim-text pt-6 border-t border-black/10 dark:border-white/5">
