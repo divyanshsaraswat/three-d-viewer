@@ -7,6 +7,9 @@ import { useGlobalContext } from '@/context/GlobalContext';
 
 // Map routes to display titles
 function getPageTitle(pathname: string): string {
+    if (pathname.startsWith('/products')) {
+        return 'PRODUCTS';
+    }
     if (pathname.startsWith('/editor')) {
         return '3D EXPERIENCE';
     }
