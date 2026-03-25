@@ -9,7 +9,7 @@ import CustomCursor from '@/components/CustomCursor';
 import AuthModal from '@/components/AuthModal';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
-import { ReactLenis } from '@studio-freight/react-lenis';
+import { ReactLenis } from 'lenis/react';
 
 function AuthModalTrigger() {
     const searchParams = useSearchParams();
