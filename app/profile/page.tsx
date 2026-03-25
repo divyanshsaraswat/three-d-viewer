@@ -23,7 +23,7 @@ export default function ProfilePage() {
     useEffect(() => {
         setMounted(true);
         if (status === 'unauthenticated') {
-            router.push('/home');
+            router.push('/');
         }
         if (IS_DEV && status === 'authenticated' && session) {
             console.log('[PROFILE] Session stored object:', session);
@@ -81,7 +81,7 @@ export default function ProfilePage() {
     const displayEmail = profile?.profile?.email || sessionUser.email;
 
     const handleLogout = async () => {
-        await signOut({ callbackUrl: '/home' });
+        await signOut({ callbackUrl: '/' });
     };
 
     return (

@@ -12,9 +12,8 @@ function getPageTitle(pathname: string): string {
     }
 
     const map: Record<string, string> = {
-        '/home': 'HOME',
-        '/about-us': 'ABOUT US',
         '/': 'HOME',
+        '/about-us': 'ABOUT US',
     };
     return map[pathname] || pathname.replace('/', '').replace(/-/g, ' ').toUpperCase() || 'HOME';
 }

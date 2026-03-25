@@ -62,7 +62,7 @@ export default function GlobalFooter() {
                     <div className="lg:col-span-2">
                         <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00]">Discovery</h4>
                         <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
-                            <li><a href="/home" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Home</a></li>
+                            <li><a href="/" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Home</a></li>
                             <li><a href="/about-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">About</a></li>
                             <li><a href="/products" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Products</a></li>
                             <li><a href="/blog" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Blog</a></li>

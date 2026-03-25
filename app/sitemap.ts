@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${siteUrl}/home`,
+      url: `${siteUrl}/`,
       lastModified,
       changeFrequency: "weekly",
       priority: 1,

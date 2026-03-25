@@ -12,7 +12,7 @@ export default function GlobalNav() {
     const { data: session } = useSession();
     const pathname = usePathname();
     
-    const isLanding = pathname === '/home';
+    const isLanding = pathname === '/' || pathname === '/home';
     const isProfile = pathname === '/profile';
     const textColorClass = isLanding ? 'text-white' : 'text-black dark:text-white';
 
@@ -21,12 +21,12 @@ export default function GlobalNav() {
             {/* Initial transparent navbar (visible at top of page) */}
             <nav className={`absolute w-full z-50 px-6 py-4 top-0 left-0 transition-all duration-500 bg-transparent ${isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
-                    <Link href="/home" className={`flex items-center gap-3 font-bold text-xl tracking-tighter ${textColorClass} transition-colors`}>
+                    <Link href="/" className={`flex items-center gap-3 font-bold text-xl tracking-tighter ${textColorClass} transition-colors`}>
                         <img src="/icon-weinix.svg" alt="Weinix Logo" className="w-10 h-10 object-contain" />
                         <span>WEINIX</span>
                     </Link>
                     <div className={`hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold ${textColorClass} transition-colors`}>
-                        <Link href="/home" className="hover:opacity-70 transition-opacity">Home</Link>
+                        <Link href="/" className="hover:opacity-70 transition-opacity">Home</Link>
                         <Link href="/about-us" className="hover:opacity-70 transition-opacity">About Us</Link>
                         {/* <a href="#" className="hover:opacity-70 transition-opacity">Project</a> */}
                         <Link href="/products" className="hover:opacity-70 transition-opacity">Products</Link>
@@ -77,12 +77,12 @@ export default function GlobalNav() {
             {/* Sticky scrolled navbar (slides down when page is scrolled) */}
             <nav className={`fixed w-full z-[100] px-6 py-4 top-0 left-0 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10 transition-all duration-500 transform ${isScrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
                 <div className="max-w-[1200px] mx-auto w-full flex items-center justify-between">
-                    <Link href="/home" className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
+                    <Link href="/" className="flex items-center gap-3 font-bold text-xl tracking-tighter text-black dark:text-white transition-colors">
                         <img src="/icon-weinix.svg" alt="Weinix Logo" className="w-10 h-10 object-contain" />
                         <span>WEINIX</span>
                     </Link>
                     <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
-                        <Link href="/home" className="hover:opacity-70 transition-opacity">Home</Link>
+                        <Link href="/" className="hover:opacity-70 transition-opacity">Home</Link>
                         <Link href="/about-us" className="hover:opacity-70 transition-opacity">About Us</Link>
                         {/* <a href="#" className="hover:opacity-70 transition-opacity">Project</a> */}
                         <Link href="/products" className="hover:opacity-70 transition-opacity">Products</Link>

@@ -221,7 +221,7 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
             <div className="w-screen h-screen overflow-hidden flex relative font-sans text-white transition-colors duration-500 select-none" style={{ backgroundColor: '#0a0a0a' }}>
                 {/* Back to Home Button (Top Left) */}
                 <button
-                    onClick={() => window.location.assign('/home')}
+                    onClick={() => window.location.assign('/')}
                     className={`absolute top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-black/40 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-full text-black/80 dark:text-white/80 hover:text-black dark:hover:text-white hover:bg-white dark:hover:bg-black/60 hover:border-black/30 dark:hover:border-white/30 transition-all duration-700 shadow-lg group ${selectedMeshId || isModelLoading ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} cursor-pointer`}
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform text-[#88aa00] dark:text-[#ccff00]">

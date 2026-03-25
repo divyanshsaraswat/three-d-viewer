@@ -248,12 +248,6 @@ export default function SpecializationCarousel() {
                                             <p className="text-[#ccff00] md:text-white/90 text-xs md:text-sm font-bold tracking-widest uppercase">
                                                 {spec.date}
                                             </p>
-                                            <button className="hidden md:flex items-center gap-2 text-[#ccff00] md:text-white md:group-hover:text-[#ccff00] transition-colors group/btn pointer-events-auto cursor-pointer">
-                                                <span className="text-sm font-bold uppercase tracking-widest hidden md:inline-block">Learn More</span>
-                                                <div className="w-10 h-10 rounded-full border border-current flex items-center justify-center md:group-hover/btn:-rotate-45 transition-transform duration-300">
-                                                    <ArrowUpRight size={18} />
-                                                </div>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>

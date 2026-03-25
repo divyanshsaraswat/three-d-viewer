@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { getSiteUrl, siteConfig } from "@/utils/seo";
 import AppShell from "./AppShell";
@@ -90,6 +91,7 @@ export default function RootLayout({
         <SessionProviderWrapper>
           <AppShell>{children}</AppShell>
         </SessionProviderWrapper>
+        <Analytics />
       </body>
     </html>
   );

@@ -8,12 +8,12 @@ export const metadata: Metadata = {
   title: "Live Purposeful",
   description: landingDescription,
   alternates: {
-    canonical: "/home",
+    canonical: "/",
   },
   openGraph: {
     title: `Live Purposeful | ${siteConfig.name}`,
     description: landingDescription,
-    url: "/home",
+    url: "/",
     images: [
       {
         url: "/og-img.webp",
