@@ -164,7 +164,7 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
                             {product.name}
                         </h1>
 
-                        <div className="w-full h-px bg-black/10 dark:bg-white/5 mb-10 anim-text shadow-[0_1px_0_rgba(255,255,255,0.02)]"></div>
+                        {/* <div className="w-full h-px bg-black/10 dark:bg-white/5 mb-10 anim-text shadow-[0_1px_0_rgba(255,255,255,0.02)]"></div> */}
 
                         {/* Description */}
                         <div className="anim-text pt-6 border-t border-black/10 dark:border-white/5">
