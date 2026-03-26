@@ -57,6 +57,17 @@ export default function AuthModal() {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
+        if (isAuthModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isAuthModalOpen]);
+
+    useEffect(() => {
         let timeoutId: NodeJS.Timeout;
         let rafId: number;
         

@@ -31,6 +31,17 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
     }
 
     useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
+
+    useEffect(() => {
         if (!shouldRender || !containerRef.current || !contentRef.current || !backdropRef.current) return;
 
         const tl = gsap.timeline();
