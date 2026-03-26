@@ -323,7 +323,10 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
           
           {/* LIST VIEW */}
           {view === "list" && (
-            <div className="absolute inset-0 overflow-y-auto overscroll-contain p-5 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10 scrollbar-track-transparent">
+            <div 
+              className="absolute inset-0 overflow-y-auto overscroll-contain p-5 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10 scrollbar-track-transparent"
+              data-lenis-prevent
+            >
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-full text-black/30 dark:text-white/30 space-y-4">
                   <Loader2 size={24} className="animate-spin" />
@@ -422,7 +425,10 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
               )}
 
               {/* Chat Thread */}
-              <div className="flex-1 overflow-y-auto overscroll-contain p-5 space-y-4 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10 scrollbar-track-transparent">
+              <div 
+                className="flex-1 overflow-y-auto overscroll-contain p-5 space-y-4 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10 scrollbar-track-transparent"
+                data-lenis-prevent
+              >
                 {isLoading ? (
                   <div className="flex items-center justify-center h-full">
                     <Loader2 size={24} className="animate-spin text-black/30 dark:text-white/30" />
@@ -503,7 +509,10 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
 
           {/* CREATE VIEW */}
           {view === "create" && (
-            <div className="absolute inset-0 overflow-y-auto overscroll-contain p-5 sm:p-8 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10 scrollbar-track-transparent flex justify-center">
+            <div 
+              className="absolute inset-0 overflow-y-auto overscroll-contain p-5 sm:p-8 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10 scrollbar-track-transparent flex justify-center"
+              data-lenis-prevent
+            >
               <div className="max-w-xl w-full space-y-6 pt-4">
                 <div className="text-center mb-8">
                   <div className="w-12 h-12 rounded-full bg-[#ccff00]/10 border border-[#ccff00]/20 flex items-center justify-center mx-auto mb-4">

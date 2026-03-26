@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useGesture } from '@use-gesture/react';
+import { useRouter } from 'next/navigation';
 
 type ImageItem = string | { src: string; alt?: string; title?: string; description?: string };
 
@@ -282,6 +283,7 @@ export default function DomeGallery({
   openedImageBorderRadius = '30px',
   grayscale = false
 }: DomeGalleryProps) {
+  const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
   const sphereRef = useRef<HTMLDivElement>(null);
@@ -1089,11 +1091,17 @@ export default function DomeGallery({
                    {/* Dynamic animate-in image goes here */}
                 </div>
                 
-                <div className="w-full md:w-1/2 h-[50%] sm:h-[55%] md:h-full flex flex-col justify-center p-8 md:p-16 overflow-y-auto">
+                <div 
+                  className="w-full md:w-1/2 h-[50%] sm:h-[55%] md:h-full flex flex-col justify-center p-8 md:p-16 overflow-y-auto"
+                  data-lenis-prevent
+                >
                     <h2 id="dg-title" className="text-3xl md:text-5xl font-black mb-4 md:mb-6 text-black dark:text-white tracking-tighter uppercase transition-colors"></h2>
                     <p id="dg-desc" className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium transition-colors"></p>
                     <div className="mt-8 flex gap-4">
-                        <button className="bg-[#ccff00] text-black px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-white hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(204,255,0,0.2)]">
+                        <button 
+                          onClick={() => router.push('/contact-us')}
+                          className="bg-[#ccff00] text-black px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-white hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(204,255,0,0.2)]"
+                        >
                             Procure Now
                         </button>
                     </div>
