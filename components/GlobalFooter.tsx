@@ -1,11 +1,54 @@
 "use client";
 
-import React from 'react';
-import { ArrowRight, Sun, Moon, Monitor, Instagram } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, Sun, Moon, Monitor, Instagram, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { useGlobalContext } from '@/context/GlobalContext';
 
 export default function GlobalFooter() {
     const { theme, setTheme } = useGlobalContext();
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [message, setMessage] = useState('');
+
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email) {
+            setStatus('error');
+            setMessage('Email is required');
+            return;
+        }
+
+        setStatus('loading');
+        try {
+            const res = await fetch('/api/newsletter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setStatus('success');
+                setMessage(data.message || 'Thank you for subscribing!');
+                setEmail('');
+            } else {
+                setStatus('error');
+                setMessage(data.message || 'Something went wrong');
+            }
+        } catch (error) {
+            setStatus('error');
+            setMessage('Failed to connect to the server');
+        }
+
+        // Reset status after 5 seconds
+        setTimeout(() => {
+            if (status !== 'loading') {
+                setStatus('idle');
+                setMessage('');
+            }
+        }, 5000);
+    };
 
     return (
         <footer className="relative  pb-12 px-4 md:px-8 mt-12 bg-gray-100 dark:bg-[#0a0a0a] transition-colors duration-500 overflow-hidden">
@@ -95,20 +138,37 @@ export default function GlobalFooter() {
 
                     {/* Col 4: Newsletter */}
                     <div className="lg:col-span-3">
-                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6">Newsletter</h4>
+                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00]">Newsletter</h4>
                         <p className="text-sm opacity-60 text-gray-800 dark:text-gray-300 mb-6 leading-relaxed transition-colors">
-                            Stay informed with the latest listings, insights, and real estate news.
+                            Get the latest updates and insights delivered straight to your inbox..
                         </p>
-                        <div className="relative flex items-center bg-white dark:bg-[#1a1a1a] rounded-full p-1 border border-black/10 dark:border-white/10 shadow-sm transition-colors">
-                            <input
-                                type="email"
-                                placeholder="Email Address"
-                                className="w-full bg-transparent pl-4 pr-2 text-sm focus:outline-none text-black dark:text-white"
-                            />
-                            <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors shrink-0">
-                                Subscribe
-                            </button>
-                        </div>
+                        <form onSubmit={handleSubscribe} className="space-y-3">
+                            <div className="relative flex items-center bg-white dark:bg-[#1a1a1a] rounded-full p-1 border border-black/10 dark:border-white/10 shadow-sm transition-colors">
+                                <input
+                                    type="email"
+                                    placeholder="Email Address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full bg-transparent pl-4 pr-2 text-sm focus:outline-none text-black dark:text-white"
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={status === 'loading'}
+                                    className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-all shrink-0 disabled:opacity-50 flex items-center gap-2"
+                                >
+                                    {status === 'loading' ? <Loader2 size={14} className="animate-spin" /> : 'Subscribe'}
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Status Message */}
+                        {message && (
+                            <div className={`mt-4 flex items-center gap-2 text-xs font-medium animate-in fade-in slide-in-from-top-1 ${status === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                                {status === 'success' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                                {message}
+                            </div>
+                        )}
                     </div>
 
                 </div>
