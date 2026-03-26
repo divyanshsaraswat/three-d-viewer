@@ -511,10 +511,10 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
                         onChange={(e) => setCreateForm(prev => ({ ...prev, type: e.target.value }))}
                         className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 rounded-xl p-3 text-[13px] text-black dark:text-white outline-none focus:border-[#ccff00]/50 focus:bg-transparent transition-colors"
                       >
-                        <option value="support">Support</option>
-                        <option value="inquiry">General Inquiry</option>
-                        <option value="sales">Sales</option>
-                        <option value="complaint">Complaint</option>
+                        <option value="support" className="bg-white dark:bg-[#1a1a1a] text-black dark:text-white">Support</option>
+                        <option value="inquiry" className="bg-white dark:bg-[#1a1a1a] text-black dark:text-white">General Inquiry</option>
+                        <option value="sales" className="bg-white dark:bg-[#1a1a1a] text-black dark:text-white">Sales</option>
+                        <option value="complaint" className="bg-white dark:bg-[#1a1a1a] text-black dark:text-white">Complaint</option>
                       </select>
                     </div>
                     
@@ -525,10 +525,10 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
                         onChange={(e) => setCreateForm(prev => ({ ...prev, priority: e.target.value }))}
                         className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 rounded-xl p-3 text-[13px] text-black dark:text-white outline-none focus:border-[#ccff00]/50 focus:bg-transparent transition-colors"
                       >
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                        <option value="urgent">Urgent</option>
+                        <option value="low" className="bg-white dark:bg-[#1a1a1a] text-black dark:text-white">Low</option>
+                        <option value="medium" className="bg-white dark:bg-[#1a1a1a] text-black dark:text-white">Medium</option>
+                        <option value="high" className="bg-white dark:bg-[#1a1a1a] text-black dark:text-white">High</option>
+                        <option value="urgent" className="bg-white dark:bg-[#1a1a1a] text-black dark:text-white">Urgent</option>
                       </select>
                     </div>
                   </div>
