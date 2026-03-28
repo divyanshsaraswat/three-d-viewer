@@ -221,6 +221,7 @@ export default function LandingPage() {
     const containerRef = useRef<HTMLDivElement>(null);
     const overlayContainerRef = useRef<HTMLDivElement>(null);
     const overlayBgRef = useRef<HTMLDivElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
 
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [hasScrolledTable, setHasScrolledTable] = useState(false);
@@ -242,6 +243,16 @@ export default function LandingPage() {
 
     const { hasEntered, setHasEntered, isMuted, setIsMuted, audioRef, setIsAuthModalOpen } = useGlobalContext();
     const hasAnimated = useRef(false);
+
+    // Forces autoplay on iPhone by ensuring muted is set via JS and play() is called explicitly
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.muted = true;
+            videoRef.current.play().catch((err) => {
+                console.log("Video autoplay failed (possibly user guesture required or low power mode):", err);
+            });
+        }
+    }, []);
 
     useEffect(() => {
         if (hasEntered) {
@@ -454,7 +465,7 @@ export default function LandingPage() {
         });
 
         // Force initial states via GSAP to override JSX classes reliably
-        heroTl.set('.hero-bg-video', { opacity: 0, scale: 1.1 })
+        heroTl.set('.hero-bg-video', { opacity: 0, scale: 1.1, visibility: 'visible' })
             .set('.hero-title-char', { opacity: 0, y: '120%', rotationZ: 10 })
             .set('.hero-subtitle', { opacity: 0, y: 20 })
             .set('.hero-cta', { opacity: 0, y: 15, filter: 'blur(12px)' });
@@ -615,15 +626,13 @@ export default function LandingPage() {
                 {/* Background Video */}
                 <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center bg-black select-none">
                     <video
+                        ref={videoRef}
                         key="hero-video"
-                        className="hero-bg-video w-full h-full object-cover opacity-0 pointer-events-none select-none"
+                        className="hero-bg-video w-full h-full object-cover invisible pointer-events-none select-none transition-opacity duration-500"
                         autoPlay
                         loop
                         muted
                         playsInline
-                        // @ts-ignore - webkit-specific attribute
-                        webkit-playsinline="true"
-                        x-webkit-airplay="deny"
                         disablePictureInPicture
                         disableRemotePlayback
                         controls={false}
