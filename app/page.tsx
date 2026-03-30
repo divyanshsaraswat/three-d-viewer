@@ -14,6 +14,7 @@ import ScrollRevealText from '@/components/ScrollRevealText';
 import SpecializationCarousel from '@/components/SpecializationCarousel';
 import TestimonialVideo from '@/components/TestimonialVideo';
 import ModelSelectDialog from '@/components/ModelSelectDialog';
+import HeroBackgroundVideo from '@/components/HeroBackgroundVideo';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { useSession } from 'next-auth/react';
 
@@ -465,13 +466,13 @@ export default function LandingPage() {
         });
 
         // Force initial states via GSAP to override JSX classes reliably
-        heroTl.set('.hero-bg-video', { opacity: 0, scale: 1.1, visibility: 'visible' })
+        heroTl.set('.hero-bg-video', { scale: 1.1 })
             .set('.hero-title-char', { opacity: 0, y: '120%', rotationZ: 10 })
             .set('.hero-subtitle', { opacity: 0, y: 20 })
             .set('.hero-cta', { opacity: 0, y: 15, filter: 'blur(12px)' });
 
         heroTl.to('.hero-bg-video',
-            { scale: 1, opacity: 1, duration: 1.5, ease: "power3.out" }
+            { scale: 1, duration: 1.5, ease: "power3.out" }
         )
             .to('.hero-title-char',
                 { y: '0%', opacity: 1, rotationZ: 0, duration: 0.8, stagger: 0.03, ease: "power4.out" },
@@ -504,7 +505,7 @@ export default function LandingPage() {
         // Ultimate safety: forced visibility after 2s
         const safetyTimer = setTimeout(() => {
             console.log("Forcing hero visibility (safety fallback)");
-            gsap.to(['.hero-bg-video', '.hero-subtitle', '.hero-cta'], { opacity: 1, duration: 0.5, overwrite: "auto" });
+            gsap.to(['.hero-subtitle', '.hero-cta'], { opacity: 1, duration: 0.5, overwrite: "auto" });
             gsap.to('.hero-title-char', { opacity: 1, y: 0, rotationZ: 0, duration: 0.5, stagger: 0.01, overwrite: "auto" });
         }, 2000);
 
@@ -624,31 +625,7 @@ export default function LandingPage() {
             <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
 
                 {/* Background Video */}
-                <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center bg-black select-none">
-                    <video
-                        ref={videoRef}
-                        key="hero-video"
-                        className="hero-bg-video w-full h-full object-cover invisible pointer-events-none select-none transition-opacity duration-500"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        disablePictureInPicture
-                        disableRemotePlayback
-                        controls={false}
-                        tabIndex={-1}
-                        preload="auto"
-                        style={{ pointerEvents: 'none' }}
-                        onCanPlayThrough={() => setIsVideoLoaded(true)}
-                        onLoadedData={() => setIsVideoLoaded(true)}
-                    >
-                        <source src="hero-section 2.webm" type="video/webm" />
-                    </video>
-                    {/* Invisible layer to physically block ALL interactions on the video */}
-                    <div className="absolute inset-0 z-10 w-full h-full" style={{ touchAction: 'none' }} onContextMenu={(e) => e.preventDefault()}></div>
-                    {/* Radial Gradient overlay focused on center */}
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,transparent_70%)] z-[2] pointer-events-none"></div>
-                </div>
+                <HeroBackgroundVideo videoRef={videoRef} setIsVideoLoaded={setIsVideoLoaded} />
 
                 {/* Content Overlay */}
                 <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center justify-center text-center px-4 md:px-8 mt-[-6rem] pointer-events-auto">
