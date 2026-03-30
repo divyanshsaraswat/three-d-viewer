@@ -622,7 +622,7 @@ export default function LandingPage() {
                 </button>
             )}
 
-            <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500">
+            <section className="relative w-full flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500" style={{ minHeight: '100svh' }}>
 
                 {/* Background Video */}
                 <HeroBackgroundVideo videoRef={videoRef} setIsVideoLoaded={setIsVideoLoaded} />
