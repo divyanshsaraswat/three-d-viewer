@@ -11,7 +11,7 @@ export default function HeroBackgroundVideo({ videoRef, setIsVideoLoaded }: Hero
             <video
                 ref={videoRef}
                 key="hero-video"
-                className="hero-bg-video w-full h-full object-cover select-none"
+                className="hero-bg-video w-full h-full object-cover select-none opacity-70 brightness-75 blur-[1.5px] saturate-110 contrast-125"
                 autoPlay
                 loop
                 muted
@@ -30,7 +30,7 @@ export default function HeroBackgroundVideo({ videoRef, setIsVideoLoaded }: Hero
             {/* Invisible layer to physically block ALL interactions on the video */}
             <div className="absolute inset-0 z-10 w-full h-full" style={{ touchAction: 'none' }} onContextMenu={(e) => e.preventDefault()}></div>
             {/* Radial Gradient overlay focused on center */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,transparent_70%)] z-[2] pointer-events-none"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,transparent_70%)] z-[2]"></div>
         </div>
     );
 }
