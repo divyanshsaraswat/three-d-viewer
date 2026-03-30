@@ -181,7 +181,7 @@ export default function ScrollRevealText() {
     });
 
     return (
-        <section ref={containerRef} className="relative w-full min-h-[100vh] py-24 flex items-center justify-center overflow-hidden pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500" style={{ contain: 'paint' }}>
+        <section ref={containerRef} className="relative w-full py-28 md:py-0 md:min-h-[100svh] flex items-center justify-center overflow-hidden pointer-events-none bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-500" style={{ contain: 'paint' }}>
             {/* Background Ribbons */}
             <div className="absolute inset-0 z-10 pointer-events-none">
                 <AnimatedRibbons />
