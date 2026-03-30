@@ -11,60 +11,32 @@ if (typeof window !== "undefined") {
 }
 
 const words = [
-    { text: "We", type: "word" },
-    { text: "know", type: "word" },
-    { text: "that", type: "word" },
-    { text: "making", type: "word" },
-    { text: "one", type: "word" },
-    { text: "conventional", type: "word" },
-    { text: "cotton", type: "word" },
-    { text: "sheet", type: "word" },
-    { text: "wastes", type: "word" },
-    { text: "💧", type: "icon" },
-    { text: "2,700 liters", type: "highlight", color: "blue" },
-    { text: "of", type: "word" },
-    { text: "water", type: "word" },
-    { text: "—", type: "word" },
-    { text: "and", type: "word" },
-    { text: "that's", type: "word" },
-    { text: "exactly", type: "word" },
-    { text: "why", type: "word" },
-    { text: "we", type: "word" },
-    { text: "do", type: "word" },
-    { text: "things", type: "word" },
-    { text: "differently.", type: "word" },
-    { text: "Every", type: "word" },
-    { text: "🌊", type: "icon" },
-    { text: "Weinix sheet", type: "highlight", color: "green" },
-    { text: "keeps", type: "word" },
-    { text: "6", type: "word" },
-    { text: "plastic bottles", type: "highlight", color: "orange" },
-    { text: "out", type: "word" },
-    { text: "of", type: "word" },
-    { text: "our", type: "word" },
-    { text: "oceans,", type: "word" },
-    { text: "because", type: "word" },
-    { text: "it's", type: "word" },
-    { text: "woven", type: "word" },
-    { text: "from", type: "word" },
-    { text: "your", type: "word" },
-    { text: "old", type: "word" },
-    { text: "👕", type: "icon" },
-    { text: "jeans, t-shirts & linens", type: "highlight", color: "purple" },
-    { text: "—", type: "word" },
-    { text: "not", type: "word" },
-    { text: "virgin", type: "word" },
-    { text: "cotton.", type: "word" },
-    { text: "Sleep", type: "word" },
-    { text: "better", type: "word" },
-    { text: "knowing", type: "word" },
-    { text: "your", type: "word" },
-    { text: "bed", type: "word" },
+    { text: "Nothing", type: "word" },
     { text: "is", type: "word" },
-    { text: "part", type: "word" },
-    { text: "of", type: "word" },
-    { text: "the", type: "word" },
-    { text: "solution.", type: "word" },
+    { text: "🗑️", type: "icon" },
+    { text: "wasted", type: "highlight", color: "orange" },
+    { text: "here.", type: "word" },
+    { text: "What", type: "word" },
+    { text: "was", type: "word" },
+    { text: "👕", type: "icon" },
+    { text: "worn", type: "highlight", color: "blue" },
+    { text: "becomes", type: "word" },
+    { text: "what", type: "word" },
+    { text: "is", type: "word" },
+    { text: "built.", type: "word" },
+    { text: "Weinix sheets", type: "highlight", color: "green" },
+    { text: "—", type: "word" },
+    { text: "recycled", type: "word" },
+    { text: "textile", type: "word" },
+    { text: "panels", type: "word" },
+    { text: "for", type: "word" },
+    { text: "🏢", type: "icon" },
+    { text: "walls, facades, and interiors", type: "highlight", color: "purple" },
+    { text: "that", type: "word" },
+    { text: "stand", type: "word" },
+    { text: "for", type: "word" },
+    { text: "something", type: "word" },
+    { text: "more.", type: "word" },
 ];
 
 export default function ScrollRevealText() {
@@ -76,7 +48,7 @@ export default function ScrollRevealText() {
         const iconWrappers = gsap.utils.toArray<HTMLElement>('.icon-wrapper');
 
         // Initial setup
-        iconWrappers.forEach(w => gsap.set(w, { opacity: 0 }));
+        iconWrappers.forEach(w => gsap.set(w, { opacity: 0, width: 0 }));
         
         gsap.set(items, {
             opacity: (i, target: any) => target.classList.contains('icon-item') ? 0 : 0.15,
@@ -125,7 +97,7 @@ export default function ScrollRevealText() {
 
                 if (isIcon) {
                     const wrapper = item.closest('.icon-wrapper');
-                    tl.to(wrapper, { opacity: 1, duration: 0.1, ease: "none", force3D: true }, startTime)
+                    tl.to(wrapper, { opacity: 1, width: "auto", duration: 0.2, ease: "power2.out", force3D: true }, startTime)
                       .to(item, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(2)", force3D: true }, startTime);
                 } else {
                     tl.to(item, { opacity: 1, duration: 0.1, ease: "none", force3D: true }, startTime);
@@ -180,7 +152,7 @@ export default function ScrollRevealText() {
             }
         } else if (w.type === 'icon') {
             groupedElements.push(
-                <span key={`icon-${i}`} className="icon-wrapper inline-flex overflow-hidden mx-0 items-center justify-center transform-gpu" style={{ willChange: "opacity" }}>
+                <span key={`icon-${i}`} className="icon-wrapper inline-flex overflow-hidden mx-0 items-center justify-center transform-gpu" style={{ willChange: "opacity, width" }}>
                     <span className={`reveal-item icon-item ${baseClasses} ${padding} inline-flex items-center justify-center origin-center`} style={{ willChange: "transform, opacity", transform: "translateZ(0)" }}>
                         {w.text}
                     </span>
