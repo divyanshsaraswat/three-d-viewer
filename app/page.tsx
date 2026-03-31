@@ -235,11 +235,11 @@ export default function LandingPage() {
     const [imagesLoaded, setImagesLoaded] = useState(0);
     const [mediaProgress, setMediaProgress] = useState(0);
     const [isAllMediaLoaded, setIsAllMediaLoaded] = useState(false);
-    
+
     // Explicit waiting for specific structural heavy components
     const [isGlobeGalleryLoaded, setIsGlobeGalleryLoaded] = useState(false);
     const [isScrollRevealLoaded, setIsScrollRevealLoaded] = useState(false);
-    
+
     const { data: session } = useSession();
 
     const { hasEntered, setHasEntered, isMuted, setIsMuted, audioRef, setIsAuthModalOpen } = useGlobalContext();
@@ -327,8 +327,8 @@ export default function LandingPage() {
 
         // Fail-safe to force them loaded after max 6 seconds
         const safetyTimer = setTimeout(() => {
-             setIsGlobeGalleryLoaded(true);
-             setIsScrollRevealLoaded(true);
+            setIsGlobeGalleryLoaded(true);
+            setIsScrollRevealLoaded(true);
         }, 6000);
 
         return () => {
@@ -447,7 +447,7 @@ export default function LandingPage() {
     useGSAP(() => {
         if (!isExitingLoader && !hasEntered) return;
         if (hasAnimated.current) return;
-        
+
         hasAnimated.current = true;
 
         console.log("Starting hero animation. hasEntered:", hasEntered, "isExitingLoader:", isExitingLoader);
@@ -631,7 +631,7 @@ export default function LandingPage() {
                 <div className="relative z-10 w-full max-w-[1000px] mx-auto flex flex-col items-center justify-center text-center px-4 md:px-8 mt-[-6rem] pointer-events-auto">
 
                     {/* Title Lines (split for staggered animation) */}
-                    <h1 className="hero-title text-4xl sm:text-5xl lg:text-[4rem] font-extrabold leading-[1.1] tracking-tight text-center text-black dark:text-white mb-6 flex flex-col w-full max-w-[800px] mx-auto uppercase [text-shadow:0px_4px_20px_rgba(0,0,0,0.1)]">
+                    <h1 className="hero-title text-4xl sm:text-5xl lg:text-[4rem] font-extrabold leading-[1.1] tracking-tight text-center text-white mb-6 flex flex-col w-full max-w-[800px] mx-auto uppercase [text-shadow:0px_4px_20px_rgba(0,0,0,0.1)]">
                         <div className="flex flex-wrap justify-center items-center w-full gap-x-2 sm:gap-x-3">
                             <AnimatedWord text="Build" />
                             <AnimatedWord text="Sustainable." highlight={true} />
@@ -642,7 +642,7 @@ export default function LandingPage() {
                         </div>
                     </h1>
 
-                    <p className="hero-subtitle opacity-0 text-sm md:text-base font-bold tracking-wide text-black/80 dark:text-white/80 max-w-xl mx-auto leading-relaxed mb-8 [text-shadow:0px_4px_20px_rgba(0,0,0,0.8)]">
+                    <p className="hero-subtitle opacity-0 text-sm md:text-base font-bold tracking-wide text-white/80 max-w-xl mx-auto leading-relaxed mb-8 [text-shadow:0px_4px_20px_rgba(0,0,0,0.8)]">
                         Revolutionary building materials crafted from recycled textiles. <br className="hidden md:block" /> Structural strength meets environmental conscience.
                     </p>
 
