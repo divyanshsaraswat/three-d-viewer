@@ -1,6 +1,6 @@
 /**
  * Server-side proxy for contact inquiry submission.
- * POST /api/contact → registers customer + creates inquiry ticket on backend
+ * POST /api/contact → creates inquiry on backend
  */
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,64 +12,43 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, email, phone, company, subject, message, businessType } = body;
 
-    // Step 1: Register / look-up customer by phone (idempotent)
-    let customerId: string | undefined;
-    try {
-      const regRes = await fetch(
-        `${API_BASE}/api/v1/admin/customers/register`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone }),
-        }
-      );
-      const regData = await regRes.json();
-      customerId = regData?.data?.customerId;
-    } catch {
-      // Backend down — return graceful mock
-      return NextResponse.json({
-        success: true,
-        message: "Inquiry submitted",
-        data: { submitted: true, ticketId: "MOCK-" + Date.now() },
-      });
-    }
-
-    // Step 2: Create inquiry ticket
-    const ticketRes = await fetch(`${API_BASE}/api/v1/admin/tickets`, {
+    const res = await fetch(`${API_BASE}/api/v1/contact`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        customerId,
-        type: "inquiry",
+        fullName: name,
+        email,
+        phone,
+        company: company || "",
         businessType: businessType || "d2c",
         subject,
-        message: `From: ${name} (${email})\nCompany: ${company || "N/A"}\n\n${message}`,
-        priority: "medium",
+        message,
       }),
     });
 
-    const ticketData = await ticketRes.json();
+    const data = await res.json();
 
-    if (!ticketRes.ok) {
+    if (!res.ok) {
       return NextResponse.json(
         {
           success: false,
-          message: ticketData?.message || "Could not submit inquiry",
+          message: data?.message || "Could not submit inquiry",
         },
-        { status: ticketRes.status }
+        { status: res.status }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: "Inquiry submitted",
+      message: data.message || "Inquiry submitted",
       data: {
-        ticketId: ticketData?.data?.ticketId,
-        status: ticketData?.data?.status,
+        ticketId: data?.data?.inquiryId, // Map inquiryId to ticketId for frontend consistency
+        inquiryId: data?.data?.inquiryId,
         submitted: true,
       },
     });
-  } catch {
+  } catch (error) {
+    console.error("Contact API error:", error);
     return NextResponse.json(
       { success: false, message: "Backend unreachable" },
       { status: 502 }
