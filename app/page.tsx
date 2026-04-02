@@ -919,9 +919,9 @@ export default function LandingPage() {
                     <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-8 transition-colors">
                         We translate our client&apos;s vision into highly curated design. We are dedicated to providing the best architecture, transforming skylines globally.
                     </p>
-                    <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
+                    {/*  <button className="bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors">
                         Discover <ArrowUpRight size={16} />
-                    </button>
+                    </button> */}
                 </div>
             </section>
 
