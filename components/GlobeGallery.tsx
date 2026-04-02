@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useGesture } from '@use-gesture/react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 type ImageItem = string | { src: string; alt?: string; title?: string; description?: string };
 
@@ -1018,11 +1019,14 @@ export default function DomeGallery({
                       backfaceVisibility: 'hidden'
                     }}
                   >
-                    <img
+                    <Image
                       src={it.src}
-                      draggable={false}
                       alt={it.alt}
-                      className="w-full h-full object-cover pointer-events-none"
+                      fill
+                      draggable={false}
+                      sizes="(max-width: 768px) 25vw, 15vw"
+                      quality={60}
+                      className="object-cover pointer-events-none transition-opacity duration-500"
                       style={{
                         backfaceVisibility: 'hidden',
                         filter: `var(--image-filter, ${grayscale ? 'grayscale(1)' : 'none'})`

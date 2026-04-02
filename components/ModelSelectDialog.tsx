@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Image as ImageIcon, X } from 'lucide-react';
-import BlurImage from './BlurImage';
+import Image from 'next/image';
 
 export interface ModelOption {
     id: string;
@@ -136,7 +136,7 @@ export default function ModelSelectDialog({ isOpen, onClose }: { isOpen: boolean
                             >
                                 <div className="w-full h-40 bg-black/10 dark:bg-black/40 rounded-xl mb-4 flex items-center justify-center overflow-hidden relative">
                                     {model.thumbnail ?
-                                        <BlurImage src={`/${model.thumbnail}`} alt={model.title} className="w-full h-full object-cover rounded-xl" />
+                                        <Image src={`/${model.thumbnail}`} alt={model.title} fill sizes="300px" className="object-cover rounded-xl" />
                                         : <ImageIcon size={32} className="text-black/20 dark:text-white/20" />
                                     }
                                 </div>
