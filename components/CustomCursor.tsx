@@ -79,10 +79,10 @@ export default function CustomCursor() {
             document.removeEventListener('mouseleave', handleMouseLeave);
             document.removeEventListener('mouseenter', handleMouseEnter);
         };
-    }, [isVisible]);
+    }, [isVisible, isEditorRoute]);
 
-    // Render nothing on mobile
-    if (typeof window !== 'undefined' && window.matchMedia("(pointer: coarse)").matches) {
+    // Render nothing on mobile or editor routes
+    if (typeof window !== 'undefined' && (window.matchMedia("(pointer: coarse)").matches || isEditorRoute)) {
         return null;
     }
 

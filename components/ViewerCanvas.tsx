@@ -112,7 +112,7 @@ export default function ViewerCanvas() {
             app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
             app.setCanvasResolution(pc.RESOLUTION_AUTO);
             app.graphicsDevice.maxPixelRatio = Math.min(window.devicePixelRatio, isMobile() ? 1.5 : 2);
-            
+
             const handleResize = () => {
                 if (app && app.graphicsDevice) {
                     app.resizeCanvas();
@@ -597,10 +597,10 @@ export default function ViewerCanvas() {
                                 // Reset focus and distance
                                 if (pivotRef.current) {
                                     pivotRef.current.setLocalPosition(0, 0, 0);
-                                    orbitPitch.current = 20; 
+                                    orbitPitch.current = 0;
                                     orbitYaw.current = 45;
                                 }
-                                
+
                                 // Adjust camera distance based on model size
                                 const maxDim = Math.max(box.halfExtents.x, box.halfExtents.y, box.halfExtents.z);
                                 orbitDistance.current = Math.max(5, maxDim * 2.5);
