@@ -242,7 +242,7 @@ export default function LandingPage() {
 
     const { data: session } = useSession();
 
-    const { hasEntered, setHasEntered, isMuted, setIsMuted, audioRef, setIsAuthModalOpen } = useGlobalContext();
+    const { hasEntered, setHasEntered, setIsAuthModalOpen } = useGlobalContext();
     const hasAnimated = useRef(false);
 
     // Forces autoplay on iPhone by ensuring muted is set via JS and play() is called explicitly
@@ -341,11 +341,6 @@ export default function LandingPage() {
     const isEverythingReady = isAllMediaLoaded && isGlobeGalleryLoaded && isScrollRevealLoaded;
 
     const handleEnter = () => {
-        if (audioRef.current) {
-            audioRef.current.volume = 0.5;
-            audioRef.current.play().catch(e => console.error("Audio play failed:", e));
-        }
-
         setIsExitingLoader(true);
 
         if (overlayContainerRef.current && overlayBgRef.current) {
@@ -585,42 +580,7 @@ export default function LandingPage() {
                 </div>
             )}
 
-            {/* ---------- BACKGROUND AUDIO (Landing Page Only) ---------- */}
-            <audio ref={audioRef} src="/music.mp3" loop preload="auto" />
 
-            {/* ---------- AUDIO TOGGLE ---------- */}
-            {hasEntered && (
-                <button
-                    onClick={() => {
-                        if (audioRef.current) {
-                            audioRef.current.muted = !isMuted;
-                            setIsMuted(!isMuted);
-                        }
-                    }}
-                    className="fixed bottom-6 left-6 z-[100] w-12 h-12 rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-md flex justify-center cursor-pointer items-center hover:bg-white dark:hover:bg-white/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.1)] overflow-hidden group"
-                    aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-                >
-                    {isMuted ? (
-                        <div className="w-5 h-[2px] bg-black dark:bg-white rounded-full transition-all duration-300"></div>
-                    ) : (
-                        <svg className="w-6 h-6 text-black dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <style dangerouslySetInnerHTML={{
-                                __html: `
-                                    @keyframes wave {
-                                        0% { d: path("M3 12h2l2-2 3 4 3-4 3 4 2-2h3"); }
-                                        20% { d: path("M3 12h2l2-8 3 16 3-16 3 16 2-8h3"); }
-                                        40% { d: path("M3 12h2l2-4 3 8 3-8 3 8 2-4h3"); }
-                                        60% { d: path("M3 12h2l2-10 3 20 3-20 3 20 2-10h3"); }
-                                        80% { d: path("M3 12h2l2-6 3 12 3-12 3 12 2-6h3"); }
-                                        100% { d: path("M3 12h2l2-2 3 4 3-4 3 4 2-2h3"); }
-                                    }
-                                    .wave-path { animation: wave 1.2s infinite ease-in-out; }
-                                `}} />
-                            <path className="wave-path" d="M3 12h2l2-2 3 4 3-4 3 4 2-2h3" />
-                        </svg>
-                    )}
-                </button>
-            )}
 
             <section className="relative w-full flex flex-col items-center justify-center overflow-hidden bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-500" style={{ minHeight: '100svh' }}>
 

@@ -5,14 +5,11 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 interface GlobalContextType {
     hasEntered: boolean;
     setHasEntered: (v: boolean) => void;
-    isMuted: boolean;
-    setIsMuted: (v: boolean) => void;
     isMenuOpen: boolean;
     setIsMenuOpen: (v: boolean) => void;
     theme: 'system' | 'light' | 'dark';
     setTheme: (v: 'system' | 'light' | 'dark') => void;
     isDarkMode: boolean;
-    audioRef: React.RefObject<HTMLAudioElement | null>;
     isScrolled: boolean;
     isAuthModalOpen: boolean;
     setIsAuthModalOpen: (v: boolean) => void;
@@ -29,13 +26,11 @@ export function useGlobalContext() {
 
 export default function GlobalProvider({ children }: { children: React.ReactNode }) {
     const [hasEntered, setHasEntered] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         if (theme === 'system') {
@@ -58,11 +53,9 @@ export default function GlobalProvider({ children }: { children: React.ReactNode
     return (
         <GlobalContext.Provider value={{
             hasEntered, setHasEntered,
-            isMuted, setIsMuted,
             isMenuOpen, setIsMenuOpen,
             theme, setTheme,
             isDarkMode,
-            audioRef,
             isScrolled,
             isAuthModalOpen, setIsAuthModalOpen,
         }}>
