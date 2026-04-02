@@ -11,7 +11,7 @@ export default function HeroBackgroundVideo({ videoRef, setIsVideoLoaded }: Hero
             <video
                 ref={videoRef}
                 key="hero-video"
-                className="hero-bg-video w-full h-full object-cover select-none opacity-70 brightness-75 blur-[1.5px] saturate-110 contrast-125"
+                className="hero-bg-video w-full h-full object-cover select-none opacity-70 brightness-[0.65] will-change-transform transform-gpu translate-z-0"
                 autoPlay
                 loop
                 muted

@@ -35,7 +35,7 @@ export const MODEL_OPTIONS: ModelOption[] = [
         description: 'A large, expansive architecture scene with a pool.',
         thumbnail: 'villa.webp',
         url: '/examples/Villa_optimized.glb',
-        backgroundImage: 'background - villa.jpg',
+        backgroundImage: 'background-villa.jpg',
         cameraSettings: {
             speed: 21.0,
             collisionPadding: 2.0

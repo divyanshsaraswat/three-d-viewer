@@ -594,6 +594,13 @@ export default function ViewerCanvas() {
                                 // Save bounds for collision handling
                                 modelExtents.current = { x: box.halfExtents.x, z: box.halfExtents.z };
 
+                                // Reset focus and distance
+                                if (pivotRef.current) {
+                                    pivotRef.current.setLocalPosition(0, 0, 0);
+                                    orbitPitch.current = 20; 
+                                    orbitYaw.current = 45;
+                                }
+                                
                                 // Adjust camera distance based on model size
                                 const maxDim = Math.max(box.halfExtents.x, box.halfExtents.y, box.halfExtents.z);
                                 orbitDistance.current = Math.max(5, maxDim * 2.5);
