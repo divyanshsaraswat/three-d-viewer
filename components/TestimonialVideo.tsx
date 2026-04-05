@@ -93,6 +93,7 @@ export default function TestimonialVideo() {
                 className="w-full h-full object-cover"
                 muted={isMuted}
                 playsInline
+                poster="/loading-weinix.png"
             />
             <div className="absolute inset-0 bg-black/10 pointer-events-none transition-colors"></div>
 

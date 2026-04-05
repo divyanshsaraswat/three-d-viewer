@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect, ImgHTMLAttributes } from 'react';
+import { useState } from 'react';
+import Image, { ImageProps } from 'next/image';
 
-interface BlurImageProps extends ImgHTMLAttributes<HTMLImageElement> {
+interface BlurImageProps extends Omit<ImageProps, 'onLoad'> {
     /** Duration for the blur-to-clear transition in ms (default: 700) */
     transitionDuration?: number;
 }
@@ -10,6 +11,7 @@ interface BlurImageProps extends ImgHTMLAttributes<HTMLImageElement> {
 /**
  * A lazy-loading image component with a blur-up reveal effect.
  * Images start fully blurred and transition to sharp once loaded.
+ * Requires width + height, or fill prop (Next.js Image requirement).
  */
 export default function BlurImage({
     src,
@@ -20,23 +22,13 @@ export default function BlurImage({
     ...rest
 }: BlurImageProps) {
     const [isLoaded, setIsLoaded] = useState(false);
-    const imgRef = useRef<HTMLImageElement>(null);
-
-    // Handle images that are already cached and load instantly
-    useEffect(() => {
-        if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
-            setIsLoaded(true);
-        }
-    }, [src]);
 
     return (
-        <img
-            ref={imgRef}
+        <Image
             src={src}
             alt={alt}
-            loading="lazy"
-            onLoad={() => setIsLoaded(true)}
             className={className}
+            onLoad={() => setIsLoaded(true)}
             style={{
                 filter: isLoaded ? 'blur(0px)' : 'blur(20px)',
                 transition: `filter ${transitionDuration}ms ease-out, transform 500ms cubic-bezier(0.87,0,0.13,1), opacity 500ms cubic-bezier(0.87,0,0.13,1)`,

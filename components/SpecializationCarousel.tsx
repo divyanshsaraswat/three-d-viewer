@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from 'react';
+import Image from 'next/image';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -17,7 +18,7 @@ const specs = [
         tag: "BRICK",
         title: "Engineering strength from what the world discarded",
         date: "2026 / DIVERTS 1.2KG TEXTILE WASTE PER BRICK",
-        image: "/weinix_brick.png",
+        image: "/weinix_brick.webp",
         colorClass: "dark:bg-[#111111]"
     },
     {
@@ -25,7 +26,7 @@ const specs = [
         tag: "INTERIOR",
         title: "Crafting surfaces that carry a story within",
         date: "THERMAL INSULATION / NOISE REDUCTION / CERTIFIED SAFE",
-        image: "/weinix_interior.png",
+        image: "/weinix_interior.webp",
         colorClass: "dark:bg-[#16120e]"
     },
     {
@@ -33,7 +34,7 @@ const specs = [
         tag: "EXTERIOR",
         title: "Designing facades built to last and built to mean more",
         date: "WEATHER RESISTANT / UV STABLE / ZERO TOXIC EMISSIONS",
-        image: "/weinix_exterior.png",
+        image: "/weinix_exterior.webp",
         colorClass: "dark:bg-[#0e1610]"
     },
     {
@@ -41,7 +42,7 @@ const specs = [
         tag: "CONSTRUCTION",
         title: "Building with precision, durability, and art",
         date: "AVERAGE 18 MO",
-        image: "/weinix_construction.png",
+        image: "/weinix_construction.webp",
         colorClass: "dark:bg-[#160e0e]"
     },
     {
@@ -49,7 +50,7 @@ const specs = [
         tag: "DOCUMENTATION",
         title: "Preserving architectural heritage properly",
         date: "ARCHIVE",
-        image: "/weinix_documentation.png",
+        image: "/weinix_documentation.webp",
         colorClass: "dark:bg-[#0f0e16]"
     }
 ];
@@ -214,13 +215,12 @@ export default function SpecializationCarousel() {
                             }}
                         >
                             <div className="card-inner absolute top-0 left-0 h-full w-full">
-                                <img
+                                <Image
                                     src={spec.image}
                                     alt={spec.title}
-                                    loading="lazy"
-                                    decoding="async"
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-auto"
-                                    style={{ objectPosition: "center center" }}
+                                    fill
+                                    sizes="(max-width: 768px) 85vw, 55vw"
+                                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-auto"
                                 />
 
                                 {/* Base gradient */}

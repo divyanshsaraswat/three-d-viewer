@@ -417,7 +417,9 @@ export default function TextureCarousel() {
                                             {/* Preview Grid inside Pack Card */}
                                             <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0 shadow-inner grid grid-cols-2 grid-rows-2 gap-[1px] bg-black/40">
                                                 {pack.textures.slice(0, 4).map((t, i) => (
-                                                    <BlurImage key={i} src={t.thumb} className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${i === 0 ? 'col-span-2 row-span-1' : ''}`} />
+                                                    <div key={i} className={`relative overflow-hidden ${i === 0 ? 'col-span-2 row-span-1' : ''}`}>
+                                                        <BlurImage src={t.thumb} alt={t.title} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                                                    </div>
                                                 ))}
                                             </div>
                                             <div className="flex-1 py-1 z-10 relative">

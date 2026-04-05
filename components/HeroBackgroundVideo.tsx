@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 
 interface HeroBackgroundVideoProps {
     videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -6,6 +8,35 @@ interface HeroBackgroundVideoProps {
 }
 
 export default function HeroBackgroundVideo({ videoRef, setIsVideoLoaded }: HeroBackgroundVideoProps) {
+    const [showVideo, setShowVideo] = useState(true);
+
+    useEffect(() => {
+        const connection = (navigator as any).connection;
+        const isSlow =
+            connection?.saveData === true ||
+            connection?.effectiveType === '2g' ||
+            connection?.effectiveType === 'slow-2g';
+
+        if (isSlow) {
+            setShowVideo(false);
+            setIsVideoLoaded(true); // unblock UI immediately on slow connections
+        }
+    }, []);
+
+    if (!showVideo) {
+        return (
+            <div
+                className="absolute inset-0 z-0 bg-black"
+                style={{
+                    backgroundImage: 'url(/bg-video-img.png)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: 0.7,
+                }}
+            />
+        );
+    }
+
     return (
         <div className="absolute inset-0 z-0 flex items-center justify-center bg-black select-none">
             <video
@@ -20,7 +51,8 @@ export default function HeroBackgroundVideo({ videoRef, setIsVideoLoaded }: Hero
                 disableRemotePlayback
                 controls={false}
                 tabIndex={-1}
-                preload="auto"
+                preload="metadata"
+                poster="/bg-video-img.png"
                 onCanPlayThrough={() => setIsVideoLoaded(true)}
                 onLoadedData={() => setIsVideoLoaded(true)}
             >
