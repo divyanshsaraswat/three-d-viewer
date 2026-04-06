@@ -44,40 +44,10 @@ const DEFAULT_IMAGES: ImageItem[] = [
     description: 'Plaster, painted walls, and interior surfaces. Grunge.'
   },
   {
-    src: '/textures/wall/9.png',
-    alt: 'Dark Rough Wall',
-    title: 'Dark Rough Wall',
-    description: 'Plaster, painted walls, and interior surfaces. Grunge.'
-  },
-  {
-    src: '/textures/wall/12.png',
-    alt: 'Brown Grunge Wall',
-    title: 'Brown Grunge Wall',
-    description: 'Plaster, painted walls, and interior surfaces. Grunge.'
-  },
-  {
-    src: '/textures/wall/15.png',
-    alt: 'Cream Block Wall',
-    title: 'Cream Block Wall',
-    description: 'Plaster, painted walls, and interior surfaces. Grunge.'
-  },
-  {
-    src: '/textures/wall/21.png',
-    alt: 'Pink Cracked Plaster',
-    title: 'Pink Cracked Plaster',
-    description: 'Plaster, painted walls, and interior surfaces. Grunge.'
-  },
-  {
     src: '/textures/wall/24.png',
     alt: 'Red Rough Plaster',
     title: 'Red Rough Plaster',
     description: 'Plaster, painted walls, and interior surfaces. Grunge.'
-  },
-  {
-    src: '/textures/brick/4.png',
-    alt: 'Yellow Brick Wall',
-    title: 'Yellow Brick Wall',
-    description: 'Structured masonry and classic brick patterns.'
   },
   {
     src: '/textures/brick/19.png',
@@ -92,51 +62,15 @@ const DEFAULT_IMAGES: ImageItem[] = [
     description: 'Hard surfaces and premium architectural materials.'
   },
   {
-    src: '/textures/stone/13.png',
-    alt: 'Concrete Stone',
-    title: 'Concrete Stone',
-    description: 'Hard surfaces and premium architectural materials.'
-  },
-  {
     src: '/textures/stone/5.png',
     alt: 'Black Cracked Stone',
     title: 'Black Cracked Stone',
     description: 'Hard surfaces and premium architectural materials.'
   },
   {
-    src: '/textures/stone/6.png',
-    alt: 'Glowing Cracked Stone',
-    title: 'Glowing Cracked Stone',
-    description: 'Hard surfaces and premium architectural materials.'
-  },
-  {
-    src: '/textures/fabric/10.png',
-    alt: 'Green Fabric Grain',
-    title: 'Green Fabric Grain',
-    description: 'Grain, fiber, and woven fabric textures.'
-  },
-  {
-    src: '/textures/fabric/11.png',
-    alt: 'Light Fabric Grain',
-    title: 'Light Fabric Grain',
-    description: 'Grain, fiber, and woven fabric textures.'
-  },
-  {
     src: '/textures/fabric/14.png',
     alt: 'Beige Canvas Surface',
     title: 'Beige Canvas Surface',
-    description: 'Grain, fiber, and woven fabric textures.'
-  },
-  {
-    src: '/textures/fabric/17.png',
-    alt: 'Dark Textile Rough',
-    title: 'Dark Textile Rough',
-    description: 'Grain, fiber, and woven fabric textures.'
-  },
-  {
-    src: '/textures/fabric/18.png',
-    alt: 'Wood-Fabric Hybrid',
-    title: 'Wood-Fabric Hybrid',
     description: 'Grain, fiber, and woven fabric textures.'
   },
   {
@@ -152,33 +86,9 @@ const DEFAULT_IMAGES: ImageItem[] = [
     description: 'Stylized lava, molten, and fire VFX textures.'
   },
   {
-    src: '/textures/lava/20.png',
-    alt: 'Molten Surface',
-    title: 'Molten Surface',
-    description: 'Stylized lava, molten, and fire VFX textures.'
-  },
-  {
-    src: '/textures/lava/23.png',
-    alt: 'Intense Fire',
-    title: 'Intense Fire',
-    description: 'Stylized lava, molten, and fire VFX textures.'
-  },
-  {
     src: '/textures/scifi/2.png',
     alt: 'Blue Electric Cracks',
     title: 'Blue Electric Cracks',
-    description: 'Cool-toned electric and cyberpunk tech textures.'
-  },
-  {
-    src: '/textures/scifi/8.png',
-    alt: 'Blue Glowing Tiles',
-    title: 'Blue Glowing Tiles',
-    description: 'Cool-toned electric and cyberpunk tech textures.'
-  },
-  {
-    src: '/textures/scifi/1.png',
-    alt: 'Orange Energy Lines',
-    title: 'Orange Energy Lines',
     description: 'Cool-toned electric and cyberpunk tech textures.'
   }
 ];
