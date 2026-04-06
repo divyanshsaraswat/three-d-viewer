@@ -123,6 +123,9 @@ export default function ProductsPage() {
                                 alt={item.name}
                                 className={`w-full h-full object-cover origin-center group-hover:scale-105 transition-all duration-500 grayscale-[0.2] group-hover:grayscale-0 items-center ${item.objectPosition ? 'object-' + item.objectPosition.split(' ').join('-') : ''}`}
                                 style={{ objectPosition: item.objectPosition }}
+                                priority={i === 0}
+                                fetchPriority={i === 0 ? 'high' : i === 1 ? 'high' : 'auto'}
+                                loading={i === 0 ? 'eager' : 'lazy'}
                             />
 
 
@@ -146,6 +149,8 @@ export default function ProductsPage() {
                                 alt={item.name}
                                 className="w-full h-full object-cover origin-center group-hover:scale-105 transition-all duration-500 grayscale-[0.2] group-hover:grayscale-0 items-center"
                                 style={{ objectPosition: item.objectPosition }}
+                                loading="lazy"
+                                fetchPriority="low"
                             />
 
 
