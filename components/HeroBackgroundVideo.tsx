@@ -54,7 +54,6 @@ export default function HeroBackgroundVideo({ videoRef, setIsVideoLoaded }: Hero
                 preload="metadata"
                 poster="/bg-video-img.png"
                 onCanPlayThrough={() => setIsVideoLoaded(true)}
-                onLoadedData={() => setIsVideoLoaded(true)}
             >
                 <source src="hero-section 2.webm" type="video/webm" />
                 <source src="hero-section 2.mp4" type="video/mp4" />

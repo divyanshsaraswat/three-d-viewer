@@ -23,16 +23,16 @@ export default function AboutUsPage() {
             { opacity: 0, y: 20 },
             { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
         )
-        .fromTo('.hero-title',
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 1, ease: "power4.out" },
-            "-=0.6"
-        )
-        .fromTo('.hero-subtitle',
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-            "-=0.6"
-        );
+            .fromTo('.hero-title',
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 1, ease: "power4.out" },
+                "-=0.6"
+            )
+            .fromTo('.hero-subtitle',
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+                "-=0.6"
+            );
 
         // Section reveal animations
         const sections = gsap.utils.toArray('.animate-section') as HTMLElement[];
@@ -56,7 +56,7 @@ export default function AboutUsPage() {
 
     return (
         <main ref={containerRef} className="relative min-h-screen bg-[#e0e1e5]/10 dark:bg-[#0a0a0a] pt-[20vh] pb-32 overflow-hidden font-sans text-black dark:text-white transition-colors duration-500">
-            
+
 
 
             {/* HERO SECTION */}
@@ -70,7 +70,7 @@ export default function AboutUsPage() {
                 <span className="hero-badge bg-black/5 dark:bg-white/10 text-black dark:text-white border border-black/10 dark:border-white/20 font-semibold tracking-widest text-[10px] sm:text-xs px-6 py-2 rounded-full uppercase mb-8">
                     About Us
                 </span>
-                
+
                 <h1 className="hero-title text-5xl sm:text-6xl md:text-[5rem] lg:text-[7rem] font-black leading-[0.9] tracking-tighter text-center uppercase mb-6 flex flex-col">
                     <span>WEINIX</span>
                     <span className="font-serif italic font-light text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-black/60 dark:text-white/60 tracking-normal capitalize mt-2 md:mt-4">
@@ -92,7 +92,7 @@ export default function AboutUsPage() {
             {/* BENTO GRID 1: THE PROBLEM & SOLUTION */}
             <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    
+
                     {/* The Problem (Large Card) */}
                     <div className="md:col-span-2 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 flex flex-col justify-between group cursor-pointer hover:border-black/10 transition-colors duration-700">
                         <div>
@@ -152,7 +152,7 @@ export default function AboutUsPage() {
             {/* BENTO GRID 2: CREATION & IMPACT */}
             <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 relative z-10">
-                    
+
                     {/* What We Create */}
                     <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative group cursor-pointer transition-colors duration-700 active:scale-[0.98]">
                         <div className="relative z-10 w-full mb-8">
@@ -161,7 +161,7 @@ export default function AboutUsPage() {
                                 We engineer high-performance secondary commodities, deploying recovered materials back into active industrial life cycles.
                             </p>
                         </div>
-                        
+
                         <div className="relative z-10 grid grid-cols-2 gap-4">
                             {[
                                 { text: "Fiber insulation for construction.", icon: Recycle },
@@ -179,13 +179,13 @@ export default function AboutUsPage() {
 
                     {/* Impact Measured */}
                     <div className="bg-[#111] text-white border border-transparent rounded-[2rem] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all duration-700">
-                         {/* Subtle grid bg */}
+                        {/* Subtle grid bg */}
                         <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-1000" style={{ backgroundImage: 'radial-gradient(circle at center, #fff 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
-                        
+
                         <div className="relative z-10">
                             <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter mb-4 text-[#ccff00]">Impact Metrics.</h2>
                             <p className="text-white/60 text-sm md:text-base font-medium mb-8 max-w-sm">Every kilogram processed translates to quantifiable impact. We do not just claim sustainability — we measure it.</p>
-                            
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-[#ccff00]/50 transition-colors group/mini">
                                     <Leaf className="text-[#ccff00] mb-3 group-hover/mini:scale-110 transition-transform origin-bottom-left" size={20} />
@@ -216,8 +216,8 @@ export default function AboutUsPage() {
 
             {/* CIRCULAR LOOP - MASSIVE BENTO CARD */}
             <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section mb-32 relative z-10">
-                 <div className="bg-white dark:bg-[#222] border border-gray-100 dark:border-transparent rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
-                     {/* Background overlay image clipping */}
+                <div className="bg-white dark:bg-[#222] border border-gray-100 dark:border-transparent rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
+                    {/* Background overlay image clipping */}
                     <div className="absolute inset-0 z-0 bg-gray-100 dark:bg-[#111]">
                         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#0a0a0a] dark:via-[#111111]/40 to-transparent transition-colors duration-500 z-10"></div>
                         <div className="absolute inset-x-0 bottom-0 z-0 flex items-end justify-center pointer-events-none opacity-40 mix-blend-overlay">
@@ -233,7 +233,7 @@ export default function AboutUsPage() {
                         <h3 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8 text-black dark:text-white text-balance drop-shadow-sm">
                             Where Waste <br className="hidden md:block" /> Never Truly Dies.
                         </h3>
-                        
+
                         <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-xs md:text-sm font-bold uppercase tracking-widest text-[#88aa00] dark:text-[#ccff00] mb-8 drop-shadow-md bg-white/80 dark:bg-black/50 backdrop-blur-md px-8 py-4 rounded-[1.5rem] border border-black/5 dark:border-white/10">
                             <span>Re-verse Collects</span>
                             <ArrowRight size={14} className="hidden md:block opacity-50 text-black dark:text-white" />
@@ -266,7 +266,7 @@ export default function AboutUsPage() {
                     <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
                         <div className="w-32 h-32 md:w-32 md:h-32 shrink-0 rounded-[1.5rem] overflow-hidden border-2 border-white dark:border-[#222] shadow-sm relative">
                             <div className="w-full h-full group-hover:scale-105 transition-all duration-[1000ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
-                                <BlurImage src="laksh sharma.webp" alt="Laksh Sharma" className="w-full h-full object-cover" />
+                                <BlurImage src="/lakshsharma.webp" alt="Laksh Sharma" className="w-full h-full object-cover" />
                             </div>
                         </div>
                         <div className="text-center sm:text-left flex-1">
@@ -282,7 +282,7 @@ export default function AboutUsPage() {
                     <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start group transition-colors duration-700 cursor-pointer active:scale-[0.98]">
                         <div className="w-32 h-32 md:w-32 md:h-32 shrink-0 rounded-[1.5rem] overflow-hidden border-2 border-white dark:border-[#222] shadow-sm relative">
                             <div className="w-full h-full  group-hover:scale-105 transition-all duration-[1000ms] ease-[cubic-bezier(0.87,0,0.13,1)]">
-                                <BlurImage src="deeppatel.webp" alt="Deep Sanghani" className="w-full h-full object-cover" />
+                                <BlurImage src="/deeppatel.webp" alt="Deep Sanghani" className="w-full h-full object-cover" />
                             </div>
                         </div>
                         <div className="text-center sm:text-left flex-1">
@@ -300,8 +300,8 @@ export default function AboutUsPage() {
             <section className="px-4 md:px-8 max-w-[1200px] mx-auto animate-section relative z-10">
                 <div className="bg-[#ccff00] text-black border border-black/10 rounded-[2rem] p-12 md:p-20 text-center relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all duration-700">
                     {/* Interactive background blobbiness simulation on hover */}
-                    <div className="absolute top-0 left-0 w-full h-full bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none mix-blend-overlay" style={{backgroundImage: 'url("https://www.transparenttextures.com/patterns/noise-lines.png")'}}></div>
-                    
+                    <div className="absolute top-0 left-0 w-full h-full bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/noise-lines.png")' }}></div>
+
                     <div className="relative z-10 max-w-4xl mx-auto">
                         <h2 className="text-xs uppercase tracking-[0.3em] font-black mb-8 opacity-60">Our Vision</h2>
                         <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter leading-[1] mb-8 drop-shadow-sm">

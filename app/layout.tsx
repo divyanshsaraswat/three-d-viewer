@@ -8,11 +8,13 @@ import AppShell from "./AppShell";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap"
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap"
 });
 
 export const metadata: Metadata = {
