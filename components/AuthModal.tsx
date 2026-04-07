@@ -38,10 +38,22 @@ export default function AuthModal() {
     const [otp, setOtp] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [resendTimer, setResendTimer] = useState(0);
+    const [resendMessage, setResendMessage] = useState('');
     
     // Animation states
     const [shouldRender, setShouldRender] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (step === 2 && resendTimer > 0) {
+            interval = setInterval(() => {
+                setResendTimer((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [step, resendTimer]);
 
     useEffect(() => {
         if (isAuthModalOpen) {
@@ -81,6 +93,8 @@ export default function AuthModal() {
                 setMobileNumber('');
                 setOtp('');
                 setError('');
+                setResendTimer(0);
+                setResendMessage('');
             }, 500); 
         }
         
@@ -153,6 +167,7 @@ export default function AuthModal() {
                 if (signupRes?.error === 'OTP_SENT' || signupRes?.error === 'CredentialsSignin') {
                     // Expected — OTP was sent, move to verification step
                     setStep(2);
+                    setResendTimer(10);
                 } else if (signupRes?.error) {
                     setError(signupRes.error);
                 }
@@ -168,11 +183,13 @@ export default function AuthModal() {
                     } else {
                         // OTP sent, move to verification
                         setStep(2);
+                        setResendTimer(10);
                     }
                 } else if (otpRes.error) {
                     // Fallback: if backend is unreachable, still allow step 2 for dev
                     if (otpRes.status === 0) {
                         setStep(2);
+                        setResendTimer(10);
                     } else {
                         setError(otpRes.error);
                     }
@@ -233,6 +250,42 @@ export default function AuthModal() {
         setOtp(val);
         if (val.length === 6) {
             handleVerifySubmit(undefined, val);
+        }
+    };
+
+    const handleResendOtp = async () => {
+        if (resendTimer > 0 || isLoading) return;
+        
+        setIsLoading(true);
+        setError('');
+        setResendMessage('');
+
+        try {
+            const phone = `${mobileNumber}`;
+            const controller = new AbortController();
+            abortRef.current = controller;
+
+            const otpRes = await apiRequestOtp(phone, controller.signal);
+
+            if (otpRes.success) {
+                setResendMessage('OTP sent successfully!');
+                setResendTimer(10);
+                setTimeout(() => setResendMessage(''), 5000);
+            } else if (otpRes.error) {
+                if (otpRes.status === 0) {
+                    setResendMessage('OTP sent successfully!');
+                    setResendTimer(10);
+                    setTimeout(() => setResendMessage(''), 5000);
+                } else {
+                    setError(otpRes.error);
+                }
+            }
+        } catch (err: unknown) {
+            if (err instanceof DOMException && err.name === 'AbortError') return;
+            setError('Failed to resend OTP');
+        } finally {
+            setIsLoading(false);
+            setOtp('');
         }
     };
 
@@ -411,10 +464,25 @@ export default function AuthModal() {
                                 </div>
                             </div>
                             
-                            <div className={`text-center transition-all duration-300 ${isLoading ? 'pt-0' : 'pt-2'}`}>
+                            {resendMessage && (
+                                <p className="text-center text-[13px] text-green-600 dark:text-green-400 font-medium mb-1 transition-opacity duration-300">
+                                    {resendMessage}
+                                </p>
+                            )}
+
+                            <div className={`flex flex-col items-center gap-3 transition-all duration-300 ${isLoading ? 'pt-0' : 'pt-2'}`}>
+                                <button
+                                    type="button"
+                                    onClick={handleResendOtp}
+                                    disabled={resendTimer > 0 || isLoading}
+                                    className="text-[13px] font-medium text-black/80 hover:text-black dark:text-white/80 dark:hover:text-white transition-colors disabled:opacity-50 disabled:hover:text-black/80 dark:disabled:hover:text-white/80"
+                                >
+                                    {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
+                                </button>
+                                
                                 <button 
                                     type="button" 
-                                    onClick={() => setStep(1)}
+                                    onClick={() => { setStep(1); setResendMessage(''); }}
                                     className="text-[13px] font-medium text-black/60 hover:text-black dark:text-white/40 dark:hover:text-white transition-colors underline-offset-4 hover:underline"
                                 >
                                     Change mobile number
