@@ -23,6 +23,10 @@ export default function BlurImage({
 }: BlurImageProps) {
     const [isLoaded, setIsLoaded] = useState(false);
 
+    // Provide default dimensions if Next.js Image requires them and caller didn't provide them
+    const requiresDefaultSize = !rest.fill && !rest.width && !rest.height;
+    const defaultProps = requiresDefaultSize ? { width: 1920, height: 1080 } : {};
+
     return (
         <Image
             src={src}
@@ -34,6 +38,7 @@ export default function BlurImage({
                 transition: `filter ${transitionDuration}ms ease-out, transform 500ms cubic-bezier(0.87,0,0.13,1), opacity 500ms cubic-bezier(0.87,0,0.13,1)`,
                 ...style,
             }}
+            {...defaultProps}
             {...rest}
         />
     );

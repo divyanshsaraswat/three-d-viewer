@@ -221,7 +221,7 @@ export default function AboutUsPage() {
                     <div className="absolute inset-0 z-0 bg-gray-100 dark:bg-[#111]">
                         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 dark:from-[#0a0a0a] dark:via-[#111111]/40 to-transparent transition-colors duration-500 z-10"></div>
                         <div className="absolute inset-x-0 bottom-0 z-0 flex items-end justify-center pointer-events-none opacity-40 mix-blend-overlay">
-                            <BlurImage src="mesh.png" className="w-[120%] h-[120%] object-cover group-hover:scale-105 transition-transform duration-[2000ms] origin-bottom" alt="Mesh Background" />
+                            <BlurImage src="/mesh.png" width={1920} height={1080} className="w-[120%] h-[120%] object-cover group-hover:scale-105 transition-transform duration-[2000ms] origin-bottom" alt="Mesh Background" />
                         </div>
                     </div>
 
@@ -271,7 +271,7 @@ export default function AboutUsPage() {
                         </div>
                         <div className="text-center sm:text-left flex-1">
                             <h3 className="text-2xl font-bold mb-1 tracking-tight">Laksh Sharma</h3>
-                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 dark:drop-shadow-sm">CEO & Co-Founder</p>
+                            <p className="text-[#000] dark:text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 dark:drop-shadow-sm">CEO & Co-Founder</p>
                             <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed font-medium transition-colors">
                                 With deep roots in apparel manufacturing, Laksh brings firsthand knowledge of material production cycles. His mission is to make end-of-life material recovery as economically compelling as first-use manufacturing.
                             </p>
@@ -287,7 +287,7 @@ export default function AboutUsPage() {
                         </div>
                         <div className="text-center sm:text-left flex-1">
                             <h3 className="text-2xl font-bold mb-1 tracking-tight">Deep Sanghani</h3>
-                            <p className="text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 dark:drop-shadow-sm">COO & Co-Founder</p>
+                            <p className="text-[#000] dark:text-[#ccff00] text-[10px] uppercase tracking-widest font-bold mb-4 dark:drop-shadow-sm">COO & Co-Founder</p>
                             <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed font-medium transition-colors">
                                 With a mechanical engineering background, Deep architects the processing workflows and systems that make high-volume waste recovery operationally viable. He ensures Weinix scales without compromising output.
                             </p>

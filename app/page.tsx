@@ -967,9 +967,9 @@ export default function LandingPage() {
                                 <div className="p-6 md:p-8 flex flex-col items-center justify-center text-center bg-[#ccff00]/10 border-l border-[#ccff00]/20 relative overflow-hidden group">
                                     <div className="absolute top-0 w-full h-1 bg-[#ccff00]"></div>
                                     <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#ccff00]/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                        <Star className="w-5 h-5 md:w-6 md:h-6 text-[#ccff00] drop-shadow-md" />
+                                        <Star className="w-5 h-5 md:w-6 md:h-6 fill-[#ccff00] stroke-black dark:fill-transparent dark:stroke-[#ccff00]" strokeWidth={1.5} />
                                     </div>
-                                    <span className="font-bold text-base md:text-xl tracking-tighter text-[#ccff00]">Weinix Sustainable Brick</span>
+                                    <span className="font-bold text-base md:text-xl tracking-tighter text-[#000] dark:text-[#ccff00] ">Weinix Sustainable Brick</span>
                                 </div>
                             </div>
 

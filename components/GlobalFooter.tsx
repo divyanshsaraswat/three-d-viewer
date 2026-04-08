@@ -103,7 +103,7 @@ export default function GlobalFooter() {
 
                     {/* Col 2: Navigation */}
                     <div className="lg:col-span-2">
-                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00]">Discovery</h4>
+                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 dark:text-[#ccff00] text-[#000]">Discovery</h4>
                         <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
                             <li><a href="/" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Home</a></li>
                             <li><a href="/about-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">About</a></li>
@@ -115,7 +115,7 @@ export default function GlobalFooter() {
 
                     {/* Col 3: Contact */}
                     <div className="lg:col-span-3">
-                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00]">Contact</h4>
+                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 dark:text-[#ccff00] text-[#000]">Contact</h4>
                         <ul className="space-y-4 text-sm opacity-60 text-gray-800 dark:text-gray-300 transition-colors">
                             <li className="flex gap-3">
                                 <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
@@ -138,7 +138,7 @@ export default function GlobalFooter() {
 
                     {/* Col 4: Newsletter */}
                     <div className="lg:col-span-3">
-                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00] ">Newsletter</h4>
+                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 dark:text-[#ccff00] text-[#000] ">Newsletter</h4>
                         <p className="text-sm opacity-60 text-gray-800 dark:text-gray-300 mb-6 leading-relaxed transition-colors">
                             Get the latest updates and insights delivered straight to your inbox..
                         </p>
