@@ -626,7 +626,8 @@ export default function LandingPage() {
                         </button>
                     </div>
                 </div>
-                <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-white dark:to-[#0a0a0a] pointer-events-none"></div>
+                <div className="hidden dark:block absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-[#0a0a0a] pointer-events-none"></div>
+                <div className="dark:hidden absolute bottom-0 left-0 w-full h-12 bg-gradient-to-b from-transparent to-white pointer-events-none"></div>
 
                 {/* Scroll Indicator */}
                 <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-20 mix-blend-difference text-white opacity-80">

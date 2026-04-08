@@ -24,7 +24,7 @@ const words = [
     { text: "what", type: "word" },
     { text: "is", type: "word" },
     { text: "built.", type: "word" },
-    { text: "Weinix sheets", type: "highlight", color: "green" },
+    { text: "Weinix sheets", type: "highlight", color: "emerald" },
     { text: "—", type: "word" },
     { text: "recycled", type: "word" },
     { text: "textile", type: "word" },
@@ -160,10 +160,10 @@ export default function ScrollRevealText() {
             );
         } else if (w.type === 'highlight') {
             let highlightColors = "";
-            if (w.color === 'blue') highlightColors = "border-blue-500/50 bg-blue-500/5 text-blue-500";
-            if (w.color === 'green') highlightColors = "border-[#ccff00]/50 bg-[#ccff00]/5 text-[#ccff00]";
-            if (w.color === 'orange') highlightColors = "border-orange-500/50 bg-orange-500/5 text-orange-500";
-            if (w.color === 'purple') highlightColors = "border-purple-500/50 bg-purple-500/5 text-purple-500";
+            if (w.color === 'blue') highlightColors = "border-blue-500/50 bg-blue-500/5 text-blue-500 [text-shadow:0_1px_3px_rgba(0,0,0,0.3)] dark:[text-shadow:none]";
+            if (w.color === 'emerald') highlightColors = "border-emerald-500/50 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 [text-shadow:0_1px_3px_rgba(0,0,0,0.3)] dark:[text-shadow:none]";
+            if (w.color === 'orange') highlightColors = "border-orange-500/50 bg-orange-500/5 text-orange-500 [text-shadow:0_1px_3px_rgba(0,0,0,0.3)] dark:[text-shadow:none]";
+            if (w.color === 'purple') highlightColors = "border-purple-500/50 bg-purple-500/5 text-purple-500 [text-shadow:0_1px_3px_rgba(0,0,0,0.3)] dark:[text-shadow:none]";
 
             groupedElements.push(
                 <span key={`highlight-${i}`} className={`reveal-item highlight-item relative inline-flex items-center justify-center origin-center ${padding}`} style={{ willChange: "transform", transform: "translateZ(0)" }}>

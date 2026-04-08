@@ -138,7 +138,7 @@ export default function GlobalFooter() {
 
                     {/* Col 4: Newsletter */}
                     <div className="lg:col-span-3">
-                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00]">Newsletter</h4>
+                        <h4 className="font-bold text-sm uppercase tracking-widest mb-6 text-[#ccff00] ">Newsletter</h4>
                         <p className="text-sm opacity-60 text-gray-800 dark:text-gray-300 mb-6 leading-relaxed transition-colors">
                             Get the latest updates and insights delivered straight to your inbox..
                         </p>
