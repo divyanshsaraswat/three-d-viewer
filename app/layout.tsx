@@ -97,6 +97,23 @@ export default function RootLayout({
           <AppShell>{children}</AppShell>
         </SessionProviderWrapper>
         <Analytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": siteConfig.name,
+              "url": getSiteUrl(),
+              "logo": `${getSiteUrl()}/icon-weinix.svg`,
+              "description": siteConfig.description,
+              "sameAs": [
+                "https://www.instagram.com/weinix.in",
+                "https://www.linkedin.com/in/imdivyanshmv/"
+              ]
+            })
+          }}
+        />
       </body>
     </html>
   );
