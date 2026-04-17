@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { getSiteUrl, siteConfig } from "@/utils/seo";
 import AppShell from "./AppShell";
@@ -96,7 +95,11 @@ export default function RootLayout({
         <SessionProviderWrapper>
           <AppShell>{children}</AppShell>
         </SessionProviderWrapper>
-        <Analytics />
+        <script 
+  src="https://va.vercel-scripts.com/v1/script.js"
+  defer
+  data-endpoint={`${process.env.NEXT_PUBLIC_DORY_DOMAIN}/api/analytics/${process.env.NEXT_PUBLIC_DORY_ID}`}
+/>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
