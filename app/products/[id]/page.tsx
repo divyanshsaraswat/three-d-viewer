@@ -11,108 +11,93 @@ import Link from 'next/link';
 import { use } from 'react';
 
 const productsData: Record<string, any> = {
-    pack_wall_base: {
-        name: "Wall Base Texture Pack",
+    pack_hov_bricks: {
+        name: "Bricks Pack",
         price: "$45.00",
-        image: "/textures/wall/7.png",
-        colors: ["Light", "Dark", "Cream"],
+        image: "/textures/hov/packs/HOV02161_white.webp",
+        colors: ["Standard", "Vintage", "Industrial"],
         sizes: ["2K", "4K", "8K"],
-        description: "Plaster, painted walls, and interior surfaces. High-resolution grunge and clean wall textures perfect for architectural visualization and game environments.",
+        description: "Structured masonry and classic brick patterns optimized for high fidelity. High-resolution textures perfect for architectural visualization and premium construction environments.",
         features: [
             "Seamlessly Tileable",
             "PBR Material Ready",
-            "Diffuse, Normal, and Roughness Maps",
+            "Optimized Fidelity",
             "Multiple Variations Included"
         ]
     },
-    pack_brick_masonry: {
-        name: "Brick & Masonry Pack",
-        price: "$28.00",
-        image: "/textures/brick/4.png",
-        colors: ["Yellow Brick", "Red Brick"],
-        sizes: ["2K", "4K", "8K"],
-        description: "Structured masonry and classic brick patterns. Ideal for exterior rendering, urban environments, and industrial scenes.",
-        features: [
-            "Seamlessly Tileable",
-            "PBR Material Ready",
-            "Diffuse, Normal, and Displacement Maps",
-            "Real-World Scale"
-        ]
-    },
-    pack_stone_mineral: {
-        name: "Stone & Marble Pack",
+    pack_hov_surfaces: {
+        name: "Surfaces Pack",
         price: "$85.00",
-        image: "/textures/stone/22.png",
-        colors: ["White Marble", "Concrete", "Black Stone"],
+        image: "/textures/hov/packs/HOV02168_white.webp",
+        colors: ["Natural Stone", "Rough Plaster", "Organic"],
         sizes: ["2K", "4K", "8K"],
-        description: "Hard surfaces and premium architectural materials. Includes high-end marble, rough concrete, and stylized glowing stones.",
+        description: "Organic stone, plaster, and rough architectural surfaces. Premium materials designed to redefine high-end spatial aesthetics.",
         features: [
             "Seamlessly Tileable",
             "PBR Material Ready",
             "High-Detail Micro-Surface",
-            "Subsurface Scattering Maps Included"
+            "Material Standard"
         ]
     },
-    pack_fabric_cloth: {
-        name: "Fabric & Cloth Pack",
-        price: "$22.00",
-        image: "/textures/fabric/10.png",
-        colors: ["Green Canvas", "Beige Cloth", "Dark Textile"],
-        sizes: ["1K", "2K", "4K"],
-        description: "Grain, fiber, and woven fabric textures. Perfect for interior furniture, clothing simulation references, and close-up detail work.",
-        features: [
-            "Seamlessly Tileable",
-            "Micro-fiber Details",
-            "Opacity Maps for Weaves",
-            "Color Variances"
-        ]
-    },
-    pack_lava_fire: {
-        name: "Lava & Fire Pack",
-        price: "$18.00",
-        image: "/textures/lava/3.png",
-        colors: ["Molten", "Bright Veins", "Intense"],
+    pack_hov_energy: {
+        name: "Energy & Glow Pack",
+        price: "$25.00",
+        image: "/textures/hov/packs/HOV02265_texture.webp",
+        colors: ["Blue Energy", "Orange Glow", "Red Embers"],
         sizes: ["2K", "4K"],
-        description: "Stylized lava, molten, and fire VFX textures. Create dynamic, glowing environments with animated-ready emission maps.",
+        description: "Specialized textures with emissive glows and energy patterns. Create dynamic, futuristic environments with certified glowing details.",
         features: [
             "Seamlessly Tileable",
             "High-Contrast Emission Maps",
-            "Flow Maps Included",
-            "Game-Ready Optimization"
-        ]
-    },
-    pack_scifi_energy: {
-        name: "Sci-Fi & Energy Pack",
-        price: "$25.00",
-        image: "/textures/scifi/2.png",
-        colors: ["Blue Electric", "Orange Energy"],
-        sizes: ["2K", "4K"],
-        description: "Cool-toned electric and cyberpunk tech textures. Add futuristic glowing details and cybernetic surfaces to any mesh.",
-        features: [
-            "Seamlessly Tileable",
-            "Emission and Panel Maps",
-            "Cyberpunk Aesthetics",
-            "Sci-Fi Material Ready"
+            "Cybernetic Aesthetics",
+            "Sci-Fi Ready"
         ]
     }
 };
 
+import { useSearchParams } from 'next/navigation';
+
 export default function ProductDetail({ params }: { params: { id: string } | Promise<{ id: string }> }) {
     // Unwrapping params for Next 15 compatibility dynamically
     const unwrappedParams = typeof params === 'object' && 'then' in params ? use(params) : params;
-    
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     const id = unwrappedParams.id;
     
+    const searchParams = useSearchParams();
+    const textureId = searchParams.get('texture');
+    
+    const [packs, setPacks] = useState<any[]>([]);
     const [activeColor, setActiveColor] = useState(0);
     const [activeSize, setActiveSize] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Provide a generic fallback if product is missing
-    const product = productsData[id] || {
+    useEffect(() => {
+        fetch('/textures/packs1.json')
+            .then(res => res.json())
+            .then(data => setPacks(data));
+    }, []);
+
+    // Find pack and texture
+    const currentPack = packs.find(p => p.id === id);
+    const currentTexture = currentPack?.textures.find((t: any) => t.id === textureId);
+
+    // Provide dynamic product data
+    const product = currentTexture ? {
+        name: currentTexture.title,
+        price: productsData[id]?.price || "$35.00",
+        image: currentTexture.full,
+        colors: productsData[id]?.colors || ["Standard"],
+        sizes: productsData[id]?.sizes || ["4K"],
+        description: productsData[id]?.description || "Individual Weinix certified texture rebuilt for maximum fidelity.",
+        features: productsData[id]?.features || [
+            "Seamlessly Tileable",
+            "PBR Material Ready",
+            "Weinix Certified Quality",
+            "100% Tracking Available"
+        ]
+    } : (productsData[id] || {
         name: "Weinix Essential Texture",
         price: "$35.00",
-        image: "/textures/wall/9.png",
+        image: "/textures/hov/packs/HOV02188_white.webp",
         colors: ["Standard"],
         sizes: ["4K"],
         description: "Standard industrial grade texture rebuilt for maximum fidelity.",
@@ -122,13 +107,13 @@ export default function ProductDetail({ params }: { params: { id: string } | Pro
             "Weinix Certified Quality",
             "100% Tracking Available"
         ]
-    };
+    });
 
     useGSAP(() => {
         const tl = gsap.timeline({ delay: 0.1 });
         tl.fromTo('.anim-image-box', { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 1.2, ease: "power3.out" })
           .fromTo('.anim-text', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.08, ease: "power2.out" }, "-=0.8");
-    }, { scope: containerRef });
+    }, { scope: containerRef, dependencies: [product] });
 
     return (
         <main ref={containerRef} className="relative min-h-[100dvh] pt-[15vh] pb-32 overflow-hidden font-sans transition-colors duration-500 text-black dark:text-white">

@@ -44,7 +44,7 @@ export default function TextureCarousel() {
 
     // Fetch texture packs from JSON manifest
     useEffect(() => {
-        fetch('/textures/packs.json')
+        fetch('/textures/packs1.json')
             .then(res => res.json())
             .then((data: TexturePack[]) => {
                 setTexturePacks(data);

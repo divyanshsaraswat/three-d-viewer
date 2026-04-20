@@ -1,0 +1,205 @@
+{
+    "id": "pack_hov_textures",
+    "title": "HOV Textures",
+    "description": "High-resolution optimized HOV textures.",
+    "tags": [
+        "HOV",
+        "Texture",
+        "Material"
+    ],
+    "thumb": "/textures/hov/HOV02151_white.webp",
+    "textures": [
+        {
+            "id": "tex_hov_hov02151_white",
+            "title": "HOV02151 white",
+            "thumb": "/textures/hov/HOV02151_white.webp",
+            "full": "/textures/hov/HOV02151_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02161_white",
+            "title": "HOV02161 white",
+            "thumb": "/textures/hov/HOV02161_white.webp",
+            "full": "/textures/hov/HOV02161_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02166_white",
+            "title": "HOV02166 white",
+            "thumb": "/textures/hov/HOV02166_white.webp",
+            "full": "/textures/hov/HOV02166_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02168_white",
+            "title": "HOV02168 white",
+            "thumb": "/textures/hov/HOV02168_white.webp",
+            "full": "/textures/hov/HOV02168_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02170_white",
+            "title": "HOV02170 white",
+            "thumb": "/textures/hov/HOV02170_white.webp",
+            "full": "/textures/hov/HOV02170_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02171_white",
+            "title": "HOV02171 white",
+            "thumb": "/textures/hov/HOV02171_white.webp",
+            "full": "/textures/hov/HOV02171_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02174_white",
+            "title": "HOV02174 white",
+            "thumb": "/textures/hov/HOV02174_white.webp",
+            "full": "/textures/hov/HOV02174_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02175_white",
+            "title": "HOV02175 white",
+            "thumb": "/textures/hov/HOV02175_white.webp",
+            "full": "/textures/hov/HOV02175_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02177_white",
+            "title": "HOV02177 white",
+            "thumb": "/textures/hov/HOV02177_white.webp",
+            "full": "/textures/hov/HOV02177_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02179_white",
+            "title": "HOV02179 white",
+            "thumb": "/textures/hov/HOV02179_white.webp",
+            "full": "/textures/hov/HOV02179_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02183_white",
+            "title": "HOV02183 white",
+            "thumb": "/textures/hov/HOV02183_white.webp",
+            "full": "/textures/hov/HOV02183_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02185_white",
+            "title": "HOV02185 white",
+            "thumb": "/textures/hov/HOV02185_white.webp",
+            "full": "/textures/hov/HOV02185_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02188_white",
+            "title": "HOV02188 white",
+            "thumb": "/textures/hov/HOV02188_white.webp",
+            "full": "/textures/hov/HOV02188_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02190_white",
+            "title": "HOV02190 white",
+            "thumb": "/textures/hov/HOV02190_white.webp",
+            "full": "/textures/hov/HOV02190_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02192_white",
+            "title": "HOV02192 white",
+            "thumb": "/textures/hov/HOV02192_white.webp",
+            "full": "/textures/hov/HOV02192_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02194_white",
+            "title": "HOV02194 white",
+            "thumb": "/textures/hov/HOV02194_white.webp",
+            "full": "/textures/hov/HOV02194_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02196_white",
+            "title": "HOV02196 white",
+            "thumb": "/textures/hov/HOV02196_white.webp",
+            "full": "/textures/hov/HOV02196_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02197_white",
+            "title": "HOV02197 white",
+            "thumb": "/textures/hov/HOV02197_white.webp",
+            "full": "/textures/hov/HOV02197_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02199_white",
+            "title": "HOV02199 white",
+            "thumb": "/textures/hov/HOV02199_white.webp",
+            "full": "/textures/hov/HOV02199_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02202_white",
+            "title": "HOV02202 white",
+            "thumb": "/textures/hov/HOV02202_white.webp",
+            "full": "/textures/hov/HOV02202_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02203_white",
+            "title": "HOV02203 white",
+            "thumb": "/textures/hov/HOV02203_white.webp",
+            "full": "/textures/hov/HOV02203_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02207_white",
+            "title": "HOV02207 white",
+            "thumb": "/textures/hov/HOV02207_white.webp",
+            "full": "/textures/hov/HOV02207_white.webp"
+        },
+        {
+            "id": "tex_hov_hov02252_texture",
+            "title": "HOV02252 texture",
+            "thumb": "/textures/hov/HOV02252_texture.webp",
+            "full": "/textures/hov/HOV02252_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02265_texture",
+            "title": "HOV02265 texture",
+            "thumb": "/textures/hov/HOV02265_texture.webp",
+            "full": "/textures/hov/HOV02265_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02280_texture",
+            "title": "HOV02280 texture",
+            "thumb": "/textures/hov/HOV02280_texture.webp",
+            "full": "/textures/hov/HOV02280_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02286_texture",
+            "title": "HOV02286 texture",
+            "thumb": "/textures/hov/HOV02286_texture.webp",
+            "full": "/textures/hov/HOV02286_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02294_texture",
+            "title": "HOV02294 texture",
+            "thumb": "/textures/hov/HOV02294_texture.webp",
+            "full": "/textures/hov/HOV02294_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02312_texture",
+            "title": "HOV02312 texture",
+            "thumb": "/textures/hov/HOV02312_texture.webp",
+            "full": "/textures/hov/HOV02312_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02334_texture",
+            "title": "HOV02334 texture",
+            "thumb": "/textures/hov/HOV02334_texture.webp",
+            "full": "/textures/hov/HOV02334_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02337_texture",
+            "title": "HOV02337 texture",
+            "thumb": "/textures/hov/HOV02337_texture.webp",
+            "full": "/textures/hov/HOV02337_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02342_texture",
+            "title": "HOV02342 texture",
+            "thumb": "/textures/hov/HOV02342_texture.webp",
+            "full": "/textures/hov/HOV02342_texture.webp"
+        },
+        {
+            "id": "tex_hov_hov02344_texture",
+            "title": "HOV02344 texture",
+            "thumb": "/textures/hov/HOV02344_texture.webp",
+            "full": "/textures/hov/HOV02344_texture.webp"
+        }
+    ]
+}

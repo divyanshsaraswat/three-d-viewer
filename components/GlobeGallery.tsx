@@ -38,58 +38,58 @@ type ItemDef = {
 
 const DEFAULT_IMAGES: ImageItem[] = [
   {
-    src: '/textures/wall/7.png',
-    alt: 'Light Gray Tiled Wall',
-    title: 'Light Gray Tiled Wall',
-    description: 'Plaster, painted walls, and interior surfaces. Grunge.'
-  },
-  {
-    src: '/textures/wall/24.png',
-    alt: 'Red Rough Plaster',
-    title: 'Red Rough Plaster',
-    description: 'Plaster, painted walls, and interior surfaces. Grunge.'
-  },
-  {
-    src: '/textures/brick/19.png',
-    alt: 'Red Brick Wall',
-    title: 'Red Brick Wall',
+    src: '/textures/hov/packs/HOV02161_white.webp',
+    alt: 'Red Brick',
+    title: 'Red Brick',
     description: 'Structured masonry and classic brick patterns.'
   },
   {
-    src: '/textures/stone/22.png',
-    alt: 'White Marble',
-    title: 'White Marble',
-    description: 'Hard surfaces and premium architectural materials.'
+    src: '/textures/hov/packs/HOV02166_white.webp',
+    alt: 'Yellow Brick',
+    title: 'Yellow Brick',
+    description: 'Structured masonry and classic brick patterns.'
   },
   {
-    src: '/textures/stone/5.png',
-    alt: 'Black Cracked Stone',
-    title: 'Black Cracked Stone',
-    description: 'Hard surfaces and premium architectural materials.'
+    src: '/textures/hov/packs/HOV02168_white.webp',
+    alt: 'Earth Surface',
+    title: 'Earth Surface',
+    description: 'Organic stone, plaster, and rough architectural surfaces.'
   },
   {
-    src: '/textures/fabric/14.png',
-    alt: 'Beige Canvas Surface',
-    title: 'Beige Canvas Surface',
-    description: 'Grain, fiber, and woven fabric textures.'
+    src: '/textures/hov/packs/HOV02203_white.webp',
+    alt: 'Smooth Plaster',
+    title: 'Smooth Plaster',
+    description: 'Organic stone, plaster, and rough architectural surfaces.'
   },
   {
-    src: '/textures/lava/3.png',
-    alt: 'Lava Cracks',
-    title: 'Lava Cracks',
-    description: 'Stylized lava, molten, and fire VFX textures.'
+    src: '/textures/hov/packs/HOV02185_white.webp',
+    alt: 'Dark Stone',
+    title: 'Dark Stone',
+    description: 'Organic stone, plaster, and rough architectural surfaces.'
   },
   {
-    src: '/textures/lava/16.png',
-    alt: 'Bright Lava Veins',
-    title: 'Bright Lava Veins',
-    description: 'Stylized lava, molten, and fire VFX textures.'
+    src: '/textures/hov/packs/HOV02190_white.webp',
+    alt: 'Tan Surface',
+    title: 'Tan Surface',
+    description: 'Organic stone, plaster, and rough architectural surfaces.'
   },
   {
-    src: '/textures/scifi/2.png',
-    alt: 'Blue Electric Cracks',
-    title: 'Blue Electric Cracks',
-    description: 'Cool-toned electric and cyberpunk tech textures.'
+    src: '/textures/hov/packs/HOV02286_texture.webp',
+    alt: 'Red Glow',
+    title: 'Red Glow',
+    description: 'Specialized textures with emissive glows and energy patterns.'
+  },
+  {
+    src: '/textures/hov/packs/HOV02252_texture.webp',
+    alt: 'Orange Glow',
+    title: 'Orange Glow',
+    description: 'Specialized textures with emissive glows and energy patterns.'
+  },
+  {
+    src: '/textures/hov/packs/HOV02265_texture.webp',
+    alt: 'Blue Energy',
+    title: 'Blue Energy',
+    description: 'Specialized textures with emissive glows and energy patterns.'
   }
 ];
 
