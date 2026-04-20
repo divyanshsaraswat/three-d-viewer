@@ -89,7 +89,7 @@ export default function ProductsPage() {
                         </p>
                     </div>
                     <div className="flex items-center gap-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-6 py-4 rounded-full shadow-lg">
-                        <span className="text-black/80 dark:text-white/80 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">Series 01 / 32 Variants</span>
+                        <span className="text-black/80 dark:text-white/80 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">Monolith / V1 / 32 Variants</span>
                         <div className="w-2 h-2 rounded-full bg-[#ccff00] animate-pulse shadow-[0_0_12px_rgba(204,255,0,0.8)]"></div>
                     </div>
                 </div>
