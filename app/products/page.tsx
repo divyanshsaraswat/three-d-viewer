@@ -157,8 +157,10 @@ export default function ProductsPage() {
                                             />
 
                                             <div className="absolute bottom-0 left-0 w-full p-8 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                                                <p className="text-[10px] font-bold text-[#ccff00] uppercase tracking-[0.2em] mb-2">Texture ID / {texture.id.split('_').pop()}</p>
-                                                <h4 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">{texture.title}</h4>
+                                                <p className="text-[10px] font-bold text-[#ccff00] uppercase tracking-[0.2em] mb-2">Texture ID / {pack.title}</p>
+                                                <h4 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+                                                    {texture.title.split(' ')[0]} {pack.title}
+                                                </h4>
                                             </div>
                                         </Link>
                                     ))}
