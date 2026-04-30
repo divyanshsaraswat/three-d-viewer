@@ -92,8 +92,8 @@ export default function CustomCursor() {
             <div ref={cursorCircleRef} className="fixed top-0 left-0 pointer-events-none z-[10000]">
                 {/* Visual Element (Tailwind scales this) */}
                 <div
-                    className={`w-10 h-10 border-2 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out flex items-center justify-center ${isHovering ? 'scale-[1.8] bg-black/20 border-black/50 dark:bg-[#ccff00]/60 dark:border-[#ccff00]/60' : 'scale-100 border-black dark:border-[#ccff00]'
-                        } ${isClicking ? 'scale-[0.8] border-transparent bg-black/40 dark:bg-[#ccff00]/80' : ''
+                    className={`w-10 h-10 border-2 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out flex items-center justify-center ${isHovering ? 'scale-[1.8] bg-[#ccff00]/60 border-[#ccff00]/60' : 'scale-100 border-[#ccff00]'
+                        } ${isClicking ? 'scale-[0.8] border-transparent bg-[#ccff00]/80' : ''
                         }`}
                 ></div>
             </div>
@@ -102,7 +102,7 @@ export default function CustomCursor() {
             <div ref={cursorDotRef} className="fixed top-0 left-0 pointer-events-none z-[10000]">
                 {/* Visual Element (Tailwind scales this) */}
                 <div
-                    className={`w-2 h-2 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out bg-black dark:bg-[#ccff00] ${isHovering ? 'scale-0 opacity-0' : 'scale-100 opacity-100'
+                    className={`w-2 h-2 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out bg-[#ccff00] ${isHovering ? 'scale-0 opacity-0' : 'scale-100 opacity-100'
                         }`}
                 ></div>
             </div>
