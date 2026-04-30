@@ -2,9 +2,11 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function TestimonialVideo() {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const { trackEvent } = useAnalytics();
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const [progress, setProgress] = useState(0);
@@ -40,6 +42,7 @@ export default function TestimonialVideo() {
 
     const togglePlay = () => {
         if (videoRef.current) {
+            trackEvent(isPlaying ? 'testimonial_video_paused' : 'testimonial_video_played');
             if (isPlaying) {
                 videoRef.current.pause();
                 setIsPlaying(false);
@@ -52,6 +55,7 @@ export default function TestimonialVideo() {
 
     const toggleMute = () => {
         if (videoRef.current) {
+            trackEvent(isMuted ? 'testimonial_video_unmuted' : 'testimonial_video_muted');
             videoRef.current.muted = !isMuted;
             setIsMuted(!isMuted);
         }

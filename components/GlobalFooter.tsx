@@ -3,15 +3,18 @@
 import React, { useState } from 'react';
 import { ArrowRight, Sun, Moon, Monitor, Instagram, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { useGlobalContext } from '@/context/GlobalContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function GlobalFooter() {
     const { theme, setTheme } = useGlobalContext();
+    const { trackEvent } = useAnalytics();
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
 
     const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
+        trackEvent('newsletter_subscribe_clicked', { email_provided: !!email });
         if (!email) {
             setStatus('error');
             setMessage('Email is required');
@@ -64,7 +67,7 @@ export default function GlobalFooter() {
                             Let&apos;s Turn Big Ideas Into Extraordinary Realities – Together
                         </h3>
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                            <a href="/contact-us" className="w-full sm:w-auto bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors inline-block text-center">
+                            <a href="/contact-us" onClick={() => trackEvent('footer_cta_clicked', { target: 'Contact Sales' })} className="w-full sm:w-auto bg-[#171717] dark:bg-white text-white dark:text-[#171717] px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase hover:bg-[#ccff00] hover:text-[#171717] dark:hover:bg-[#ccff00] dark:hover:text-[#171717] transition-colors inline-block text-center">
                                 Contact Sales
                             </a>
                             {/* <button className="w-full sm:w-auto justify-center bg-transparent border border-black/20 dark:border-white/20 hover:border-black dark:hover:border-white text-black dark:text-white px-8 py-4 rounded-full text-sm font-bold tracking-widest uppercase flex items-center gap-2 transition-colors">
@@ -180,21 +183,21 @@ export default function GlobalFooter() {
                     {/* Theme Toggle Pill */}
                     <div className="flex items-center justify-center rounded-[2rem] p-1.5 shadow-inner mt-4 md:mt-0 transition-colors">
                         <button
-                            onClick={() => setTheme('light')}
+                            onClick={() => { trackEvent('theme_changed', { theme: 'light' }); setTheme('light'); }}
                             className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'light' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
                             aria-label="Light Theme"
                         >
                             <Sun size={14} strokeWidth={2} />
                         </button>
                         <button
-                            onClick={() => setTheme('dark')}
+                            onClick={() => { trackEvent('theme_changed', { theme: 'dark' }); setTheme('dark'); }}
                             className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'dark' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
                             aria-label="Dark Theme"
                         >
                             <Moon size={14} strokeWidth={2} />
                         </button>
                         <button
-                            onClick={() => setTheme('system')}
+                            onClick={() => { trackEvent('theme_changed', { theme: 'system' }); setTheme('system'); }}
                             className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'system' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}
                             aria-label="System Theme"
                         >

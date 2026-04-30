@@ -16,6 +16,7 @@ import TextType from '@/components/TextType';
 import { OnboardingProvider } from '@onboardjs/react';
 import { tourSteps, tourRegistry } from '@/config/tour';
 import TourOverlay from '@/components/TourOverlay';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function EditorPage({ params }: { params: Promise<{ modelId: string }> }) {
     const modelsLength = useStore(state => state.models.length);
@@ -31,6 +32,11 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
     const [isHydrated, setIsHydrated] = useState(false);
     const [isCapturing, setIsCapturing] = useState(false);
     const [hasSeenTour, setHasSeenTour] = useState(true); // Default to true to prevent flash
+    const { trackEvent } = useAnalytics();
+
+    useEffect(() => {
+        trackEvent('page_view', { page: 'editor', modelId: typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '' });
+    }, []);
 
     const loadingQuotes = useMemo(() => {
         const quotes = [
@@ -221,7 +227,7 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
             <div className="w-screen h-screen overflow-hidden flex relative font-sans text-white transition-colors duration-500 select-none" style={{ backgroundColor: '#0a0a0a' }}>
                 {/* Back to Home Button (Top Left) */}
                 <button
-                    onClick={() => window.location.assign('/')}
+                    onClick={() => { trackEvent('editor_home_clicked'); window.location.assign('/'); }}
                     className={`absolute top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-black/40 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-full text-black/80 dark:text-white/80 hover:text-black dark:hover:text-white hover:bg-white dark:hover:bg-black/60 hover:border-black/30 dark:hover:border-white/30 transition-all duration-700 shadow-lg group ${selectedMeshId || isModelLoading ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'} cursor-pointer`}
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform text-[#88aa00] dark:text-[#ccff00]">
@@ -254,6 +260,7 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
                             disabled={isCapturing}
                             onClick={() => {
                                 if (isCapturing) return;
+                                trackEvent('editor_screenshot_clicked');
                                 setIsCapturing(true);
                                 // Yield rendering thread briefly before heavy WebGL readPixels blocks it
                                 setTimeout(() => {
@@ -282,6 +289,7 @@ export default function EditorPage({ params }: { params: Promise<{ modelId: stri
                             disabled={isCapturing}
                             onClick={() => {
                                 if (isCapturing) return;
+                                trackEvent('editor_screenshot_clicked');
                                 setIsCapturing(true);
                                 setTimeout(() => {
                                     window.dispatchEvent(new CustomEvent('take-screenshot'));

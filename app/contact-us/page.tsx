@@ -9,6 +9,7 @@ import {
     Loader2, Building2, ChevronDown, ArrowRight
 } from 'lucide-react';
 import { submitContactInquiry } from '@/utils/api/contact';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -30,9 +31,11 @@ export default function ContactUsPage() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [ticketId, setTicketId] = useState('');
     const [error, setError] = useState('');
+    const { trackEvent } = useAnalytics();
 
     // Cleanup on unmount
     useEffect(() => {
+        trackEvent('page_view', { page: 'contact-us' });
         return () => { abortRef.current?.abort(); };
     }, []);
 
@@ -103,6 +106,7 @@ export default function ContactUsPage() {
             }, controller.signal);
 
             if (res.success && res.data) {
+                trackEvent('contact_form_submitted', { businessType });
                 setTicketId(res.data.ticketId || '');
                 setIsSubmitted(true);
             } else if (res.error) {
@@ -431,6 +435,7 @@ export default function ContactUsPage() {
                                     href="https://maps.google.com/?q=Titanium+City+Center+Ahmedabad"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={() => trackEvent('contact_maps_clicked')}
                                     className="text-[10px] font-bold tracking-widest uppercase text-[#8aab00] dark:text-[#ccff00] hover:text-black dark:hover:text-white transition-colors"
                                 >
                                     Open in Maps →
@@ -456,6 +461,7 @@ export default function ContactUsPage() {
                         </p>
                         <a
                             href="mailto:contact@re-verse.in"
+                            onClick={() => trackEvent('contact_partnership_email_clicked')}
                             className="inline-flex items-center gap-2 bg-black text-[#ccff00] font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full hover:scale-[1.03] transition-transform shadow-xl"
                         >
                             <Mail size={14} />

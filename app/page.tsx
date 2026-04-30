@@ -17,6 +17,7 @@ import ModelSelectDialog from '@/components/ModelSelectDialog';
 import HeroBackgroundVideo from '@/components/HeroBackgroundVideo';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { useSession } from 'next-auth/react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const AnimatedWord = ({ text, highlight }: { text: string; highlight?: boolean }) => (
     <span className={`inline-block whitespace-nowrap px-1 ${highlight ? 'font-light italic font-serif tracking-normal' : ''}`}>
@@ -244,6 +245,11 @@ export default function LandingPage() {
 
     const { hasEntered, setHasEntered, setIsAuthModalOpen } = useGlobalContext();
     const hasAnimated = useRef(false);
+    const { trackEvent } = useAnalytics();
+
+    useEffect(() => {
+        trackEvent('page_view', { page: 'landing' });
+    }, []);
 
     // Forces autoplay on iPhone by ensuring muted is set via JS and play() is called explicitly
     useEffect(() => {
@@ -607,14 +613,15 @@ export default function LandingPage() {
                     </p>
 
                     <div className="hero-cta opacity-0 flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 w-full">
-                        <Link href="/about-us" className="bg-black/60 dark:bg-white/10 text-white backdrop-blur-sm border border-white/20 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-black/80 dark:hover:bg-white/20 transition-all duration-300 w-full sm:w-auto shadow-[0_4px_20px_rgba(0,0,0,0.3)] text-center">
+                        <Link href="/about-us" onClick={() => trackEvent('landing_explore_story_clicked')} className="bg-black/60 dark:bg-white/10 text-white backdrop-blur-sm border border-white/20 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-black/80 dark:hover:bg-white/20 transition-all duration-300 w-full sm:w-auto shadow-[0_4px_20px_rgba(0,0,0,0.3)] text-center">
                             Explore Our Story
                         </Link>
-                        <Link href="/products" className="bg-transparent text-white border-2 border-white/30 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-white/10 hover:border-white/60 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm [text-shadow:0px_2px_10px_rgba(0,0,0,0.5)] text-center">
+                        <Link href="/products" onClick={() => trackEvent('landing_shop_clicked')} className="bg-transparent text-white border-2 border-white/30 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-white/10 hover:border-white/60 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm [text-shadow:0px_2px_10px_rgba(0,0,0,0.5)] text-center">
                             Shop Sustainable Bricks
                         </Link>
                         <button
                             onClick={() => {
+                                trackEvent('landing_experience_3d_clicked');
                                 if (session?.user) {
                                     setIsModelDialogOpen(true);
                                 } else {

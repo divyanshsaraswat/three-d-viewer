@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -60,6 +61,7 @@ export default function SpecializationCarousel() {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const stRef = useRef<ScrollTrigger | null>(null);
     const [activeIdx, setActiveIdx] = useState(0);
+    const { trackEvent } = useAnalytics();
 
     const isDragging = useRef(false);
     const dragStart = useRef({ x: 0, scroll: 0 });
@@ -155,6 +157,7 @@ export default function SpecializationCarousel() {
 
     const scrollToIdx = (idx: number) => {
         if (!stRef.current) return;
+        trackEvent('specialization_carousel_navigated', { target_index: idx, target_title: specs[idx]?.title });
         const st = stRef.current;
         const progress = Math.min(idx / (specs.length - 1), 1);
         const maxScroll = st.end - st.start;

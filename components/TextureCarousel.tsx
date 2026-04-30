@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Search, Plus, X, ChevronLeft, ChevronRight, MoreHorizontal, Package } from 'lucide-react';
+import { Search, Plus, X, ChevronLeft, ChevronRight, MoreHorizontal, Package, Check } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BlurImage from './BlurImage';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface TextureEntry {
     id: string;
@@ -36,11 +37,12 @@ export default function TextureCarousel() {
     const [activePackId, setActivePackId] = useState<string>('');
     const [showOptionsId, setShowOptionsId] = useState<string | null>(null);
     const [popoverLeft, setPopoverLeft] = useState<number>(0);
-    const [stickyTiling, setStickyTiling] = useState<[number, number]>([5, 5]);
+    const [stickyTiling, setStickyTiling] = useState<[number, number]>([1, 1]);
     const applyTextureOptions = useStore(state => state.applyTextureOptions);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const trayRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
+    const { trackEvent } = useAnalytics();
 
     // Fetch texture packs from JSON manifest
     useEffect(() => {
@@ -125,6 +127,7 @@ export default function TextureCarousel() {
 
     const navigateTexture = (direction: 'left' | 'right') => {
         if (!packTextures.length) return;
+        trackEvent('texture_carousel_navigated', { direction });
 
         let currentIndex = packTextures.findIndex(t => t.id === activeTextureId);
         if (currentIndex === -1) currentIndex = 0;
@@ -213,6 +216,10 @@ export default function TextureCarousel() {
         setActiveTextureId(tex.id);
         setShowOptionsId(null);
 
+        if (forceApply || activeTextureId !== tex.id) {
+            trackEvent('texture_applied', { texture_id: tex.id, texture_title: tex.title });
+        }
+
         try {
             const res = await fetch(tex.full);
             const blob = await res.blob();
@@ -228,6 +235,7 @@ export default function TextureCarousel() {
     };
 
     const handleSelectPack = (packId: string) => {
+        trackEvent('texture_pack_selected', { pack_id: packId });
         setActivePackId(packId);
         setIsMenuOpen(false); // Close dialog to reveal the new quick picks
 
@@ -263,25 +271,34 @@ export default function TextureCarousel() {
                             className="absolute bottom-[calc(100%+8px)] -translate-x-1/2 rounded-xl border border-white/10 shadow-xl p-1.5 flex flex-col gap-1 w-32 animate-in fade-in zoom-in-95 duration-200 z-50 transition-all" style={{ backgroundColor: '#1a1a1a', left: popoverLeft > 0 ? `${popoverLeft}px` : '50%' }}
                         >
                             <button
-                                onClick={() => { setStickyTiling([5, 5]); applyTextureOptions({ tiling: [5, 5] }); setShowOptionsId(null); }}
-                                className="text-xs text-left text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                                onClick={() => { trackEvent('texture_options_changed', { tiling: [1, 1] }); setStickyTiling([1, 1]); applyTextureOptions({ tiling: [1, 1] }); setShowOptionsId(null); }}
+                                className={`text-xs text-left px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-between ${stickyTiling[0] === 1 ? 'text-[#ccff00] bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/10'}`}
                             >
-                                <span className="font-semibold block">Tiled</span>
-                                <span className="text-[10px] text-white/40 font-normal">Default (5x5)</span>
+                                <div>
+                                    <span className="font-semibold block">Fit / Fill</span>
+                                    <span className={`text-[10px] font-normal ${stickyTiling[0] === 1 ? 'text-[#ccff00]/70' : 'text-white/40'}`}>Stretched (1x1)</span>
+                                </div>
+                                {stickyTiling[0] === 1 && <Check size={14} className="text-[#ccff00]" />}
                             </button>
                             <button
-                                onClick={() => { setStickyTiling([10, 10]); applyTextureOptions({ tiling: [10, 10] }); setShowOptionsId(null); }}
-                                className="text-xs text-left text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                                onClick={() => { trackEvent('texture_options_changed', { tiling: [5, 5] }); setStickyTiling([5, 5]); applyTextureOptions({ tiling: [5, 5] }); setShowOptionsId(null); }}
+                                className={`text-xs text-left px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-between ${stickyTiling[0] === 5 ? 'text-[#ccff00] bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/10'}`}
                             >
-                                <span className="font-semibold block">Fine</span>
-                                <span className="text-[10px] text-white/40 font-normal">Dense (10x10)</span>
+                                <div>
+                                    <span className="font-semibold block">Tiled</span>
+                                    <span className={`text-[10px] font-normal ${stickyTiling[0] === 5 ? 'text-[#ccff00]/70' : 'text-white/40'}`}>Default (5x5)</span>
+                                </div>
+                                {stickyTiling[0] === 5 && <Check size={14} className="text-[#ccff00]" />}
                             </button>
                             <button
-                                onClick={() => { setStickyTiling([1, 1]); applyTextureOptions({ tiling: [1, 1] }); setShowOptionsId(null); }}
-                                className="text-xs text-left text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                                onClick={() => { trackEvent('texture_options_changed', { tiling: [10, 10] }); setStickyTiling([10, 10]); applyTextureOptions({ tiling: [10, 10] }); setShowOptionsId(null); }}
+                                className={`text-xs text-left px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-between ${stickyTiling[0] === 10 ? 'text-[#ccff00] bg-white/5' : 'text-white/80 hover:text-white hover:bg-white/10'}`}
                             >
-                                <span className="font-semibold block">Fit / Fill</span>
-                                <span className="text-[10px] text-white/40 font-normal">Stretched (1x1)</span>
+                                <div>
+                                    <span className="font-semibold block">Fine</span>
+                                    <span className={`text-[10px] font-normal ${stickyTiling[0] === 10 ? 'text-[#ccff00]/70' : 'text-white/40'}`}>Dense (10x10)</span>
+                                </div>
+                                {stickyTiling[0] === 10 && <Check size={14} className="text-[#ccff00]" />}
                             </button>
                         </div>
                     )}
@@ -332,7 +349,7 @@ export default function TextureCarousel() {
                     {/* "More" Packs Button */}
                     <button
                         id="tour-packs-btn"
-                        onClick={() => setIsMenuOpen(true)}
+                        onClick={() => { trackEvent('texture_packs_opened'); setIsMenuOpen(true); }}
                         className="gsap-static-btn cursor-pointer w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-xl flex flex-col items-center justify-center gap-1 md:gap-1.5 shrink-0 transition-colors border border-white/5 text-white shadow-inner hover:border-[#ccff00]/30 cursor-pointer" style={{ backgroundColor: '#1a1a1a' }}
                     >
                         <Package size={20} className="text-[#ccff00] w-4 h-4 md:w-5 md:h-5" />
@@ -341,6 +358,7 @@ export default function TextureCarousel() {
                     {/* Reset & Close */}
                     <button
                         onClick={() => {
+                            trackEvent('texture_carousel_closed');
                             setActiveTextureId(null);
                             setShowOptionsId(null);
                             window.dispatchEvent(new CustomEvent('deselect-mesh'));
@@ -389,6 +407,7 @@ export default function TextureCarousel() {
                                         <button
                                             key={tag}
                                             onClick={() => {
+                                                trackEvent('texture_pack_tag_toggled', { tag });
                                                 setSelectedTags(prev =>
                                                     prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
                                                 );

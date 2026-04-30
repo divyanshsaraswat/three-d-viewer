@@ -5,6 +5,7 @@ import { X, Mail, Phone, Loader2, ChevronDown } from 'lucide-react';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { signIn, getSession } from 'next-auth/react';
 import { requestOtp as apiRequestOtp } from '@/utils/api/auth';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const IS_DEV = process.env.NEXT_PUBLIC_EDITOR_MODE !== "prod";
 
@@ -44,6 +45,7 @@ export default function AuthModal() {
     // Animation states
     const [shouldRender, setShouldRender] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const { trackEvent } = useAnalytics();
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -128,6 +130,7 @@ export default function AuthModal() {
     const handleActionSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        trackEvent('auth_modal_submit_clicked', { mode });
 
         if (mode === 'signup') {
             if (!firstName.trim() || !lastName.trim()) {
@@ -206,6 +209,7 @@ export default function AuthModal() {
     const handleVerifySubmit = (e?: React.FormEvent, overrideOtp?: string) => {
         if (e) e.preventDefault();
         setError('');
+        trackEvent('auth_modal_verify_clicked');
 
         const codeToVerify = overrideOtp || otp;
 
@@ -259,6 +263,7 @@ export default function AuthModal() {
         setIsLoading(true);
         setError('');
         setResendMessage('');
+        trackEvent('auth_modal_resend_otp_clicked');
 
         try {
             const phone = `${mobileNumber}`;
@@ -325,13 +330,13 @@ export default function AuthModal() {
                 {/* Header Toggle (Sign up / Sign in) */}
                 <div className={`relative z-10 flex items-center gap-1 bg-black/5 dark:bg-black/40 backdrop-blur-md p-1 rounded-full w-fit mb-6 border border-black/5 dark:border-white/5 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] delay-75 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                     <button 
-                        onClick={() => { setMode('signup'); setStep(1); setError(''); }}
+                        onClick={() => { trackEvent('auth_modal_tab_clicked', { tab: 'signup' }); setMode('signup'); setStep(1); setError(''); }}
                         className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 ${mode === 'signup' ? 'bg-white text-black shadow-sm scale-100 dark:bg-[#1e1e20] dark:text-white' : 'text-black/50 hover:text-black dark:text-white/40 dark:hover:text-white/70 scale-95 hover:scale-100'}`}
                     >
                         Sign up
                     </button>
                     <button 
-                        onClick={() => { setMode('signin'); setStep(1); setError(''); }}
+                        onClick={() => { trackEvent('auth_modal_tab_clicked', { tab: 'signin' }); setMode('signin'); setStep(1); setError(''); }}
                         className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 ${mode === 'signin' ? 'bg-white text-black shadow-sm scale-100 dark:bg-[#1e1e20] dark:text-white' : 'text-black/50 hover:text-black dark:text-white/40 dark:hover:text-white/70 scale-95 hover:scale-100'}`}
                     >
                         Sign in

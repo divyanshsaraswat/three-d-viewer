@@ -1,6 +1,7 @@
 import { X, ChevronLeft, ChevronRight, Upload, ZoomIn, ZoomOut, Move, RotateCw, Trash2 } from 'lucide-react';
 import { useState, useRef, useCallback } from 'react';
 import { useStore, LoadedModel } from '@/store/useStore';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 function DraggableNumberInput({ value, onChange, step = 0.5 }: { value: number, onChange: (val: number) => void, step?: number }) {
     const [displayValue, setDisplayValue] = useState(value);
@@ -67,6 +68,7 @@ export default function Sidebar() {
     const setFileMap = useStore(state => state.setFileMap);
     const addBookmark = useStore(state => state.addBookmark);
     const triggerCapture = useStore(state => state.triggerCapture);
+    const { trackEvent } = useAnalytics();
 
     const fileLoaded = models.length > 0;
     const [collapsed, setCollapsed] = useState(false);
@@ -85,6 +87,7 @@ export default function Sidebar() {
     };
 
     const handleCloseModel = () => {
+        trackEvent('sidebar_model_closed');
         const currentFileMap = useStore.getState().fileMap;
         if (currentFileMap) {
             currentFileMap.forEach(url => URL.revokeObjectURL(url));
@@ -94,6 +97,7 @@ export default function Sidebar() {
     };
 
     const handleFileUpload = (files: FileList) => {
+        trackEvent('sidebar_file_uploaded', { files_count: files.length });
         setIsModelLoading(true);
         const map = new Map<string, string>();
         const newModels: LoadedModel[] = [];
@@ -139,6 +143,7 @@ export default function Sidebar() {
     const [downloading, setDownloading] = useState<{ name: string; progress: number } | null>(null);
 
     const handleExampleLoad = (filename: string, url: string) => {
+        trackEvent('sidebar_example_loaded', { example_name: filename });
         handleCloseModel();
 
         // Determine format based on url or filename
@@ -293,7 +298,7 @@ export default function Sidebar() {
             onWheel={(e) => e.stopPropagation()}
         >
             <button
-                onClick={() => setCollapsed(!collapsed)}
+                onClick={() => { trackEvent('sidebar_toggled', { collapsed: !collapsed }); setCollapsed(!collapsed); }}
                 className="absolute -right-3 top-4 rounded-full p-1 hover:opacity-80 transition-opacity" style={{ backgroundColor: '#1a1a1a' }}
             >
                 {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
@@ -504,7 +509,7 @@ export default function Sidebar() {
                             <div className="flex items-center justify-between mt-4 border-t border-white/5 pt-4">
                                 <label className="text-xs text-neutral-400">Dynamic Focus</label>
                                 <button
-                                    onClick={() => updateSetting('dynamicFocus', !settings.dynamicFocus)}
+                                    onClick={() => { trackEvent('sidebar_setting_changed', { setting: 'dynamicFocus', value: !settings.dynamicFocus }); updateSetting('dynamicFocus', !settings.dynamicFocus); }}
                                     className={`w-8 h-4 rounded-full relative transition-colors ${settings.dynamicFocus ? 'bg-[#ccff00]' : 'bg-neutral-600'}`}
                                 >
                                     <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-black rounded-full transition-transform ${settings.dynamicFocus ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -514,7 +519,7 @@ export default function Sidebar() {
                             <div className="flex items-center justify-between border-t border-white/5 pt-4">
                                 <label className="text-xs text-neutral-400">Auto Rotate</label>
                                 <button
-                                    onClick={() => updateSetting('autoRotate', !settings.autoRotate)}
+                                    onClick={() => { trackEvent('sidebar_setting_changed', { setting: 'autoRotate', value: !settings.autoRotate }); updateSetting('autoRotate', !settings.autoRotate); }}
                                     className={`w-8 h-4 rounded-full relative transition-colors ${settings.autoRotate ? 'bg-[#ccff00]' : 'bg-neutral-600'}`}
                                 >
                                     <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-black rounded-full transition-transform ${settings.autoRotate ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -529,7 +534,7 @@ export default function Sidebar() {
                                     <span className="block text-[10px] text-neutral-500">WASD + Mouse</span>
                                 </label>
                                 <button
-                                    onClick={() => updateSetting('tourMode', !settings.tourMode)}
+                                    onClick={() => { trackEvent('sidebar_setting_changed', { setting: 'tourMode', value: !settings.tourMode }); updateSetting('tourMode', !settings.tourMode); }}
                                     className={`w-8 h-4 rounded-full relative transition-colors ${settings.tourMode ? 'bg-[#ccff00]' : 'bg-neutral-600'}`}
                                 >
                                     <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-black rounded-full transition-transform ${settings.tourMode ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -542,7 +547,7 @@ export default function Sidebar() {
                                     <span className="block text-[10px] text-neutral-500">Requires Tour Mode</span>
                                 </label>
                                 <button
-                                    onClick={() => updateSetting('collisionEnabled', !settings.collisionEnabled)}
+                                    onClick={() => { trackEvent('sidebar_setting_changed', { setting: 'collisionEnabled', value: !settings.collisionEnabled }); updateSetting('collisionEnabled', !settings.collisionEnabled); }}
                                     className={`w-8 h-4 rounded-full relative transition-colors ${settings.collisionEnabled ? 'bg-[#ccff00]' : 'bg-neutral-600'}`}
                                 >
                                     <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-black rounded-full transition-transform ${settings.collisionEnabled ? 'translate-x-4' : 'translate-x-0'}`} />

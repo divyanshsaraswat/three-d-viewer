@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useGesture } from '@use-gesture/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 type ImageItem = string | { src: string; alt?: string; title?: string; description?: string };
 
@@ -222,6 +223,7 @@ export default function DomeGallery({
   const openingRef = useRef(false);
   const openStartedAtRef = useRef(0);
   const lastDragEndAt = useRef(0);
+  const { trackEvent } = useAnalytics();
 
   const scrollLockedRef = useRef(false);
   const lockScroll = useCallback(() => {
@@ -483,6 +485,7 @@ export default function DomeGallery({
 
     const close = () => {
       if (performance.now() - openStartedAtRef.current < 250) return;
+      trackEvent('globe_gallery_item_closed');
       const el = focusedElRef.current;
       if (!el) return;
       const parent = el.parentElement as HTMLElement;
@@ -705,6 +708,7 @@ export default function DomeGallery({
     
     const rawTitle = parent.dataset.title || 'Product Story';
     const rawDesc = parent.dataset.desc || 'Crafted with premium sustainable materials designed to redefine the everyday experience.';
+    trackEvent('globe_gallery_item_opened', { title: rawTitle, src: rawSrc });
     const titleEl = frameEl?.querySelector('#dg-title');
     const descEl = frameEl?.querySelector('#dg-desc');
     if (titleEl) titleEl.textContent = rawTitle;
@@ -1015,7 +1019,11 @@ export default function DomeGallery({
                     <p id="dg-desc" className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium transition-colors"></p>
                     <div className="mt-8 flex gap-4">
                         <button 
-                          onClick={() => router.push('/contact-us')}
+                          onClick={() => { 
+                              const titleEl = document.querySelector('#dg-title');
+                              trackEvent('globe_gallery_procure_clicked', { title: titleEl?.textContent }); 
+                              router.push('/contact-us'); 
+                          }}
                           className="bg-[#ccff00] text-black px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-white hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(204,255,0,0.2)]"
                         >
                             Procure Now

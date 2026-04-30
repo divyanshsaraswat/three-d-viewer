@@ -6,11 +6,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { useSession } from 'next-auth/react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function GlobalNav() {
     const { isScrolled, setIsMenuOpen, setIsAuthModalOpen } = useGlobalContext();
     const { data: session } = useSession();
     const pathname = usePathname();
+    const { trackEvent } = useAnalytics();
     
     const isLanding = pathname === '/' || pathname === '/home';
     const isProfile = pathname === '/profile';
@@ -49,7 +51,7 @@ export default function GlobalNav() {
                         ) : (
                             <>
                                 <button 
-                                    onClick={() => setIsAuthModalOpen(true)}
+                                    onClick={() => { trackEvent('nav_join_now_clicked'); setIsAuthModalOpen(true); }}
                                     className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
                                 >
                                     <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
@@ -59,7 +61,7 @@ export default function GlobalNav() {
                                     </span>
                                 </button>
                                 <button 
-                                    onClick={() => setIsAuthModalOpen(true)}
+                                    onClick={() => { trackEvent('nav_join_now_clicked'); setIsAuthModalOpen(true); }}
                                     className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-[#ccff00] text-black hover:scale-105 active:scale-95 transition-all shadow-[0_0_10px_rgba(204,255,0,0.3)] cursor-pointer"
                                     aria-label="Join Now"
                                 >
@@ -67,7 +69,7 @@ export default function GlobalNav() {
                                 </button>
                             </>
                         )}
-                        <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
+                        <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => { trackEvent('nav_menu_clicked'); setIsMenuOpen(true); }}>
                             <Menu size={22} />
                         </button>
                     </div>
@@ -105,7 +107,7 @@ export default function GlobalNav() {
                         ) : (
                             <>
                                 <button 
-                                    onClick={() => setIsAuthModalOpen(true)}
+                                    onClick={() => { trackEvent('nav_join_now_clicked'); setIsAuthModalOpen(true); }}
                                     className="hidden md:flex group relative items-center justify-center px-6 py-2.5 text-xs font-black uppercase tracking-[0.15em] text-black bg-[#ccff00] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(204,255,0,0.4)] hover:shadow-[0_0_30px_rgba(204,255,0,0.8)] border border-[#ccff00]/50 cursor-pointer"
                                 >
                                     <span className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
@@ -115,7 +117,7 @@ export default function GlobalNav() {
                                     </span>
                                 </button>
                                 <button 
-                                    onClick={() => setIsAuthModalOpen(true)}
+                                    onClick={() => { trackEvent('nav_join_now_clicked'); setIsAuthModalOpen(true); }}
                                     className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-[#ccff00] text-black hover:scale-105 active:scale-95 transition-all shadow-[0_0_10px_rgba(204,255,0,0.3)] cursor-pointer"
                                     aria-label="Join Now"
                                 >
@@ -123,7 +125,7 @@ export default function GlobalNav() {
                                 </button>
                             </>
                         )}
-                        <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => setIsMenuOpen(true)}>
+                        <button className="hover:opacity-70 transition-opacity cursor-pointer" onClick={() => { trackEvent('nav_menu_clicked'); setIsMenuOpen(true); }}>
                             <Menu size={22} />
                         </button>
                     </div>

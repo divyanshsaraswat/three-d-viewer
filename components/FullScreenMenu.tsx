@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { X, Twitter, Instagram, Linkedin } from 'lucide-react';
 import Link from 'next/link';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface FullScreenMenuProps {
     isOpen: boolean;
@@ -25,6 +26,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
     const linksRef = useRef<HTMLAnchorElement[]>([]);
     const backdropRef = useRef<HTMLDivElement>(null);
     const [shouldRender, setShouldRender] = useState(isOpen);
+    const { trackEvent } = useAnalytics();
 
     if (isOpen && !shouldRender) {
         setShouldRender(true);
@@ -95,7 +97,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
             <div
                 ref={backdropRef}
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 cursor-pointer"
-                onClick={onClose}
+                onClick={() => { trackEvent('full_screen_menu_closed'); onClose(); }}
             />
 
             {/* Menu side panel */}
@@ -109,7 +111,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                 <div ref={contentRef} className="absolute inset-0 w-full h-full flex flex-col pt-8 md:pt-12 px-6 md:px-16 pb-12 opacity-0 pointer-events-auto text-black dark:text-white z-30">
 
                     <button
-                        onClick={onClose}
+                        onClick={() => { trackEvent('full_screen_menu_closed'); onClose(); }}
                         className="absolute top-8 right-8 md:top-12 md:right-12 flex items-center gap-2 uppercase text-xs font-bold tracking-widest group hover:text-[#ccff00] transition-colors z-50 cursor-pointer text-black dark:text-white"
                     >
                         Close
@@ -127,7 +129,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                                     href={href}
                                     ref={el => { if (el) linksRef.current[idx] = el as any }}
                                     className="relative group w-max cursor-pointer py-4 px-6 -ml-6 rounded-2xl mb-2 flex items-start overflow-hidden"
-                                    onClick={onClose}
+                                    onClick={() => { trackEvent('full_screen_menu_nav_clicked', { link: link.title }); onClose(); }}
                                 >
                                     {/* Background block sliding from bottom to top on hover */}
                                     <div className="absolute inset-0 w-full h-full bg-[#ccff00] rounded-2xl transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] z-0" />
@@ -161,7 +163,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                     <div className="flex flex-col gap-4 text-xs font-bold uppercase tracking-widest text-gray-500 mt-auto border-t border-black/10 dark:border-white/10 pt-8">
                         <span className="text-black dark:text-white">Socials</span>
                         <div className="flex flex-wrap gap-6">
-                            <a href="https://www.instagram.com/weinix.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Instagram size={16} /> Instagram</a>
+                            <a href="https://www.instagram.com/weinix.in" target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('full_screen_menu_social_clicked', { platform: 'Instagram' })} className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Instagram size={16} /> Instagram</a>
                             {/* <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Linkedin size={16} /> LinkedIn</a>
                             <a href="#" className="hover:text-[#ccff00] transition-colors flex items-center gap-2"><Twitter size={16} /> X/Twitter</a> */}
                         </div>

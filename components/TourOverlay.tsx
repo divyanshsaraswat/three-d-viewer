@@ -5,10 +5,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, X, Check, MousePointerClick } from 'lucide-react';
 import { tourSteps } from '@/config/tour';
 import { useStore } from '@/store/useStore';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function TourOverlay() {
     const onboarding = useOnboarding();
     const { state, next, previous } = onboarding;
+    const { trackEvent } = useAnalytics();
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
     const isModelLoading = useStore(s => s.isModelLoading);
 
@@ -83,6 +85,7 @@ export default function TourOverlay() {
     const isLast = state.isLastStep;
 
     const handleSkip = async () => {
+        trackEvent('tour_skipped', { current_step: state?.currentStep?.id });
         try {
             // Because the headless engine's finish/skip bindings are occasionally
             // detached in this beta react wrapper, we force completion locally
@@ -195,7 +198,10 @@ export default function TourOverlay() {
                         </div>
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={async () => await previous()}
+                                onClick={async () => {
+                                    trackEvent('tour_previous_clicked', { current_step: state?.currentStep?.id });
+                                    await previous();
+                                }}
                                 disabled={isFirst}
                                 className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg transition-colors font-semibold ${isFirst ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-white/80'}`}
                             >
@@ -204,7 +210,10 @@ export default function TourOverlay() {
                             <button
                                 onClick={async () => {
                                     if (isLast) await handleSkip();
-                                    else await next();
+                                    else {
+                                        trackEvent('tour_next_clicked', { current_step: state?.currentStep?.id });
+                                        await next();
+                                    }
                                 }}
                                 className="flex items-center gap-1 text-xs px-4 py-1.5 rounded-lg bg-[#ccff00] text-black font-bold hover:bg-[#ccff00]/90 transition-all shadow-[0_0_15px_rgba(204,255,0,0.2)]"
                             >

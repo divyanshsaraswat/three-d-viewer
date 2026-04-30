@@ -7,6 +7,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { LogOut, MapPin, Phone, Mail, ShieldCheck, Loader2, Building2, Briefcase, MessageSquare, Activity, CalendarDays } from 'lucide-react';
 import { getCustomerProfile, type CustomerProfile } from '@/utils/api/profile';
 import TicketsModal from '@/components/TicketsModal';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const IS_DEV = process.env.NEXT_PUBLIC_EDITOR_MODE !== "prod";
 
@@ -19,6 +20,11 @@ export default function ProfilePage() {
     // Real Profile State
     const [profile, setProfile] = useState<CustomerProfile | null>(null);
     const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+    const { trackEvent } = useAnalytics();
+
+    useEffect(() => {
+        trackEvent('page_view', { page: 'profile' });
+    }, []);
 
     useEffect(() => {
         setMounted(true);
@@ -81,6 +87,7 @@ export default function ProfilePage() {
     const displayEmail = profile?.profile?.email || sessionUser.email;
 
     const handleLogout = async () => {
+        trackEvent('profile_logout_clicked');
         await signOut({ callbackUrl: '/' });
     };
 
@@ -104,7 +111,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex items-center gap-3">
                         <button 
-                            onClick={() => setIsTicketsModalOpen(true)}
+                            onClick={() => { trackEvent('profile_manage_tickets_clicked'); setIsTicketsModalOpen(true); }}
                             className="group flex flex-shrink-0 items-center gap-2 px-5 py-2.5 rounded-full bg-[#ccff00]/10 hover:bg-[#ccff00]/20 border border-[#ccff00]/20 hover:border-[#ccff00]/40 text-[#8aab00] dark:text-[#ccff00] transition-all duration-300 text-[11px] font-bold uppercase tracking-widest w-fit"
                         >
                             <MessageSquare size={14} className="group-hover:scale-110 transition-transform" />

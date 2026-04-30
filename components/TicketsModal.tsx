@@ -11,6 +11,7 @@ import {
   getTickets, getTicketById, replyToTicket, closeTicket, createTicket,
   type Ticket, type TicketMessage, type CreateTicketPayload 
 } from "@/utils/api/tickets";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 const IS_DEV = process.env.NEXT_PUBLIC_EDITOR_MODE !== "prod";
 
@@ -22,6 +23,7 @@ interface TicketsModalProps {
 export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
   const { data: session } = useSession();
   const token = (session?.user as any)?.accessToken;
+  const { trackEvent } = useAnalytics();
 
   // Animation States
   const [shouldRender, setShouldRender] = useState(false);
@@ -137,6 +139,7 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
 
   const openTicket = async (ticketId: string) => {
     if (!token) return;
+    trackEvent('ticket_opened', { ticket_id: ticketId });
     // Optimistically set view to show skeleton or loader
     setView("chat");
     setIsLoading(true);
@@ -158,6 +161,7 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
 
   const handleSendReply = async () => {
     if (!token || !activeTicket || !replyText.trim()) return;
+    trackEvent('ticket_reply_sent', { ticket_id: activeTicket.ticketId });
     setIsSending(true);
     try {
       const res = await replyToTicket(token, activeTicket.ticketId, { message: replyText.trim() });
@@ -188,6 +192,7 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
     const confirmClose = window.confirm("Are you sure you want to close this ticket?");
     if (!confirmClose) return;
 
+    trackEvent('ticket_closed', { ticket_id: activeTicket.ticketId });
     setIsClosing(true);
     try {
       const res = await closeTicket(token, activeTicket.ticketId);
@@ -204,6 +209,7 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
 
   const handleCreateTicket = async () => {
     if (!token || !createForm.subject || !createForm.message) return;
+    trackEvent('ticket_created', { type: createForm.type, priority: createForm.priority });
     setIsCreating(true);
     try {
       const res = await createTicket(token, {
@@ -283,7 +289,7 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
           <div className="flex items-center gap-2">
             {view === "chat" && activeTicket && (
               <button
-                onClick={() => openTicket(activeTicket.ticketId)}
+                onClick={() => { trackEvent('ticket_chat_refreshed', { ticket_id: activeTicket.ticketId }); openTicket(activeTicket.ticketId); }}
                 disabled={isLoading}
                 className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors text-black/60 dark:text-white/60"
                 title="Refresh Chat"
@@ -294,13 +300,13 @@ export default function TicketsModal({ isOpen, onClose }: TicketsModalProps) {
             {view === "list" && (
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setView("create")}
+                  onClick={() => { trackEvent('new_ticket_clicked'); setView("create"); }}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ccff00]/10 hover:bg-[#ccff00]/20 border border-[#ccff00]/20 transition-colors text-[#8aab00] dark:text-[#ccff00] text-[10px] uppercase font-bold tracking-widest"
                 >
                   <Plus size={12} /> New Ticket
                 </button>
                 <button
-                  onClick={() => fetchTickets()}
+                  onClick={() => { trackEvent('tickets_refreshed'); fetchTickets(); }}
                   disabled={isLoading}
                   className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors text-black/60 dark:text-white/60"
                   title="Refresh Tickets"

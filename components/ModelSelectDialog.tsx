@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Image as ImageIcon, X } from 'lucide-react';
 import Image from 'next/image';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export interface ModelOption {
     id: string;
@@ -47,6 +48,7 @@ export default function ModelSelectDialog({ isOpen, onClose }: { isOpen: boolean
     // Animation states — mirrors AuthModal pattern
     const [shouldRender, setShouldRender] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const { trackEvent } = useAnalytics();
 
     useEffect(() => {
         let timeoutId: NodeJS.Timeout;
@@ -77,6 +79,7 @@ export default function ModelSelectDialog({ isOpen, onClose }: { isOpen: boolean
     if (!shouldRender) return null;
 
     const handleSelect = (id: string) => {
+        trackEvent('model_selected', { model_id: id });
         onClose();
         window.location.assign(`/editor/${id}`);
     };
@@ -102,7 +105,7 @@ export default function ModelSelectDialog({ isOpen, onClose }: { isOpen: boolean
 
                 {/* Close Button — matching AuthModal style */}
                 <button 
-                    onClick={onClose}
+                    onClick={() => { trackEvent('model_select_dialog_closed'); onClose(); }}
                     className="absolute top-5 right-5 p-2 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 transition-all duration-300 z-10 flex items-center justify-center backdrop-blur-md hover:rotate-90 hover:scale-110"
                     style={{ width: '32px', height: '32px' }}
                 >

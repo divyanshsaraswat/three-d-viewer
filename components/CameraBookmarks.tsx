@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useStore, CameraBookmark } from '@/store/useStore';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { ChevronUp, ChevronDown, Plus, Trash2, Camera, Eye, Download, Upload, Image as ImageIcon } from 'lucide-react';
 
 export default function CameraBookmarks({ containerId = "tour-saved-views" }: { containerId?: string }) {
@@ -16,6 +17,7 @@ export default function CameraBookmarks({ containerId = "tour-saved-views" }: { 
     const updateBookmark = useStore(state => state.updateBookmark);
     const setBookmarks = useStore(state => state.setBookmarks);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { trackEvent } = useAnalytics();
 
     // Auto-expand when bookmarks are loaded (e.g. from switching models)
     useEffect(() => {
@@ -27,11 +29,13 @@ export default function CameraBookmarks({ containerId = "tour-saved-views" }: { 
     }, [bookmarks.length]);
 
     const handleRestore = (bookmark: CameraBookmark) => {
+        trackEvent('camera_bookmark_restored', { bookmark_name: bookmark.name });
         setActiveViewId(bookmark.id);
         window.dispatchEvent(new CustomEvent('restore-bookmark', { detail: bookmark }));
     };
 
     const handleExport = () => {
+        trackEvent('camera_bookmarks_exported');
         const data = JSON.stringify(bookmarks, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -56,6 +60,7 @@ export default function CameraBookmarks({ containerId = "tour-saved-views" }: { 
                     // Simple validation
                     const valid = json.every(b => b.id && b.position && b.rotation);
                     if (valid) {
+                        trackEvent('camera_bookmarks_imported', { count: json.length });
                         setBookmarks(json);
                         alert('Bookmarks imported successfully!');
                     } else {
@@ -84,7 +89,7 @@ export default function CameraBookmarks({ containerId = "tour-saved-views" }: { 
 
             {/* Header */}
             <div
-                onClick={() => setExpanded(!expanded)}
+                onClick={() => { trackEvent('camera_bookmarks_toggled', { expanded: !expanded }); setExpanded(!expanded); }}
                 className="flex items-center justify-between px-3 py-2 w-full hover:bg-white/5 rounded-t-lg transition-colors cursor-pointer"
             >
                 <div className="flex items-center gap-2 text-sm font-medium">
@@ -123,12 +128,12 @@ export default function CameraBookmarks({ containerId = "tour-saved-views" }: { 
                                             value={editName}
                                             onChange={(e) => setEditName(e.target.value)}
                                             onBlur={() => {
-                                                if (editName.trim()) updateBookmark(b.id, editName.trim());
+                                                if (editName.trim()) { trackEvent('camera_bookmark_renamed'); updateBookmark(b.id, editName.trim()); }
                                                 setEditingId(null);
                                             }}
                                             onKeyDown={(e) => {
                                                 if (e.key === 'Enter') {
-                                                    if (editName.trim()) updateBookmark(b.id, editName.trim());
+                                                    if (editName.trim()) { trackEvent('camera_bookmark_renamed'); updateBookmark(b.id, editName.trim()); }
                                                     setEditingId(null);
                                                 }
                                                 if (e.key === 'Escape') {
@@ -147,7 +152,7 @@ export default function CameraBookmarks({ containerId = "tour-saved-views" }: { 
                                         </span>
                                     )}
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); removeBookmark(b.id); }}
+                                        onClick={(e) => { e.stopPropagation(); trackEvent('camera_bookmark_removed'); removeBookmark(b.id); }}
                                         className="text-neutral-500 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                                     >
                                         <Trash2 size={12} />
@@ -160,7 +165,7 @@ export default function CameraBookmarks({ containerId = "tour-saved-views" }: { 
                     {/* Footer Actions */}
                     <div className="p-2 border-t border-white/5 space-y-2">
                         <button
-                            onClick={triggerCapture}
+                            onClick={() => { trackEvent('camera_bookmark_added'); triggerCapture(); }}
                             className="w-full flex items-center justify-center gap-2 text-black py-1.5 rounded text-xs transition-colors font-medium hover:opacity-90 cursor-pointer" style={{ backgroundColor: '#ccff00' }}
                         >
                             <Plus size={14} /> Add Current View
