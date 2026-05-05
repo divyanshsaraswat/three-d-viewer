@@ -613,11 +613,11 @@ export default function LandingPage() {
                     </p>
 
                     <div className="hero-cta opacity-0 flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 w-full">
-                        <Link href="/about-us" onClick={() => trackEvent('landing_explore_story_clicked')} className="bg-black/60 dark:bg-white/10 text-white backdrop-blur-sm border border-white/20 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-black/80 dark:hover:bg-white/20 transition-all duration-300 w-full sm:w-auto shadow-[0_4px_20px_rgba(0,0,0,0.3)] text-center">
+                        <Link href="/about-us" onClick={() => trackEvent('landing_explore_story_clicked')} className="bg-black/60 dark:bg-white/10 text-white backdrop-blur-sm border border-white/20 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-black/80 dark:hover:bg-white/20 transition-all duration-300 w-full sm:w-auto shadow-[0_4px_20px_rgba(0,0,0,0.3)] text-center cursor-pointer">
                             Explore Our Story
                         </Link>
-                        <Link href="/products" onClick={() => trackEvent('landing_shop_clicked')} className="bg-transparent text-white border-2 border-white/30 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-white/10 hover:border-white/60 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm [text-shadow:0px_2px_10px_rgba(0,0,0,0.5)] text-center">
-                            Shop Sustainable Bricks
+                        <Link href="/products" onClick={() => trackEvent('landing_shop_clicked')} className="bg-transparent text-white border-2 border-white/30 font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] hover:bg-white/10 hover:border-white/60 transition-all duration-300 w-full sm:w-auto backdrop-blur-sm [text-shadow:0px_2px_10px_rgba(0,0,0,0.5)] text-center cursor-pointer">
+                            View Brochure
                         </Link>
                         <button
                             onClick={() => {
@@ -628,7 +628,7 @@ export default function LandingPage() {
                                     setIsAuthModalOpen(true);
                                 }
                             }}
-                            className="bg-[#ccff00] text-black font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto border border-[#ccff00]">
+                            className="bg-[#ccff00] text-black font-semibold tracking-wide text-xs md:text-sm px-6 py-3 rounded-[20px] shadow-[0_8px_30px_rgba(204,255,0,0.2)] hover:scale-[1.03] transition-transform duration-300 w-full sm:w-auto border border-[#ccff00] cursor-pointer">
                             Experience in 3D
                         </button>
                     </div>

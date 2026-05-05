@@ -94,6 +94,18 @@
                 "thumb": "/textures/hov/packs/HOV02344_texture.webp",
                 "full": "/textures/hov/packs/HOV02344_texture.webp"
             }
+        ],
+        "brochurePages": [
+            "/textures/brochures_webp/brick_page_1.webp",
+            "/textures/brochures_webp/brick_page_2.webp",
+            "/textures/brochures_webp/brick_page_3.webp",
+            "/textures/brochures_webp/brick_page_4.webp",
+            "/textures/brochures_webp/brick_page_5.webp",
+            "/textures/brochures_webp/brick_page_6.webp",
+            "/textures/brochures_webp/brick_page_7.webp",
+            "/textures/brochures_webp/brick_page_8.webp",
+            "/textures/brochures_webp/brick_page_9.webp",
+            "/textures/brochures_webp/brick_page_10.webp"
         ]
     },
     {
@@ -192,6 +204,17 @@
                 "thumb": "/textures/hov/packs/HOV02312_texture.webp",
                 "full": "/textures/hov/packs/HOV02312_texture.webp"
             }
+        ],
+        "brochurePages": [
+            "/textures/brochures_webp/surface_page_1.webp",
+            "/textures/brochures_webp/surface_page_2.webp",
+            "/textures/brochures_webp/surface_page_3.webp",
+            "/textures/brochures_webp/surface_page_4.webp",
+            "/textures/brochures_webp/surface_page_5.webp",
+            "/textures/brochures_webp/surface_page_6.webp",
+            "/textures/brochures_webp/surface_page_7.webp",
+            "/textures/brochures_webp/surface_page_8.webp",
+            "/textures/brochures_webp/surface_page_9.webp"
         ]
     },
     {
@@ -230,6 +253,47 @@
                 "thumb": "/textures/hov/packs/HOV02286_texture.webp",
                 "full": "/textures/hov/packs/HOV02286_texture.webp"
             }
+        ]
+    },
+    {
+        "id": "pack_hov_stone",
+        "title": "Stone",
+        "description": "Premium natural stone textures and patterns.",
+        "tags": [
+            "Stone",
+            "Natural"
+        ],
+        "thumb": "/textures/brochures_webp/stone_page_1.webp",
+        "textures": [],
+        "brochurePages": [
+            "/textures/brochures_webp/stone_page_1.webp",
+            "/textures/brochures_webp/stone_page_2.webp",
+            "/textures/brochures_webp/stone_page_3.webp",
+            "/textures/brochures_webp/stone_page_4.webp",
+            "/textures/brochures_webp/stone_page_5.webp",
+            "/textures/brochures_webp/stone_page_6.webp",
+            "/textures/brochures_webp/stone_page_7.webp",
+            "/textures/brochures_webp/stone_page_8.webp"
+        ]
+    },
+    {
+        "id": "pack_hov_wood",
+        "title": "Wood",
+        "description": "Authentic wood grains and timber surfaces.",
+        "tags": [
+            "Wood",
+            "Timber",
+            "Natural"
+        ],
+        "thumb": "/textures/brochures_webp/wood_page_1.webp",
+        "textures": [],
+        "brochurePages": [
+            "/textures/brochures_webp/wood_page_1.webp",
+            "/textures/brochures_webp/wood_page_2.webp",
+            "/textures/brochures_webp/wood_page_3.webp",
+            "/textures/brochures_webp/wood_page_4.webp",
+            "/textures/brochures_webp/wood_page_5.webp",
+            "/textures/brochures_webp/wood_page_6.webp"
         ]
     }
 ]

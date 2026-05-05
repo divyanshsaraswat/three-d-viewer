@@ -8,6 +8,7 @@ import BlurImage from '@/components/BlurImage';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import PromotionalHero from '@/components/PromotionalHero';
+import BrochureModal from '@/components/BrochureModal';
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -18,10 +19,12 @@ interface TexturePack {
     title: string;
     description: string;
     textures: { id: string, title: string, thumb: string, full: string }[];
+    brochurePages?: string[];
 }
 
 export default function ProductsPage() {
     const [packs, setPacks] = useState<TexturePack[]>([]);
+    const [selectedBrochurePack, setSelectedBrochurePack] = useState<TexturePack | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -127,9 +130,67 @@ export default function ProductsPage() {
                     `}</style>
                 </div>
 
+                {/* BROWSE BY BROCHURES */}
+                <div className="mb-24 pack-section">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 px-2">
+                        <div className="max-w-2xl">
+                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-black dark:text-white mb-2">
+                                Browse by Brochures
+                            </h2>
+                            <p className="text-black/50 dark:text-white/50 text-sm md:text-base font-medium">
+                                Flip through our curated digital catalogs.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="relative w-full overflow-hidden">
+                        <div className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory pb-8 pt-2 px-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                            {packs.filter(p => p.brochurePages && p.brochurePages.length > 0).map((pack) => (
+                                <button 
+                                    key={`brochure-${pack.id}`}
+                                    onClick={() => setSelectedBrochurePack(pack)}
+                                    className="texture-card shrink-0 w-[240px] md:w-[320px] aspect-[3/4] rounded-[2rem] overflow-hidden relative group cursor-pointer snap-start bg-gray-100 dark:bg-[#111] border border-black/5 dark:border-white/5 hover:scale-[1.02] transition-all duration-500 ease-out shadow-sm hover:shadow-2xl text-left"
+                                >
+                                    <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                                    
+                                    <BlurImage 
+                                        src={pack.brochurePages?.[0] || pack.textures?.[0]?.thumb || ''} 
+                                        alt={pack.title}
+                                        className="w-full h-full object-cover origin-center group-hover:scale-105 transition-all duration-700 grayscale-[0.2] group-hover:grayscale-0"
+                                    />
+
+                                    <div className="absolute bottom-0 left-0 w-full p-6 z-20 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                                        <p className="text-[10px] font-bold text-[#ccff00] uppercase tracking-[0.2em] mb-2">Catalog / V1</p>
+                                        <h4 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight mb-1">
+                                            {pack.title}
+                                        </h4>
+                                        <p className="text-white/60 text-xs font-medium uppercase tracking-widest">
+                                            {pack.brochurePages ? pack.brochurePages.length : (pack.textures?.length || 0)} Pages
+                                        </p>
+                                    </div>
+                                    
+                                    <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                                        <ArrowRight size={18} />
+                                    </div>
+                                </button>
+                            ))}
+                            <div className="shrink-0 w-8 md:w-16"></div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* BROWSE BY PRODUCTS */}
+                <div className="mb-10 px-2 pack-section">
+                    <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-black dark:text-white mb-2">
+                        Browse by Products
+                    </h2>
+                    <p className="text-black/50 dark:text-white/50 text-sm md:text-base font-medium">
+                        Explore individual high-fidelity materials for your projects.
+                    </p>
+                </div>
+
                 {/* PACK SECTIONS */}
                 <div className="space-y-32">
-                    {packs.map((pack) => (
+                    {packs.filter(p => p.textures && p.textures.length > 0).map((pack) => (
                         <section key={pack.id} className="pack-section">
                             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 px-2">
                                 <div className="max-w-2xl">
@@ -172,6 +233,13 @@ export default function ProductsPage() {
                     ))}
                 </div>
             </div>
+
+            {selectedBrochurePack && (
+                <BrochureModal 
+                    pack={selectedBrochurePack} 
+                    onClose={() => setSelectedBrochurePack(null)} 
+                />
+            )}
         </main>
     );
 }
