@@ -29,7 +29,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
     // Pages where we show the landing-style layout (nav + footer)
-    const isLandingStyle = pathname === '/' || pathname === '/home' || pathname === '/about-us' || pathname.startsWith('/products') || pathname.startsWith('/blog') || pathname === '/profile' || pathname === '/contact-us';
+    const isLandingStyle = pathname === '/' || pathname === '/home' || pathname === '/about-us' || pathname.startsWith('/products') || pathname.startsWith('/blog') || pathname === '/profile' || pathname === '/contact-us' || pathname.startsWith('/bni');
 
     return (
         <>
