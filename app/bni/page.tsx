@@ -5,10 +5,12 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import RegistrationModal from '@/components/RegistrationModal';
 import { ArrowRight, Star, Users, ShieldCheck, Globe } from 'lucide-react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function BNIPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { trackEvent } = useAnalytics();
 
   useGSAP(() => {
     const tl = gsap.timeline();
@@ -67,7 +69,10 @@ export default function BNIPage() {
 
             <div className="hero-reveal flex flex-col sm:flex-row gap-6">
               <button 
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  trackEvent('bni_secure_spot_clicked');
+                  setIsModalOpen(true);
+                }}
                 className="group relative flex items-center justify-center gap-3 bg-[#ccff00] hover:bg-[#b8e600] text-black font-black uppercase tracking-tighter px-10 py-5 rounded-2xl shadow-[0_0_50px_rgba(204,255,0,0.3)] transition-all active:scale-[0.98] cursor-pointer overflow-hidden"
               >
                 <span className="relative z-10">Secure Your Spot</span>

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import gsap from 'gsap';
 import { X, User, Building, Phone, Mail, Loader2, CheckCircle2 } from 'lucide-react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const registrationSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -26,6 +27,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
   const overlayRef = useRef<HTMLDivElement>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
+  const { trackEvent } = useAnalytics();
 
   const {
     register,
@@ -67,6 +69,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
 
   const onSubmit = async (data: RegistrationFormData) => {
     setIsSubmitting(true);
+    trackEvent('bni_registration_submitted', { company: data.company });
     try {
       const response = await fetch('/api/bni/register', {
         method: 'POST',
@@ -75,16 +78,19 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
       });
 
       if (response.ok) {
+        trackEvent('bni_registration_success', { company: data.company });
         setIsSuccess(true);
         setTimeout(() => {
           window.location.href = 'https://www.instagram.com/re_verse.in/';
         }, 1500);
       } else {
         const errorData = await response.json();
+        trackEvent('bni_registration_failed', { error: errorData.error });
         alert(errorData.error || 'Failed to register');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting form:', error);
+      trackEvent('bni_registration_error', { error: error.message });
       alert('An error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
