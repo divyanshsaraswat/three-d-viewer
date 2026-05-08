@@ -15,13 +15,29 @@ export async function GET() {
     const headers = ['Name', 'Company', 'Contact', 'Email', 'Registration Date'];
     
     // Convert users to CSV rows
-    const rows = users.map(user => [
-      `"${user.name || ''}"`,
-      `"${user.company || ''}"`,
-      `"${user.contact || ''}"`,
-      `"${user.email || ''}"`,
-      `"${user.registeredAt ? new Date(user.registeredAt).toLocaleString() : ''}"`
-    ]);
+    const rows = users.map(user => {
+      const date = user.registeredAt ? new Date(user.registeredAt) : null;
+      const formattedDate = date 
+        ? date.toLocaleString('en-IN', { 
+            timeZone: 'Asia/Kolkata',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+          }) 
+        : 'N/A';
+
+      return [
+        `"${user.name || ''}"`,
+        `"${user.company || ''}"`,
+        `"${user.contact || ''}"`,
+        `"${user.email || ''}"`,
+        `"${formattedDate}"`
+      ];
+    });
 
     const csvContent = [
       headers.join(','),
