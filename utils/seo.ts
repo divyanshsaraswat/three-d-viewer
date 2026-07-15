@@ -11,7 +11,7 @@ function normalizeSiteUrl(value: string): string {
 export const siteConfig = {
   name: "WEINIX",
   description:
-    "Revolutionizing building materials through circularity. We craft structural-grade architectural surfaces from recycled textiles, merging environmental conscience with premium design.",
+    "Weinix is the recycling and material recovery engine powering the circular fashion economy. We transform textile waste into valuable resources, building the industrial backbone for a future where no garment ends its life in a landfill.",
   creator: "Divyansh Saraswat",
   keywords: [
     "WEINIX",

@@ -51,11 +51,11 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-img.jpg",
-        width: 1200,
-        height: 630,
+        url: "/icon-weinix.svg",
+        width: 512,
+        height: 512,
         alt: "WEINIX - Sustainable Building Materials",
-        type: "image/jpeg",
+        type: "image/svg+xml",
       },
     ],
   },
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${siteConfig.name} | Circular Architectural Surfaces`,
     description: siteConfig.description,
-    images: ["/og-img.jpg"],
+    images: ["/icon-weinix.svg"],
   },
   verification: {
     google: "f7k4DkIBSy0kmjx2ihTGl_LDk3gptMt723sb_5zyEaE",
@@ -93,6 +93,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta property="og:type" content="business.business" />
+        <meta property="og:title" content="Weinix" />
+        <meta property="og:url" content="https://www.weinix.com/" />
+        <meta property="og:image" content="https://www.weinix.com/icon-weinix.svg" />
+        <meta property="og:description" content="Weinix is the recycling and material recovery engine powering the circular fashion economy. While Re-verse collects post-consumer clothing waste, Weinix transforms it." />
+        <meta property="business:contact_data:street_address" content="B-907, Unicus Shyamal, Shyamal Cross Road" />
+        <meta property="business:contact_data:locality" content="Ahmedabad" />
+        <meta property="business:contact_data:region" content="Gujarat" />
+        <meta property="business:contact_data:postal_code" content="380015" />
+        <meta property="business:contact_data:country_name" content="India" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Weinix" />
+        <meta property="og:url" content="https://www.weinix.com/" />
+        <meta property="og:image" content="https://www.weinix.com/icon-weinix.svg" />
+        <meta property="og:description" content="Weinix is the recycling and material recovery engine powering the circular fashion economy. We transform textile waste into valuable resources, building the industrial backbone for a future where no garment ends its life in a landfill." />
+
+        <meta property="og:type" content="profile" />
+        <meta property="og:title" content="Weinix" />
+        <meta property="og:url" content="https://www.weinix.com/" />
+        <meta property="og:image" content="https://www.weinix.com/icon-weinix.svg" />
+        <meta property="og:description" content="Weinix is the recycling and material recovery engine powering the circular fashion economy. While Re-verse collects post-consumer clothing waste, Weinix transforms it." />
+        <meta property="profile:first_name" content="Laksh" />
+        <meta property="profile:last_name" content="Sharma" />
+      </head>
       <body
         className={`${geistSans.variable} ${inter.variable} antialiased`}
       >

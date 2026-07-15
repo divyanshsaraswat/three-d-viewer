@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BlurImage from '@/components/BlurImage';
@@ -9,6 +9,16 @@ import { MessageCircle, Heart, Bookmark, Share, PlayCircle } from 'lucide-react'
 import Link from 'next/link';
 // @ts-ignore
 import { use } from 'react';
+
+const sections = [
+    { id: "introduction", num: "01", title: "Introduction" },
+    { id: "why-it-matters", num: "02", title: "Why It Matters" },
+    { id: "key-challenges", num: "03", title: "Key Challenges" },
+    { id: "industry-insights", num: "04", title: "Industry Insights" },
+    { id: "sustainable-solutions", num: "05", title: "Sustainable Solutions" },
+    { id: "future-outlook", num: "06", title: "Future Outlook" },
+    { id: "conclusion", num: "07", title: "Conclusion" }
+];
 
 const fullPostsData: Record<string, any> = {
     "circular-economy-shift": {
@@ -71,6 +81,59 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
     const post = fullPostsData[id];
     const containerRef = useRef<HTMLDivElement>(null);
 
+    const [activeId, setActiveId] = useState("introduction");
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+            if (totalHeight > 0) {
+                const scrolled = (window.scrollY / totalHeight) * 100;
+                setProgress(Math.min(100, Math.max(0, Math.round(scrolled))));
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        handleScroll();
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    useEffect(() => {
+        const observerOptions = {
+            root: null,
+            rootMargin: "-15% 0px -55% 0px",
+            threshold: 0.1,
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    setActiveId(entry.target.id);
+                }
+            });
+        }, observerOptions);
+
+        const headingElements = sections.map((sec) => document.getElementById(sec.id));
+        headingElements.forEach((el) => {
+            if (el) observer.observe(el);
+        });
+
+        return () => {
+            headingElements.forEach((el) => {
+                if (el) observer.unobserve(el);
+            });
+        };
+    }, [post]);
+
+    const scrollToSection = (sectionId: string) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            const yOffset = -120;
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    };
+
     useGSAP(() => {
         const tl = gsap.timeline({ delay: 0.1 });
         tl.fromTo('.anim-header', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power2.out" })
@@ -91,113 +154,201 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
 
     return (
         <main ref={containerRef} className="relative min-h-[100dvh] pt-[15vh] md:pt-[20vh] pb-32 font-sans transition-colors duration-500 text-[#242424] dark:text-white bg-white dark:bg-[#050505]">
-            <article className="max-w-[720px] mx-auto px-4 md:px-0">
-                
-                {/* Title & Subtitle */}
-                <div className="mb-10 anim-header">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/5 dark:bg-white/10 rounded-md text-xs font-semibold mb-6 border border-black/10 dark:border-white/10">
-                        <span className="text-[#ccff00] text-sm leading-none">✦</span> Member-only story
-                    </div>
-                    
-                    <h1 className="text-4xl md:text-[46px] leading-[1.15] font-black tracking-tight mb-4 text-black dark:text-white">
-                        {post.title}
-                    </h1>
-                    
-                    {/* Highlighted Subtitle (Medium Style Background) */}
-                    <div className="inline-block relative mb-8 lg:mb-12">
-                        <div className="absolute inset-0 bg-[#e7f5e9] dark:bg-[#e7f5e9]/10 rounded-sm -z-10 -mx-1 -my-0.5"></div>
-                        <h2 className="textxl md:text-[22px] text-[#2f4f4f] dark:text-[#a0c0c0] font-normal leading-snug">
-                            {post.subtitle}
-                        </h2>
-                    </div>
-                    
-                    {/* Author Byline block */}
-                    <div className="flex items-center justify-between mb-8 cursor-pointer group">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
-                                <BlurImage src={post.author.avatar!} alt={post.author.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex flex-col">
-                                <div className="flex items-center gap-3">
-                                    <span className="font-semibold text-black dark:text-white group-hover:underline decoration-1 underline-offset-2">{post.author.name}</span>
-                                    <span className="text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/10 dark:bg-[#ccff00]/10 border border-[#1a8917]/20 dark:border-[#ccff00]/30 px-3 py-0.5 rounded-full text-xs font-medium transition-colors hover:bg-[#1a8917]/20 dark:hover:bg-[#ccff00]/20">Follow</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-[13px] text-black/60 dark:text-white/50 mt-1">
-                                    <span>{post.author.readTime}</span>
-                                    <span>·</span>
-                                    <span>{post.author.date}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Action Bar (Medium stats strip) */}
-                    <div className="flex items-center justify-between py-3 md:py-4 border-t border-b border-black/10 dark:border-white/10 mb-12">
-                        <div className="flex items-center gap-6 text-black/60 dark:text-white/60">
-                            <button className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors group">
-                                <Heart size={18} className="group-hover:fill-black/10 dark:group-hover:fill-white/10" /> 
-                                <span className="text-sm font-medium">{post.stats.likes}</span>
-                            </button>
-                            <button className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors">
-                                <MessageCircle size={18} /> 
-                                <span className="text-sm font-medium">{post.stats.comments}</span>
-                            </button>
-                        </div>
-                        <div className="flex items-center gap-5 text-black/60 dark:text-white/60">
-                            <button className="hover:text-black dark:hover:text-white transition-colors"><Bookmark size={20} /></button>
-                            <button className="hover:text-black dark:hover:text-white transition-colors"><PlayCircle size={20} /></button>
-                            <button className="hover:text-black dark:hover:text-white transition-colors"><Share size={18} /></button>
-                        </div>
-                    </div>
-                </div>
-
-            </article>
-
-            {/* Expansive Hero Image that breaks out slightly */}
-            <div className="max-w-[720px] mx-auto px-4 md:px-0 mb-16 anim-hero-img">
-                <div className="w-full aspect-[21/9] md:aspect-[16/8] bg-gray-100 dark:bg-[#111] overflow-hidden rounded-[1rem] md:rounded-[2rem] shadow-sm">
-                    <BlurImage 
-                        src={post.image} 
-                        alt="Featured hero" 
-                        className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-[2s]"
-                    />
-                </div>
-                <p className="text-center text-xs text-black/50 dark:text-white/50 mt-4 font-medium">Photo acquired directly from the Weinix processing facilities.</p>
+            
+            {/* Top progress bar for mobile/tablet */}
+            <div className="fixed top-0 left-0 right-0 h-1 bg-black/5 dark:bg-white/5 z-50 pointer-events-none">
+                <div 
+                    className="h-full bg-[#d97736] dark:bg-[#e07a3c] transition-all duration-100 ease-out" 
+                    style={{ width: `${progress}%` }}
+                />
             </div>
 
-            {/* Article Content Block */}
-            <article className="max-w-[720px] mx-auto px-4 md:px-0 anim-content">
-                <div className="prose prose-lg dark:prose-invert prose-p:text-[20px] prose-p:leading-[1.6] prose-p:text-[#242424] dark:prose-p:text-[#e0e0e0] prose-p:font-normal prose-h2:text-[32px] prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-a:text-[#1a8917] dark:prose-a:text-[#ccff00] prose-li:text-[19px] max-w-none">
-                    <p>
-                        Every year, millions of tonnes of clothing are discarded—shoved into landfills, burned in dumping yards, or left to leach microplastics into soil and groundwater. The fashion industry is one of the largest contributors to industrial waste globally, yet the materials locked inside discarded garments—cotton fibers, polyester threads, blended textiles—retain enormous recoverable value.
-                    </p>
-                    <p>
-                        <strong>Weinix exists to unlock that value.</strong> As we scale our thermal press and mechanical shredding methodologies across continents, the definition of a &quot;primary commodity&quot; begins to blur. Why pull virgin materials from the earth when millions of tonnes of premium fibers are sitting exactly where we left them?
-                    </p>
-                    <h2>The infrastructure for tomorrow</h2>
-                    <p>
-                        We are not a charity. We are infrastructure. This distinction is vital because it shifts the framing of the conversation from &quot;ethical consumption&quot; to &quot;industrial viability.&quot; Operations of our scale demand financial frameworks that rival traditional manufacturing pipelines—otherwise, the system collapses beneath its own weight.
-                    </p>
-                    <blockquote>
-                        &quot;When the end of a product's life is decided at its inception, we can engineer garments that flow seamlessly back into our raw material stream.&quot;
-                    </blockquote>
-                    <p>
-                        Post-consumer clothing waste procured through the logistics network flows into Weinix processing hubs, where it is subjected to a proprietary purification cycle. Zippers are melted. Natural fibers are chemically decoupled from synthetics. Colors are entirely stripped back to baseline white via massive-scale optical bleaching systems. 
-                    </p>
-                    <p>
-                        What leaves the facility is not recycled clothing—it is fresh, virgin-equivalent thread, completely unassailable in its structural integrity.
-                    </p>
-                </div>
+            <div className="max-w-[1100px] mx-auto px-4 md:px-8 xl:px-0 grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-12 relative">
                 
-                {/* Bottom Topic Footer Tags */}
-                <div className="flex flex-wrap gap-2 mt-16 mb-20 pt-10 border-t border-black/10 dark:border-white/10">
-                    {["Circular Economy", "Industrial Design", "Sustainability", "Materials", "Supply Chain"].map((tag, i) => (
-                        <span key={i} className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full text-sm font-medium transition-colors cursor-pointer text-black/70 dark:text-white/70">
-                            {tag}
-                        </span>
-                    ))}
+                {/* Sticky Sidebar Table of Contents */}
+                <aside className="hidden lg:block">
+                    <div className="sticky top-[20vh] self-start space-y-6">
+                        <div className="text-[11px] font-bold tracking-widest text-black/40 dark:text-white/40 uppercase mb-4 font-mono">
+                            On This Page
+                        </div>
+                        
+                        <div className="relative border-l border-black/10 dark:border-white/10 pl-5 space-y-3.5">
+                            {sections.map((section) => {
+                                const isActive = activeId === section.id;
+                                return (
+                                    <div 
+                                        key={section.id} 
+                                        onClick={() => scrollToSection(section.id)}
+                                        className={`group relative py-0.5 text-[13px] leading-relaxed transition-all duration-300 cursor-pointer ${
+                                            isActive 
+                                                ? 'text-[#d97736] dark:text-[#e07a3c] font-semibold' 
+                                                : 'text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white'
+                                        }`}
+                                    >
+                                        {isActive && (
+                                            <div className="absolute -left-[22px] top-0 bottom-0 w-[2px] bg-[#d97736] dark:bg-[#e07a3c]" />
+                                        )}
+                                        <span className="font-mono text-[11px] mr-3 opacity-60">{section.num}</span>
+                                        <span className="tracking-tight">{section.title}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Reading Progress */}
+                        <div className="border-t border-dashed border-black/10 dark:border-white/10 pt-4 mt-6">
+                            <span className="font-mono text-[11px] text-black/50 dark:text-white/50">
+                                {progress}% read
+                            </span>
+                        </div>
+                    </div>
+                </aside>
+
+                {/* Main Content Area */}
+                <div className="w-full min-w-0">
+                    <article className="max-w-[720px] mx-auto lg:mx-0">
+                        
+                        {/* Title & Subtitle */}
+                        <div className="mb-10 anim-header">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/5 dark:bg-white/10 rounded-md text-xs font-semibold mb-6 border border-black/10 dark:border-white/10">
+                                <span className="text-[#ccff00] text-sm leading-none">✦</span> Member-only story
+                            </div>
+                            
+                            <h1 className="text-4xl md:text-[46px] leading-[1.15] font-black tracking-tight mb-4 text-black dark:text-white">
+                                {post.title}
+                            </h1>
+                            
+                            {/* Highlighted Subtitle */}
+                            <div className="inline-block relative mb-8 lg:mb-12">
+                                <div className="absolute inset-0 bg-[#e7f5e9] dark:bg-[#e7f5e9]/10 rounded-sm -z-10 -mx-1 -my-0.5"></div>
+                                <h2 className="text-xl md:text-[22px] text-[#2f4f4f] dark:text-[#a0c0c0] font-normal leading-snug">
+                                    {post.subtitle}
+                                </h2>
+                            </div>
+                            
+                            {/* Author Byline block */}
+                            <div className="flex items-center justify-between mb-8 cursor-pointer group">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
+                                        <BlurImage src={post.author.avatar!} alt={post.author.name} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-3">
+                                            <span className="font-semibold text-black dark:text-white group-hover:underline decoration-1 underline-offset-2">{post.author.name}</span>
+                                            <span className="text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/10 dark:bg-[#ccff00]/10 border border-[#1a8917]/20 dark:border-[#ccff00]/30 px-3 py-0.5 rounded-full text-xs font-medium transition-colors hover:bg-[#1a8917]/20 dark:hover:bg-[#ccff00]/20">Follow</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-[13px] text-black/60 dark:text-white/50 mt-1">
+                                            <span>{post.author.readTime}</span>
+                                            <span>·</span>
+                                            <span>{post.author.date}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Bar */}
+                            <div className="flex items-center justify-between py-3 md:py-4 border-t border-b border-black/10 dark:border-white/10 mb-12">
+                                <div className="flex items-center gap-6 text-black/60 dark:text-white/60">
+                                    <button className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors group">
+                                        <Heart size={18} className="group-hover:fill-black/10 dark:group-hover:fill-white/10" /> 
+                                        <span className="text-sm font-medium">{post.stats.likes}</span>
+                                    </button>
+                                    <button className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors">
+                                        <MessageCircle size={18} /> 
+                                        <span className="text-sm font-medium">{post.stats.comments}</span>
+                                    </button>
+                                </div>
+                                <div className="flex items-center gap-5 text-black/60 dark:text-white/60">
+                                    <button className="hover:text-black dark:hover:text-white transition-colors"><Bookmark size={20} /></button>
+                                    <button className="hover:text-black dark:hover:text-white transition-colors"><PlayCircle size={20} /></button>
+                                    <button className="hover:text-black dark:hover:text-white transition-colors"><Share size={18} /></button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </article>
+
+                    {/* Expansive Hero Image */}
+                    <div className="max-w-[720px] mx-auto lg:mx-0 mb-16 anim-hero-img">
+                        <div className="w-full aspect-[21/9] md:aspect-[16/8] bg-gray-100 dark:bg-[#111] overflow-hidden rounded-[1rem] md:rounded-[2rem] shadow-sm">
+                            <BlurImage 
+                                src={post.image} 
+                                alt="Featured hero" 
+                                className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-[2s]"
+                            />
+                        </div>
+                        <p className="text-center text-xs text-black/50 dark:text-white/50 mt-4 font-medium">Photo acquired directly from the Weinix processing facilities.</p>
+                    </div>
+
+                    {/* Article Content Block */}
+                    <article className="max-w-[720px] mx-auto lg:mx-0 anim-content">
+                        <div className="prose prose-lg dark:prose-invert prose-p:text-[20px] prose-p:leading-[1.6] prose-p:text-[#242424] dark:prose-p:text-[#e0e0e0] prose-p:font-normal prose-h2:text-[32px] prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-a:text-[#1a8917] dark:prose-a:text-[#ccff00] prose-li:text-[19px] max-w-none">
+                            
+                            <h2 id="introduction" className="scroll-mt-32">Introduction</h2>
+                            <p>
+                                Every year, millions of tonnes of clothing are discarded—shoved into landfills, burned in dumping yards, or left to leach microplastics into soil and groundwater. The fashion industry is one of the largest contributors to industrial waste globally, yet the materials locked inside discarded garments—cotton fibers, polyester threads, blended textiles—retain enormous recoverable value.
+                            </p>
+                            <p>
+                                At Weinix, we look at this waste not as a liability, but as a dense, pre-processed resource. Our goal is to intercept these materials before they degrade and route them back into the production cycle as high-grade commodities.
+                            </p>
+
+                            <h2 id="why-it-matters" className="scroll-mt-32">Why It Matters</h2>
+                            <p>
+                                The shift toward circularity is not just an environmental imperative; it is an economic necessity. Linear consumption models rely on continuous raw material extraction, leaving supply chains vulnerable to volatile commodity markets, geopolitical friction, and resource scarcity.
+                            </p>
+                            <p>
+                                By closing the loop on textile fibers, we decouple manufacturing from raw material dependency. This ensures that the products of today become the resources of tomorrow, creating a self-sustaining cycle that insulates the industry from external resource shocks.
+                            </p>
+
+                            <h2 id="key-challenges" className="scroll-mt-32">Key Challenges</h2>
+                            <p>
+                                Scaling a material recovery engine presents unique engineering and logistical hurdles. Post-consumer clothing is highly heterogeneous—garments arrive with mixed synthetic-natural fibers, embedded zippers, buttons, tags, and persistent dyes.
+                            </p>
+                            <p>
+                                Traditional mechanical recycling often shears fibers, significantly reducing their tensile strength and making them unsuitable for high-grade applications. Overcoming this requires advanced preprocessing protocols that can cleanly segregate fibers without compromising their physical integrity.
+                            </p>
+
+                            <h2 id="industry-insights" className="scroll-mt-32">Industry Insights</h2>
+                            <p>
+                                Data indicates that less than 1% of clothing is currently recycled back into new clothing. The remaining 99% is either downcycled into low-value items like insulation, sent directly to landfills, or incinerated.
+                            </p>
+                            <p>
+                                This represents a multi-billion dollar loss of raw materials annually. By establishing regional recovery networks and standardized sorting technologies, we can tap into this untapped feedstock, turning a systemic waste crisis into a structured commodity market.
+                            </p>
+
+                            <h2 id="sustainable-solutions" className="scroll-mt-32">Sustainable Solutions</h2>
+                            <p>
+                                To address these bottlenecks, Weinix employs a hybrid processing framework. Post-consumer clothing waste is subjected to a proprietary purification cycle where natural fibers are chemically decoupled from synthetics, and dyes are stripped back using high-volume optical bleaching.
+                            </p>
+                            <p>
+                                Our mechanical shredding operations utilize precision control parameters to keep fiber length intact. What leaves our facilities is a virgin-equivalent polymer and cotton stream, ready to be spun back into high-performance fabrics.
+                            </p>
+
+                            <h2 id="future-outlook" className="scroll-mt-32">Future Outlook</h2>
+                            <p>
+                                As regulatory frameworks around the world tighten—such as extended producer responsibility (EPR) mandates—brands are being forced to take ownership of their product lifecycles. 
+                            </p>
+                            <p>
+                                We envision a future where circular design is the default. In this paradigm, garments are engineered from the outset to be easily disassembled and recovered, completely eliminating the concept of waste from the fashion supply chain.
+                            </p>
+
+                            <h2 id="conclusion" className="scroll-mt-32">Conclusion</h2>
+                            <p>
+                                The transition to a circular fashion economy is well underway, but it requires building the heavy industrial infrastructure to back it up. Weinix is building that backbone. By treating post-consumer clothing as a valuable resource stream rather than garbage, we are paving the way for a truly sustainable industrial future.
+                            </p>
+                        </div>
+                        
+                        {/* Bottom Topic Footer Tags */}
+                        <div className="flex flex-wrap gap-2 mt-16 mb-20 pt-10 border-t border-black/10 dark:border-white/10">
+                            {["Circular Economy", "Industrial Design", "Sustainability", "Materials", "Supply Chain"].map((tag, i) => (
+                                <span key={i} className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full text-sm font-medium transition-colors cursor-pointer text-black/70 dark:text-white/70">
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    </article>
                 </div>
-            </article>
+            </div>
 
         </main>
     );
