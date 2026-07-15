@@ -119,6 +119,12 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
     const [activeId, setActiveId] = useState("introduction");
     const [progress, setProgress] = useState(0);
     const [isCopied, setIsCopied] = useState(false);
+    const [isTocOpen, setIsTocOpen] = useState(false);
+    const [showFloatingToc, setShowFloatingToc] = useState(false);
+    const [isBottomVisible, setIsBottomVisible] = useState(false);
+
+    const navButtonsRef = useRef<HTMLDivElement>(null);
+    const isBottomVisibleRef = useRef(false);
 
     const handleCopyLink = () => {
         if (typeof window !== 'undefined') {
@@ -129,11 +135,68 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
     };
 
     useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    const isFooter = entry.target.tagName === 'FOOTER';
+                    const isNavButtons = entry.target === navButtonsRef.current;
+
+                    if (isFooter || isNavButtons) {
+                        if (entry.isIntersecting) {
+                            isBottomVisibleRef.current = true;
+                            setIsBottomVisible(true);
+                            setShowFloatingToc(false);
+                        } else {
+                            // Check if either is still intersecting
+                            const footer = document.querySelector('footer');
+                            const nav = navButtonsRef.current;
+                            const isFooterIntersecting = footer ? footer.getBoundingClientRect().top < window.innerHeight : false;
+                            const isNavIntersecting = nav ? nav.getBoundingClientRect().top < window.innerHeight : false;
+                            
+                            const visible = isFooterIntersecting || isNavIntersecting;
+                            isBottomVisibleRef.current = visible;
+                            setIsBottomVisible(visible);
+                            if (!visible) {
+                                const scrollY = window.scrollY;
+                                setShowFloatingToc(scrollY > 400);
+                            }
+                        }
+                    }
+                });
+            },
+            {
+                root: null,
+                threshold: 0.01,
+            }
+        );
+
+        if (navButtonsRef.current) {
+            observer.observe(navButtonsRef.current);
+        }
+        
+        const footer = document.querySelector('footer');
+        if (footer) {
+            observer.observe(footer);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    useEffect(() => {
         const handleScroll = () => {
+            const scrollY = window.scrollY;
             const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
             if (totalHeight > 0) {
-                const scrolled = (window.scrollY / totalHeight) * 100;
-                setProgress(Math.min(100, Math.max(0, Math.round(scrolled))));
+                const scrolled = (scrollY / totalHeight) * 100;
+                const roundedScrolled = Math.min(100, Math.max(0, Math.round(scrolled)));
+                setProgress(roundedScrolled);
+                
+                // Show if scrolled more than 400px and the bottom navigation block / footer is not visible
+                setShowFloatingToc(scrollY > 400 && !isBottomVisibleRef.current);
+            } else {
+                setShowFloatingToc(false);
             }
         };
 
@@ -250,6 +313,26 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
                 <div className="w-full min-w-0">
                     <article className="max-w-[720px] mx-auto lg:mx-0">
                         
+                        {/* Mobile Table of Contents Trigger Strip */}
+                        <div className="lg:hidden mb-8 anim-header">
+                            <button 
+                                onClick={() => setIsTocOpen(true)}
+                                className="w-full flex items-center justify-between px-4 py-3 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 rounded-xl text-left transition-all active:scale-[0.98] group cursor-pointer"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="text-black/60 dark:text-white/60 text-xs font-bold tracking-widest uppercase font-mono">
+                                        On This Page
+                                    </span>
+                                    <span className="text-[10px] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/10 dark:bg-[#ccff00]/10 border border-[#1a8917]/20 dark:border-[#ccff00]/30 px-2 py-0.5 rounded font-mono leading-none">
+                                        {activeId.toUpperCase().replace('-', ' ')}
+                                    </span>
+                                </div>
+                                <span className="text-xs font-bold text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white font-mono flex items-center gap-1.5">
+                                    Outline <span>➔</span>
+                                </span>
+                            </button>
+                        </div>
+
                         {/* Title & Subtitle */}
                         <div className="mb-10 anim-header">
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/5 dark:bg-white/10 rounded-md text-xs font-semibold mb-6 border border-black/10 dark:border-white/10">
@@ -347,7 +430,6 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
                                 {/* Right Side: Page utility options */}
                                 <div className="flex items-center gap-5 text-black/60 dark:text-white/60">
                                     <button className="hover:text-black dark:hover:text-white transition-colors cursor-pointer" title="Bookmark"><Bookmark size={20} /></button>
-                                    <button className="hover:text-black dark:hover:text-white transition-colors cursor-pointer" title="Listen to story"><PlayCircle size={20} /></button>
                                     <button className="hover:text-black dark:hover:text-white transition-colors cursor-pointer" title="Share"><Share size={18} /></button>
                                 </div>
 
@@ -436,7 +518,7 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
                         </div>
 
                         {/* Article Navigation Buttons */}
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-black/10 dark:border-white/10">
+                        <div ref={navButtonsRef} className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-black/10 dark:border-white/10">
                             {/* Back to Journal */}
                             <Link 
                                 href="/blog" 
@@ -467,6 +549,92 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
                         </div>
                     </article>
                 </div>
+            </div>
+
+            {/* Mobile Table of Contents Drawer Backdrop */}
+            <div 
+                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] transition-opacity duration-300 lg:hidden ${
+                    isTocOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                }`}
+                onClick={() => setIsTocOpen(false)}
+            />
+
+            {/* Mobile Table of Contents Drawer Panel */}
+            <div 
+                className={`fixed top-0 right-0 h-full w-[280px] bg-white dark:bg-[#0a0a0a] border-l border-black/10 dark:border-white/10 z-[160] shadow-2xl p-6 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] transform lg:hidden flex flex-col justify-between ${
+                    isTocOpen ? 'translate-x-0' : 'translate-x-full'
+                }`}
+            >
+                <div>
+                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-black/5 dark:border-white/5">
+                        <span className="text-xs font-bold tracking-widest text-black/50 dark:text-white/40 uppercase font-mono">
+                            On This Page
+                        </span>
+                        <button 
+                            onClick={() => setIsTocOpen(false)} 
+                            className="text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white font-mono text-xs uppercase cursor-pointer"
+                        >
+                            Close
+                        </button>
+                    </div>
+
+                    <div className="space-y-5">
+                        {sections.map((section) => {
+                            const isActive = activeId === section.id;
+                            return (
+                                <div 
+                                    key={section.id}
+                                    onClick={() => {
+                                        scrollToSection(section.id);
+                                        setIsTocOpen(false);
+                                    }}
+                                    className={`flex items-start gap-4 cursor-pointer text-xs font-bold uppercase tracking-wider transition-all py-1.5 ${
+                                        isActive 
+                                            ? 'text-[#1a8917] dark:text-[#ccff00] border-l-2 border-[#1a8917] dark:border-[#ccff00] pl-3' 
+                                            : 'text-black/50 dark:text-white/40 hover:text-black dark:hover:text-white pl-3.5'
+                                    }`}
+                                >
+                                    <span className="font-mono opacity-60 text-[10px]">{section.num}</span>
+                                    <span className="tracking-tight">{section.title}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Reading Progress */}
+                <div className="border-t border-black/10 dark:border-white/10 pt-6 mt-6 flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-black/40 dark:text-white/40 font-mono uppercase">Progress</span>
+                    <span className="font-mono text-xs font-bold text-black dark:text-[#ccff00]">
+                        {progress}% read
+                    </span>
+                </div>
+            </div>
+
+            {/* Mobile Floating Table of Contents Trigger */}
+            <div 
+                className={`fixed bottom-6 left-4 right-4 md:left-1/2 md:right-auto md:w-[400px] md:-translate-x-1/2 z-[140] lg:hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    showFloatingToc 
+                        ? 'opacity-100 translate-y-0 pointer-events-auto' 
+                        : 'opacity-0 translate-y-8 pointer-events-none'
+                }`}
+            >
+                <button 
+                    onClick={() => setIsTocOpen(true)}
+                    className="w-full flex items-center justify-between px-5 py-3 bg-[#111]/95 backdrop-blur-md border border-white/10 rounded-full text-left transition-all active:scale-[0.98] group cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.3)] animate-fade-in"
+                >
+                    <div className="flex items-center gap-2">
+                        <span className="text-white/50 text-[10px] font-bold tracking-widest uppercase font-mono">
+                            On This Page
+                        </span>
+                        <span className="text-[10px] text-[#ccff00] bg-[#ccff00]/10 border border-[#ccff00]/25 px-2 py-0.5 rounded font-mono leading-none">
+                            {activeId.toUpperCase().replace('-', ' ')}
+                        </span>
+                    </div>
+                    <span className="text-xs font-bold text-white/80 group-hover:text-[#ccff00] font-mono flex items-center gap-1.5 transition-colors">
+                        Outline <span className="group-hover:translate-x-0.5 transition-transform">➔</span>
+                    </span>
+                </button>
             </div>
 
         </main>

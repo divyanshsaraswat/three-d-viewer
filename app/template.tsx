@@ -13,6 +13,9 @@ function getPageTitle(pathname: string): string {
     if (pathname.startsWith('/editor')) {
         return '3D EXPERIENCE';
     }
+    if (pathname.startsWith('/blog')) {
+        return 'BLOG';
+    }
 
     const map: Record<string, string> = {
         '/': 'HOME',
