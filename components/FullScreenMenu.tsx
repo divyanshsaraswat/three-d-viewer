@@ -15,8 +15,8 @@ const navLinks = [
     { title: "HOME", num: "01" },
     { title: "ABOUT US", num: "02" },
     { title: "PRODUCTS", num: "03" },
-    // { title: "BLOG", num: "04" },
-    { title: "CONTACT US", num: "04" },
+    { title: "BLOG", num: "04" },
+    { title: "CONTACT US", num: "05" },
 ];
 
 export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps) {

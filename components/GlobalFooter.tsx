@@ -111,7 +111,7 @@ export default function GlobalFooter() {
                             <li><a href="/" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Home</a></li>
                             <li><a href="/about-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">About</a></li>
                             <li><a href="/products" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Products</a></li>
-                            { /* <li><a href="/blog" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Blog</a></li>*/}
+                            <li><a href="/blog" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Blog</a></li>
                             <li><a href="/contact-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Contact</a></li>
                         </ul>
                     </div>

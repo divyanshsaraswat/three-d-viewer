@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect, Suspense } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BlurImage from '@/components/BlurImage';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useAnalytics } from '@/hooks/useAnalytics';
+
+const POSTS_PER_PAGE = 10;
 
 const blogPosts = [
     {
@@ -28,7 +32,7 @@ const blogPosts = [
         id: "sustainable-materials",
         title: "Building the infrastructure for tomorrow",
         excerpt: "Why we aren't a charity. A look into the economics of operating a massive material recovery engine that rivals traditional first-use manufacturing plants.",
-        author: "Laksh Sharma",
+        author: "Divyansh Saraswat",
         date: "15 Sep 2025",
         image: "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?auto=format&fit=crop&q=80&w=1200",
     },
@@ -42,8 +46,78 @@ const blogPosts = [
     }
 ];
 
-export default function BlogPage() {
+function BlogContent() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const containerRef = useRef<HTMLDivElement>(null);
+
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [message, setMessage] = useState('');
+    const { trackEvent } = useAnalytics();
+
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault();
+        trackEvent('newsletter_subscribe_clicked', { email_provided: !!email });
+        if (!email) {
+            setStatus('error');
+            setMessage('Email is required');
+            return;
+        }
+
+        setStatus('loading');
+        try {
+            const res = await fetch('/api/newsletter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setStatus('success');
+                setMessage(data.message || 'Thank you for subscribing!');
+                setEmail('');
+            } else {
+                setStatus('error');
+                setMessage(data.message || 'Something went wrong');
+            }
+        } catch (error) {
+            setStatus('error');
+            setMessage('Failed to connect to the server');
+        }
+
+        // Reset status after 5 seconds
+        setTimeout(() => {
+            if (status !== 'loading') {
+                setStatus('idle');
+                setMessage('');
+            }
+        }, 5000);
+    };
+
+    const currentPage = Number(searchParams.get('page') || '1');
+    const totalPages = Math.ceil(blogPosts.length / POSTS_PER_PAGE);
+
+    const handlePageChange = (page: number) => {
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', page.toString());
+        router.push(`/blog?${params.toString()}`);
+        
+        // Scroll smoothly to top of blog grid
+        const gridElement = document.querySelector('.blog-grid');
+        if (gridElement) {
+            const yOffset = -150;
+            const y = gridElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    };
+
+    const paginatedPosts = blogPosts.slice(
+        (currentPage - 1) * POSTS_PER_PAGE,
+        currentPage * POSTS_PER_PAGE
+    );
 
     useGSAP(() => {
         const tl = gsap.timeline({ delay: 0.1 });
@@ -70,7 +144,7 @@ export default function BlogPage() {
                 }
             }
         );
-    }, { scope: containerRef });
+    }, { scope: containerRef, dependencies: [currentPage] });
 
     return (
         <main ref={containerRef} className="relative min-h-[100dvh] pt-[15vh] pb-32 overflow-hidden font-sans transition-colors duration-500 text-black dark:text-white bg-white dark:bg-[#050505]">
@@ -84,15 +158,32 @@ export default function BlogPage() {
                         </h1>
                         
                         {/* Newsletter Subscribe */}
-                        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md blog-header-elem">
-                            <input 
-                                type="email" 
-                                placeholder="Enter your email" 
-                                className="flex-1 bg-transparent border border-black/20 dark:border-white/20 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:border-black/50 dark:focus:border-[#ccff00] transition-colors"
-                            />
-                            <button className="bg-black dark:bg-[#ccff00] text-white dark:text-black font-semibold rounded-full px-8 py-3.5 text-sm hover:scale-[1.03] transition-transform active:scale-95 shadow-md">
-                                Subscribe
-                            </button>
+                        <div className="w-full max-w-md blog-header-elem">
+                            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 w-full">
+                                <input 
+                                    type="email" 
+                                    placeholder="Enter your email" 
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="flex-1 bg-transparent border border-black/20 dark:border-white/20 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:border-black/50 dark:focus:border-[#ccff00] transition-colors text-black dark:text-white"
+                                    required
+                                />
+                                <button 
+                                    type="submit"
+                                    disabled={status === 'loading'}
+                                    className="bg-black dark:bg-[#ccff00] text-white dark:text-black font-semibold rounded-full px-8 py-3.5 text-sm hover:scale-[1.03] transition-transform active:scale-95 shadow-md disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                                >
+                                    {status === 'loading' ? <Loader2 size={14} className="animate-spin" /> : 'Subscribe'}
+                                </button>
+                            </form>
+                            
+                            {/* Status Message */}
+                            {message && (
+                                <div className={`mt-3 flex items-center gap-2 text-xs font-semibold animate-in fade-in slide-in-from-top-1 ${status === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                                    {status === 'success' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                                    {message}
+                                </div>
+                            )}
                         </div>
                     </div>
                     
@@ -107,7 +198,7 @@ export default function BlogPage() {
 
                 {/* BLOG GRID */}
                 <div className="blog-grid grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
-                    {blogPosts.map((post) => (
+                    {paginatedPosts.map((post) => (
                         <Link href={`/blog/${post.id}`} key={post.id} className="blog-card group cursor-pointer flex flex-col block">
                             {/* Image Container with Frosted Overlay */}
                             <div className="relative w-full aspect-[16/10] rounded-[1.5rem] overflow-hidden mb-6 bg-gray-100 dark:bg-[#111] shadow-sm">
@@ -146,7 +237,67 @@ export default function BlogPage() {
                     ))}
                 </div>
 
+                {/* PAGINATION */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-20">
+                        {/* Prev Button */}
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className={`w-10 h-10 rounded-full border border-black/10 dark:border-white/10 flex items-center justify-center text-sm font-semibold transition-all hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer active:scale-95 ${
+                                currentPage === 1 ? 'opacity-30 pointer-events-none' : 'hover:border-black/30 dark:hover:border-white/30 text-black dark:text-white'
+                            }`}
+                            title="Previous Page"
+                        >
+                            ←
+                        </button>
+
+                        {/* Page Numbers */}
+                        {Array.from({ length: totalPages }).map((_, index) => {
+                            const pageNum = index + 1;
+                            const isActive = pageNum === currentPage;
+                            return (
+                                <button
+                                    key={pageNum}
+                                    onClick={() => handlePageChange(pageNum)}
+                                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all cursor-pointer active:scale-95 ${
+                                        isActive
+                                            ? 'bg-black dark:bg-[#ccff00] text-white dark:text-black shadow-md shadow-black/10 dark:shadow-[#ccff00]/10 border border-transparent'
+                                            : 'border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white'
+                                    }`}
+                                >
+                                    {pageNum}
+                                </button>
+                            );
+                        })}
+
+                        {/* Next Button */}
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className={`w-10 h-10 rounded-full border border-black/10 dark:border-white/10 flex items-center justify-center text-sm font-semibold transition-all hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer active:scale-95 ${
+                                currentPage === totalPages ? 'opacity-30 pointer-events-none' : 'hover:border-black/30 dark:hover:border-white/30 text-black dark:text-white'
+                            }`}
+                            title="Next Page"
+                        >
+                            →
+                        </button>
+                    </div>
+                )}
+
             </div>
         </main>
+    );
+}
+
+export default function BlogPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#050505] text-black dark:text-white font-mono text-sm">
+                Loading journal...
+            </div>
+        }>
+            <BlogContent />
+        </Suspense>
     );
 }

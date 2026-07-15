@@ -38,7 +38,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
             {isLandingStyle && <GlobalNav />}
 
-            <div className="bg-[#f5f5f5] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen overflow-hidden font-sans transition-colors duration-500">
+            <div className="bg-[#f5f5f5] dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed] min-h-screen font-sans transition-colors duration-500">
                 {children}
 
                 {isLandingStyle && <GlobalFooter />}

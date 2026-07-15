@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BlurImage from '@/components/BlurImage';
 import { notFound } from 'next/navigation';
-import { MessageCircle, Heart, Bookmark, Share, PlayCircle } from 'lucide-react';
+import { MessageCircle, Heart, Bookmark, Share, PlayCircle, Link2 } from 'lucide-react';
 import Link from 'next/link';
 // @ts-ignore
 import { use } from 'react';
@@ -26,9 +26,13 @@ const fullPostsData: Record<string, any> = {
         subtitle: "Everything you wanted to know but were afraid to ask.",
         author: {
             name: "Laksh Sharma",
+            designation: "Materials & Supply Lead",
             avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=200",
             readTime: "16 min read",
-            date: "Mar 23, 2025"
+            published: "Mar 23, 2025",
+            updated: "Mar 28, 2025",
+            linkedin: "https://linkedin.com",
+            twitter: "https://twitter.com"
         },
         stats: { likes: "6.3K", comments: "116" },
         image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80&w=2000",
@@ -38,22 +42,29 @@ const fullPostsData: Record<string, any> = {
         subtitle: "How we maintain fiber integrity while scaling post-consumer waste operations globally.",
         author: {
             name: "Deep Patel",
+            designation: "Operations & Tech Lead",
             avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200",
             readTime: "24 min read",
-            date: "Sep 28, 2025"
+            published: "Sep 28, 2025",
+            updated: "Oct 2, 2025",
+            linkedin: "https://linkedin.com",
+            twitter: "https://twitter.com"
         },
         stats: { likes: "12.1K", comments: "342" },
         image: "https://images.unsplash.com/photo-1516397281156-ca07cf9746fc?auto=format&fit=crop&q=80&w=2000",
     },
-    // Adding generic fallbacks
     "sustainable-materials": {
         title: "Building the Infrastructure for Tomorrow's Materials",
         subtitle: "Why we aren't a charity. The economics of operating a massive material recovery engine.",
         author: {
-            name: "Laksh Sharma",
-            avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=200",
+            name: "Divyansh Saraswat",
+            designation: "Founder & Materials Lead",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
             readTime: "9 min read",
-            date: "Sep 15, 2025"
+            published: "Jun 2, 2026",
+            updated: "Jul 9, 2026",
+            linkedin: "https://linkedin.com",
+            twitter: "https://twitter.com"
         },
         stats: { likes: "4.8K", comments: "89" },
         image: "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?auto=format&fit=crop&q=80&w=2000",
@@ -63,9 +74,13 @@ const fullPostsData: Record<string, any> = {
         subtitle: "A framework for creating apparel that fundamentally flows back into raw commodity streams.",
         author: {
             name: "Deep Patel",
+            designation: "Operations & Tech Lead",
             avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200",
             readTime: "12 min read",
-            date: "Sep 02, 2025"
+            published: "Sep 02, 2025",
+            updated: "Sep 05, 2025",
+            linkedin: "https://linkedin.com",
+            twitter: "https://twitter.com"
         },
         stats: { likes: "8.2K", comments: "210" },
         image: "https://images.unsplash.com/photo-1529369623266-f5264b696110?auto=format&fit=crop&q=80&w=2000",
@@ -78,11 +93,40 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
     
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     const id = unwrappedParams.id;
-    const post = fullPostsData[id];
+    const post = fullPostsData[id] || {
+        title: id.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "),
+        subtitle: "A detailed look into circular architecture and material recovery.",
+        author: {
+            name: "Divyansh Saraswat",
+            designation: "Founder & Materials Lead",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+            readTime: "9 min read",
+            published: "Jun 2, 2026",
+            updated: "Jul 9, 2026",
+            linkedin: "https://linkedin.com",
+            twitter: "https://twitter.com"
+        },
+        stats: { likes: "4.8K", comments: "89" },
+        image: "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?auto=format&fit=crop&q=80&w=2000",
+    };
     const containerRef = useRef<HTMLDivElement>(null);
+
+    const postKeys = Object.keys(fullPostsData);
+    const currentIndex = postKeys.indexOf(id);
+    const prevKey = currentIndex > 0 ? postKeys[currentIndex - 1] : null;
+    const nextKey = currentIndex < postKeys.length - 1 ? postKeys[currentIndex + 1] : null;
 
     const [activeId, setActiveId] = useState("introduction");
     const [progress, setProgress] = useState(0);
+    const [isCopied, setIsCopied] = useState(false);
+
+    const handleCopyLink = () => {
+        if (typeof window !== 'undefined') {
+            navigator.clipboard.writeText(window.location.href);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        }
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -155,52 +199,50 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
     return (
         <main ref={containerRef} className="relative min-h-[100dvh] pt-[15vh] md:pt-[20vh] pb-32 font-sans transition-colors duration-500 text-[#242424] dark:text-white bg-white dark:bg-[#050505]">
             
-            {/* Top progress bar for mobile/tablet */}
-            <div className="fixed top-0 left-0 right-0 h-1 bg-black/5 dark:bg-white/5 z-50 pointer-events-none">
+            {/* Top progress bar for mobile/tablet/desktop (positioned above the z-[100] sticky navbar) */}
+            <div className="fixed top-0 left-0 right-0 h-1 bg-black/5 dark:bg-white/5 z-[101] pointer-events-none">
                 <div 
-                    className="h-full bg-[#d97736] dark:bg-[#e07a3c] transition-all duration-100 ease-out" 
+                    className="h-full bg-[#1a8917] dark:bg-[#ccff00] transition-all duration-100 ease-out" 
                     style={{ width: `${progress}%` }}
                 />
             </div>
 
             <div className="max-w-[1100px] mx-auto px-4 md:px-8 xl:px-0 grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-12 relative">
                 
-                {/* Sticky Sidebar Table of Contents */}
-                <aside className="hidden lg:block">
-                    <div className="sticky top-[20vh] self-start space-y-6">
-                        <div className="text-[11px] font-bold tracking-widest text-black/40 dark:text-white/40 uppercase mb-4 font-mono">
-                            On This Page
-                        </div>
-                        
-                        <div className="relative border-l border-black/10 dark:border-white/10 pl-5 space-y-3.5">
-                            {sections.map((section) => {
-                                const isActive = activeId === section.id;
-                                return (
-                                    <div 
-                                        key={section.id} 
-                                        onClick={() => scrollToSection(section.id)}
-                                        className={`group relative py-0.5 text-[13px] leading-relaxed transition-all duration-300 cursor-pointer ${
-                                            isActive 
-                                                ? 'text-[#d97736] dark:text-[#e07a3c] font-semibold' 
-                                                : 'text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white'
-                                        }`}
-                                    >
-                                        {isActive && (
-                                            <div className="absolute -left-[22px] top-0 bottom-0 w-[2px] bg-[#d97736] dark:bg-[#e07a3c]" />
-                                        )}
-                                        <span className="font-mono text-[11px] mr-3 opacity-60">{section.num}</span>
-                                        <span className="tracking-tight">{section.title}</span>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                {/* Sticky Sidebar Table of Contents (positioned under the sticky navbar) */}
+                <aside className="hidden lg:block sticky top-[140px] self-start space-y-6">
+                    <div className="text-[11px] font-bold tracking-widest text-black/40 dark:text-white/40 uppercase mb-4 font-mono">
+                        On This Page
+                    </div>
+                    
+                    <div className="relative border-l border-black/10 dark:border-white/10 pl-5 space-y-3.5">
+                        {sections.map((section) => {
+                            const isActive = activeId === section.id;
+                            return (
+                                <div 
+                                    key={section.id} 
+                                    onClick={() => scrollToSection(section.id)}
+                                    className={`group relative py-0.5 text-[13px] leading-relaxed transition-all duration-300 cursor-pointer ${
+                                        isActive 
+                                            ? 'text-[#1a8917] dark:text-[#ccff00] font-semibold' 
+                                            : 'text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white'
+                                    }`}
+                                >
+                                    {isActive && (
+                                        <div className="absolute -left-[22px] top-0 bottom-0 w-[2px] bg-[#1a8917] dark:bg-[#ccff00]" />
+                                    )}
+                                    <span className="font-mono text-[11px] mr-3 opacity-60">{section.num}</span>
+                                    <span className="tracking-tight">{section.title}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
 
-                        {/* Reading Progress */}
-                        <div className="border-t border-dashed border-black/10 dark:border-white/10 pt-4 mt-6">
-                            <span className="font-mono text-[11px] text-black/50 dark:text-white/50">
-                                {progress}% read
-                            </span>
-                        </div>
+                    {/* Reading Progress */}
+                    <div className="border-t border-dashed border-black/10 dark:border-white/10 pt-4 mt-6">
+                        <span className="font-mono text-[11px] text-black/50 dark:text-white/50">
+                            {progress}% read
+                        </span>
                     </div>
                 </aside>
 
@@ -226,43 +268,89 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
                                 </h2>
                             </div>
                             
-                            {/* Author Byline block */}
-                            <div className="flex items-center justify-between mb-8 cursor-pointer group">
+                            {/* Author Byline Block */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
+                                
+                                {/* Author Info (Left) */}
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
                                         <BlurImage src={post.author.avatar!} alt={post.author.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-semibold text-black dark:text-white group-hover:underline decoration-1 underline-offset-2">{post.author.name}</span>
-                                            <span className="text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/10 dark:bg-[#ccff00]/10 border border-[#1a8917]/20 dark:border-[#ccff00]/30 px-3 py-0.5 rounded-full text-xs font-medium transition-colors hover:bg-[#1a8917]/20 dark:hover:bg-[#ccff00]/20">Follow</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-[13px] text-black/60 dark:text-white/50 mt-1">
-                                            <span>{post.author.readTime}</span>
-                                            <span>·</span>
-                                            <span>{post.author.date}</span>
-                                        </div>
+                                        <span className="font-bold text-black dark:text-white text-base leading-tight">
+                                            {post.author.name}
+                                        </span>
+                                        <span className="text-[12px] font-medium text-black/50 dark:text-white/40 mt-1">
+                                            {post.author.designation}
+                                        </span>
                                     </div>
                                 </div>
+
+                                {/* Dates and Read Time (Right) */}
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm font-medium">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Published</span>
+                                        <span className="text-black/80 dark:text-white/80">{post.author.published}</span>
+                                    </div>
+                                    {post.author.updated && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Updated</span>
+                                            <span className="text-black/80 dark:text-white/80">{post.author.updated}</span>
+                                        </div>
+                                    )}
+                                    <div className="text-black/80 dark:text-white/80 font-semibold font-mono text-xs">
+                                        {post.author.readTime}
+                                    </div>
+                                </div>
+
                             </div>
 
-                            {/* Action Bar */}
-                            <div className="flex items-center justify-between py-3 md:py-4 border-t border-b border-black/10 dark:border-white/10 mb-12">
-                                <div className="flex items-center gap-6 text-black/60 dark:text-white/60">
-                                    <button className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors group">
-                                        <Heart size={18} className="group-hover:fill-black/10 dark:group-hover:fill-white/10" /> 
-                                        <span className="text-sm font-medium">{post.stats.likes}</span>
+                            {/* Share and Action Utility Bar */}
+                            <div className="flex items-center justify-between py-3.5 border-t border-b border-black/10 dark:border-white/10 mb-12">
+                                
+                                {/* Left Side: Social sharing links */}
+                                <div className="flex items-center gap-3">
+                                    {/* Copy Link Button */}
+                                    <button 
+                                        onClick={handleCopyLink}
+                                        className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
+                                            isCopied 
+                                                ? 'border-[#1a8917] dark:border-[#ccff00] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/5 dark:bg-[#ccff00]/5 scale-105' 
+                                                : 'border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+                                        }`}
+                                        title={isCopied ? "Link copied!" : "Copy story link"}
+                                    >
+                                        <Link2 size={15} />
                                     </button>
-                                    <button className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors">
-                                        <MessageCircle size={18} /> 
-                                        <span className="text-sm font-medium">{post.stats.comments}</span>
-                                    </button>
+                                    {/* LinkedIn Link */}
+                                    <a 
+                                        href={post.author.linkedin} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-mono text-xs font-bold leading-none cursor-pointer"
+                                        title="LinkedIn Profile"
+                                    >
+                                        in
+                                    </a>
+                                    {/* Twitter/X Link */}
+                                    <a 
+                                        href={post.author.twitter} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-serif text-sm font-bold leading-none cursor-pointer"
+                                        title="X Profile"
+                                    >
+                                        𝕏
+                                    </a>
                                 </div>
+
+                                {/* Right Side: Page utility options */}
                                 <div className="flex items-center gap-5 text-black/60 dark:text-white/60">
-                                    <button className="hover:text-black dark:hover:text-white transition-colors"><Bookmark size={20} /></button>
-                                    <button className="hover:text-black dark:hover:text-white transition-colors"><PlayCircle size={20} /></button>
-                                    <button className="hover:text-black dark:hover:text-white transition-colors"><Share size={18} /></button>
+                                    <button className="hover:text-black dark:hover:text-white transition-colors cursor-pointer" title="Bookmark"><Bookmark size={20} /></button>
+                                    <button className="hover:text-black dark:hover:text-white transition-colors cursor-pointer" title="Listen to story"><PlayCircle size={20} /></button>
+                                    <button className="hover:text-black dark:hover:text-white transition-colors cursor-pointer" title="Share"><Share size={18} /></button>
                                 </div>
+
                             </div>
                         </div>
 
@@ -345,6 +433,37 @@ export default function BlogPost({ params }: { params: { id: string } | Promise<
                                     {tag}
                                 </span>
                             ))}
+                        </div>
+
+                        {/* Article Navigation Buttons */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-black/10 dark:border-white/10">
+                            {/* Back to Journal */}
+                            <Link 
+                                href="/blog" 
+                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95"
+                            >
+                                ← Back to Journal
+                            </Link>
+
+                            {/* Previous & Next Articles */}
+                            <div className="flex items-center gap-3">
+                                <Link 
+                                    href={prevKey ? `/blog/${prevKey}` : '#'} 
+                                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95 ${
+                                        !prevKey ? 'opacity-30 pointer-events-none' : 'hover:border-black/30 dark:hover:border-white/30'
+                                    }`}
+                                >
+                                    ← Previous Article
+                                </Link>
+                                <Link 
+                                    href={nextKey ? `/blog/${nextKey}` : '#'} 
+                                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95 ${
+                                        !nextKey ? 'opacity-30 pointer-events-none' : 'hover:border-black/30 dark:hover:border-white/30'
+                                    }`}
+                                >
+                                    Next Article →
+                                </Link>
+                            </div>
                         </div>
                     </article>
                 </div>
