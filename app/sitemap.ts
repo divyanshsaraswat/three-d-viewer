@@ -1,9 +1,19 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/utils/seo";
+import { sanityClient } from "@/lib/sanity/client";
+import { allSlugsQuery } from "@/lib/sanity/queries";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
   const lastModified = new Date();
+
+  const postSlugs: string[] = await sanityClient.fetch(allSlugsQuery).catch(() => []);
+  const postEntries: MetadataRoute.Sitemap = postSlugs.map((slug) => ({
+    url: `${siteUrl}/blog/${slug}`,
+    lastModified,
+    changeFrequency: "monthly",
+    priority: 0.5,
+  }));
 
   return [
     {
@@ -43,5 +53,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.5,
     },
+    ...postEntries,
   ];
 }

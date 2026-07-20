@@ -16,6 +16,9 @@ function getPageTitle(pathname: string): string {
     if (pathname.startsWith('/blog')) {
         return 'BLOG';
     }
+    if (pathname.startsWith('/studio')) {
+        return 'STUDIO';
+    }
 
     const map: Record<string, string> = {
         '/': 'HOME',
