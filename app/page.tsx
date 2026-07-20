@@ -649,7 +649,8 @@ export default function LandingPage() {
             <ScrollRevealText />
 
             {/* ---------- SUBTLE TICKER ---------- */}
-            <div className="w-full bg-[#ccff00] py-4 md:py-6 transform -rotate-3 scale-110 my-12 overflow-hidden flex whitespace-nowrap z-20 relative border-y-[3px] border-black drop-shadow-lg" style={{ contain: "content" }}>
+            <div className="w-full overflow-hidden my-12">
+            <div className="w-full bg-[#ccff00] py-4 md:py-6 transform -rotate-3 scale-110 overflow-hidden flex whitespace-nowrap z-20 relative border-y-[3px] border-black drop-shadow-lg" style={{ contain: "content" }}>
                 <style dangerouslySetInnerHTML={{
                     __html: `
                         @keyframes ticker-marquee {
@@ -680,6 +681,7 @@ export default function LandingPage() {
                         </div>
                     ))}
                 </div>
+            </div>
             </div>
 
             <section className="pb-24 pt-12 px-4 md:px-8 max-w-[1200px] mx-auto text-black dark:text-white transition-colors duration-500 relative z-30">
