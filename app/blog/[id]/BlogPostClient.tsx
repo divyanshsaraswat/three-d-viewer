@@ -12,6 +12,9 @@ import { extractHeadings, ptComponents } from '@/lib/sanity/portableText';
 export interface BlogPostData {
     title: string;
     subtitle: string;
+    category?: string;
+    metaTitle?: string;
+    metaDescription?: string;
     image: string;
     tags: string[];
     body: any[];

@@ -15,6 +15,10 @@ export const postBySlugQuery = groq`
   *[_type == "post" && slug.current == $slug][0] {
     title,
     subtitle,
+    excerpt,
+    category,
+    metaTitle,
+    metaDescription,
     "image": mainImage,
     tags,
     readTime,

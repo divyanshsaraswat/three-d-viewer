@@ -24,6 +24,9 @@ async function getPost(slug: string) {
     const post: BlogPostData = {
         title: raw.title,
         subtitle: raw.subtitle,
+        category: raw.category,
+        metaTitle: raw.metaTitle,
+        metaDescription: raw.metaDescription || raw.excerpt,
         image: raw.image ? urlFor(raw.image).width(2000).url() : "",
         tags: raw.tags || [],
         body: raw.body || [],
@@ -55,20 +58,25 @@ export async function generateMetadata({
     const post = await getPost(id);
     if (!post) return {};
 
+    const metaTitle = post.metaTitle || post.title;
+    const metaDescription = post.metaDescription || post.subtitle;
+
     return {
-        title: `${post.title} | ${siteConfig.name}`,
-        description: post.subtitle,
+        title: `${metaTitle} | ${siteConfig.name}`,
+        description: metaDescription,
         alternates: { canonical: `/blog/${id}` },
         openGraph: {
-            title: post.title,
-            description: post.subtitle,
+            type: "article",
+            title: metaTitle,
+            description: metaDescription,
             url: `/blog/${id}`,
-            images: post.image ? [{ url: post.image, width: 1200, height: 630, alt: post.title }] : undefined,
+            section: post.category || undefined,
+            images: post.image ? [{ url: post.image, width: 1200, height: 630, alt: metaTitle }] : undefined,
         },
         twitter: {
             card: "summary_large_image",
-            title: post.title,
-            description: post.subtitle,
+            title: metaTitle,
+            description: metaDescription,
             images: post.image ? [post.image] : undefined,
         },
     };
