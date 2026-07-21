@@ -41,14 +41,21 @@ export const ptComponents: PortableTextComponents = {
   },
   types: {
     image: ({ value }) => (
-      <div className="my-8 rounded-2xl overflow-hidden">
-        <BlurImage
-          src={urlFor(value).width(1600).url()}
-          alt={value.alt || ""}
-          width={1600}
-          height={900}
-          className="w-full h-auto"
-        />
+      <div className="my-8">
+        <div className="rounded-2xl overflow-hidden">
+          <BlurImage
+            src={urlFor(value).width(1600).url()}
+            alt={value.alt || ""}
+            width={1600}
+            height={900}
+            className="w-full h-auto"
+          />
+        </div>
+        {value.caption && (
+          <p className="text-center text-xs text-black/50 dark:text-white/50 mt-4 font-medium">
+            {value.caption}
+          </p>
+        )}
       </div>
     ),
   },

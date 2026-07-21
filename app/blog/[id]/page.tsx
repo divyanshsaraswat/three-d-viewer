@@ -28,6 +28,8 @@ async function getPost(slug: string) {
         metaTitle: raw.metaTitle,
         metaDescription: raw.metaDescription || raw.excerpt,
         image: raw.image ? urlFor(raw.image).width(2000).url() : "",
+        imageAlt: raw.image?.alt,
+        imageCaption: raw.image?.caption,
         tags: raw.tags || [],
         body: raw.body || [],
         author: {

@@ -16,6 +16,8 @@ export interface BlogPostData {
     metaTitle?: string;
     metaDescription?: string;
     image: string;
+    imageAlt?: string;
+    imageCaption?: string;
     tags: string[];
     body: any[];
     author: {
@@ -358,11 +360,13 @@ export default function BlogPostClient({
                         <div className="w-full aspect-[21/9] md:aspect-[16/8] bg-gray-100 dark:bg-[#111] overflow-hidden rounded-[1rem] md:rounded-[2rem] shadow-sm">
                             <BlurImage
                                 src={post.image}
-                                alt="Featured hero"
+                                alt={post.imageAlt || post.title}
                                 className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-[2s]"
                             />
                         </div>
-                        <p className="text-center text-xs text-black/50 dark:text-white/50 mt-4 font-medium">Photo acquired directly from the Weinix processing facilities.</p>
+                        {post.imageCaption && (
+                            <p className="text-center text-xs text-black/50 dark:text-white/50 mt-4 font-medium">{post.imageCaption}</p>
+                        )}
                     </div>
 
                     {/* Article Content Block */}

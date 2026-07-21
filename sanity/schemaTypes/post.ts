@@ -48,6 +48,10 @@ export default defineType({
       type: "image",
       group: "content",
       options: { hotspot: true },
+      fields: [
+        defineField({ name: "alt", title: "Alt text", type: "string", description: "Describes the image for accessibility & SEO." }),
+        defineField({ name: "caption", title: "Caption", type: "string", description: "Optional caption shown under the hero image." }),
+      ],
       validation: (r) => r.required(),
     }),
     defineField({
@@ -106,7 +110,14 @@ export default defineType({
             ],
           },
         },
-        { type: "image", options: { hotspot: true } },
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({ name: "alt", title: "Alt text", type: "string", description: "Describes the image for accessibility & SEO." }),
+            defineField({ name: "caption", title: "Caption", type: "string", description: "Optional caption shown under the image." }),
+          ],
+        },
       ],
     }),
   ],
