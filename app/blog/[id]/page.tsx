@@ -102,5 +102,5 @@ export default async function BlogPost({
     const prevId = currentIndex > 0 ? slugs[currentIndex - 1] : null;
     const nextId = currentIndex >= 0 && currentIndex < slugs.length - 1 ? slugs[currentIndex + 1] : null;
 
-    return <BlogPostClient post={post} prevId={prevId} nextId={nextId} />;
+    return <BlogPostClient post={post} prevId={prevId} nextId={nextId} id={id} />;
 }

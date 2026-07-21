@@ -32,14 +32,26 @@ export interface BlogPostData {
     };
 }
 
+const BOOKMARKS_KEY = "weinix_bookmarks";
+
+interface Bookmark {
+    id: string;
+    title: string;
+    image: string;
+    url: string;
+    bookmarkedAt: string;
+}
+
 export default function BlogPostClient({
     post,
     prevId,
     nextId,
+    id,
 }: {
     post: BlogPostData;
     prevId: string | null;
     nextId: string | null;
+    id: string;
 }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const sections = post.headings;
@@ -50,6 +62,7 @@ export default function BlogPostClient({
     const [isTocOpen, setIsTocOpen] = useState(false);
     const [showFloatingToc, setShowFloatingToc] = useState(false);
     const [isBottomVisible, setIsBottomVisible] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(false);
 
     const navButtonsRef = useRef<HTMLDivElement>(null);
     const isBottomVisibleRef = useRef(false);
@@ -59,6 +72,41 @@ export default function BlogPostClient({
             navigator.clipboard.writeText(window.location.href);
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 2000);
+        }
+    };
+
+    const handleShare = async () => {
+        if (typeof navigator !== 'undefined' && navigator.share) {
+            try {
+                await navigator.share({ title: post.title, text: post.subtitle, url: window.location.href });
+            } catch {
+                // user cancelled the share sheet, nothing to do
+            }
+        } else {
+            handleCopyLink();
+        }
+    };
+
+    useEffect(() => {
+        try {
+            const stored: Bookmark[] = JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || "[]");
+            setIsBookmarked(stored.some((b) => b.id === id));
+        } catch {
+            // ignore malformed localStorage data
+        }
+    }, [id]);
+
+    const handleToggleBookmark = () => {
+        try {
+            const stored: Bookmark[] = JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || "[]");
+            const exists = stored.some((b) => b.id === id);
+            const next = exists
+                ? stored.filter((b) => b.id !== id)
+                : [...stored, { id, title: post.title, image: post.image, url: `/blog/${id}`, bookmarkedAt: new Date().toISOString() }];
+            localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(next));
+            setIsBookmarked(!exists);
+        } catch {
+            // ignore write failures (e.g. private browsing storage limits)
         }
     };
 
@@ -261,18 +309,20 @@ export default function BlogPostClient({
                             </h1>
 
                             {/* Highlighted Subtitle */}
-                            <div className="inline-block relative mb-8 lg:mb-12">
-                                <div className="absolute inset-0 bg-[#e7f5e9] dark:bg-[#e7f5e9]/10 rounded-sm -z-10 -mx-1 -my-0.5"></div>
-                                <h2 className="text-xl md:text-[22px] text-[#2f4f4f] dark:text-[#a0c0c0] font-normal leading-snug">
-                                    {post.subtitle}
-                                </h2>
-                            </div>
+                            {post.subtitle && (
+                                <div className="inline-block relative mb-8 lg:mb-12">
+                                    <div className="absolute inset-0 bg-[#e7f5e9] dark:bg-[#e7f5e9]/10 rounded-sm -z-10 -mx-1 -my-0.5"></div>
+                                    <h2 className="text-xl md:text-[22px] text-[#2f4f4f] dark:text-[#a0c0c0] font-normal leading-snug">
+                                        {post.subtitle}
+                                    </h2>
+                                </div>
+                            )}
 
                             {/* Author Byline Block */}
                             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
 
                                 {/* Author Info (Left) */}
-                                <div className="flex items-start gap-4">
+                                <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
                                         <BlurImage src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
                                     </div>
@@ -288,12 +338,12 @@ export default function BlogPostClient({
 
                                 {/* Dates and Read Time (Right) */}
                                 <div className="flex flex-wrap items-start gap-x-6 gap-y-2 text-xs md:text-sm font-medium pt-1">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex flex-col gap-1">
                                         <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Published</span>
                                         <span className="text-black/80 dark:text-white/80">{post.author.published}</span>
                                     </div>
                                     {post.author.updated && (
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-col gap-1">
                                             <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Updated</span>
                                             <span className="text-black/80 dark:text-white/80">{post.author.updated}</span>
                                         </div>
@@ -323,31 +373,47 @@ export default function BlogPostClient({
                                         <Link2 size={15} />
                                     </button>
                                     {/* LinkedIn Link */}
-                                    <a
-                                        href={post.author.linkedin}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-mono text-xs font-bold leading-none cursor-pointer"
-                                        title="LinkedIn Profile"
-                                    >
-                                        in
-                                    </a>
+                                    {post.author.linkedin && (
+                                        <a
+                                            href={post.author.linkedin}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-mono text-xs font-bold leading-none cursor-pointer"
+                                            title="LinkedIn Profile"
+                                        >
+                                            in
+                                        </a>
+                                    )}
                                     {/* Twitter/X Link */}
-                                    <a
-                                        href={post.author.twitter}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-serif text-sm font-bold leading-none cursor-pointer"
-                                        title="X Profile"
-                                    >
-                                        𝕏
-                                    </a>
+                                    {post.author.twitter && (
+                                        <a
+                                            href={post.author.twitter}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-serif text-sm font-bold leading-none cursor-pointer"
+                                            title="X Profile"
+                                        >
+                                            𝕏
+                                        </a>
+                                    )}
                                 </div>
 
                                 {/* Right Side: Page utility options */}
                                 <div className="flex items-center gap-5 text-black/60 dark:text-white/60">
-                                    <button className="hover:text-black dark:hover:text-white transition-colors cursor-pointer" title="Bookmark"><Bookmark size={20} /></button>
-                                    <button className="hover:text-black dark:hover:text-white transition-colors cursor-pointer" title="Share"><Share size={18} /></button>
+                                    <button
+                                        onClick={handleToggleBookmark}
+                                        className={`transition-colors cursor-pointer ${isBookmarked ? 'text-[#1a8917] dark:text-[#ccff00]' : 'hover:text-black dark:hover:text-white'}`}
+                                        title={isBookmarked ? "Remove bookmark" : "Bookmark"}
+                                    >
+                                        <Bookmark size={20} fill={isBookmarked ? "currentColor" : "none"} />
+                                    </button>
+                                    <button
+                                        onClick={handleShare}
+                                        className="hover:text-black dark:hover:text-white transition-colors cursor-pointer"
+                                        title="Share"
+                                    >
+                                        <Share size={18} />
+                                    </button>
                                 </div>
 
                             </div>
