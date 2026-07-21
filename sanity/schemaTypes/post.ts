@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import TinyMCEInput from "../components/TinyMCEInput";
 
 export default defineType({
   name: "post",
@@ -85,40 +86,10 @@ export default defineType({
     defineField({
       name: "body",
       title: "Body",
-      type: "array",
+      type: "text",
       group: "content",
-      of: [
-        {
-          type: "block",
-          styles: [
-            { title: "Normal", value: "normal" },
-            { title: "H2", value: "h2" },
-          ],
-          lists: [{ title: "Bullet", value: "bullet" }],
-          marks: {
-            decorators: [
-              { title: "Bold", value: "strong" },
-              { title: "Italic", value: "em" },
-            ],
-            annotations: [
-              {
-                name: "link",
-                type: "object",
-                title: "Link",
-                fields: [{ name: "href", type: "url", title: "URL" }],
-              },
-            ],
-          },
-        },
-        {
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({ name: "alt", title: "Alt text", type: "string", description: "Describes the image for accessibility & SEO." }),
-            defineField({ name: "caption", title: "Caption", type: "string", description: "Optional caption shown under the image." }),
-          ],
-        },
-      ],
+      description: "Full rich-text editor (headings, fonts, colors, alignment, tables, images, etc).",
+      components: { input: TinyMCEInput },
     }),
   ],
   preview: {

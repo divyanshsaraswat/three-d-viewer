@@ -43,4 +43,5 @@ next-env.d.ts
 
 # assets
 /public/imgs/
+/public/tinymce/
 

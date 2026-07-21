@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { sanityClient } from "@/lib/sanity/client";
 import { postBySlugQuery, allSlugsQuery } from "@/lib/sanity/queries";
 import { urlFor } from "@/lib/sanity/image";
+import { processBodyHtml } from "@/lib/sanity/richText";
 import { siteConfig } from "@/utils/seo";
 import BlogPostClient, { type BlogPostData } from "./BlogPostClient";
 
@@ -21,6 +22,8 @@ async function getPost(slug: string) {
     const raw = await sanityClient.fetch(postBySlugQuery, { slug });
     if (!raw) return null;
 
+    const { html: bodyHtml, headings } = processBodyHtml(raw.body || "");
+
     const post: BlogPostData = {
         title: raw.title,
         subtitle: raw.subtitle,
@@ -31,7 +34,8 @@ async function getPost(slug: string) {
         imageAlt: raw.image?.alt,
         imageCaption: raw.image?.caption,
         tags: raw.tags || [],
-        body: raw.body || [],
+        bodyHtml,
+        headings,
         author: {
             name: raw.author?.name ?? "",
             designation: raw.author?.designation ?? "",

@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BlurImage from '@/components/BlurImage';
 import { MessageCircle, Heart, Bookmark, Share, PlayCircle, Link2 } from 'lucide-react';
 import Link from 'next/link';
-import { PortableText } from '@portabletext/react';
-import { extractHeadings, ptComponents } from '@/lib/sanity/portableText';
+import type { Heading } from '@/lib/sanity/richText';
 
 export interface BlogPostData {
     title: string;
@@ -19,7 +18,8 @@ export interface BlogPostData {
     imageAlt?: string;
     imageCaption?: string;
     tags: string[];
-    body: any[];
+    bodyHtml: string;
+    headings: Heading[];
     author: {
         name: string;
         designation: string;
@@ -42,7 +42,7 @@ export default function BlogPostClient({
     nextId: string | null;
 }) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const sections = useMemo(() => extractHeadings(post.body), [post.body]);
+    const sections = post.headings;
 
     const [activeId, setActiveId] = useState(sections[0]?.id ?? "");
     const [progress, setProgress] = useState(0);
@@ -252,9 +252,9 @@ export default function BlogPostClient({
 
                         {/* Title & Subtitle */}
                         <div className="mb-10 anim-header">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/5 dark:bg-white/10 rounded-md text-xs font-semibold mb-6 border border-black/10 dark:border-white/10">
+                            {/* <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/5 dark:bg-white/10 rounded-md text-xs font-semibold mb-6 border border-black/10 dark:border-white/10">
                                 <span className="text-[#ccff00] text-sm leading-none">✦</span> Member-only story
-                            </div>
+                            </div> */}
 
                             <h1 className="text-4xl md:text-[46px] leading-[1.15] font-black tracking-tight mb-4 text-black dark:text-white">
                                 {post.title}
@@ -269,10 +269,10 @@ export default function BlogPostClient({
                             </div>
 
                             {/* Author Byline Block */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
 
                                 {/* Author Info (Left) */}
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-start gap-4">
                                     <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
                                         <BlurImage src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
                                     </div>
@@ -287,7 +287,7 @@ export default function BlogPostClient({
                                 </div>
 
                                 {/* Dates and Read Time (Right) */}
-                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm font-medium">
+                                <div className="flex flex-wrap items-start gap-x-6 gap-y-2 text-xs md:text-sm font-medium pt-1">
                                     <div className="flex items-center gap-2">
                                         <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Published</span>
                                         <span className="text-black/80 dark:text-white/80">{post.author.published}</span>
@@ -371,9 +371,10 @@ export default function BlogPostClient({
 
                     {/* Article Content Block */}
                     <article className="max-w-[720px] mx-auto lg:mx-0 anim-content">
-                        <div className="prose prose-lg dark:prose-invert prose-p:text-[20px] prose-p:leading-[1.6] prose-p:text-[#242424] dark:prose-p:text-[#e0e0e0] prose-p:font-normal prose-h2:text-[32px] prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-a:text-[#1a8917] dark:prose-a:text-[#ccff00] prose-li:text-[19px] max-w-none">
-                            <PortableText value={post.body} components={ptComponents} />
-                        </div>
+                        <div
+                            className="prose prose-lg dark:prose-invert prose-p:text-[20px] prose-p:leading-[1.6] prose-p:text-[#242424] dark:prose-p:text-[#e0e0e0] prose-p:font-normal prose-h1:text-[32px] prose-h1:font-bold prose-h2:text-[32px] prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-h3:mt-10 prose-h3:mb-4 prose-h4:text-[14px] prose-h4:uppercase prose-h4:tracking-wider prose-h4:font-bold prose-h4:mt-8 prose-h4:mb-3 prose-a:text-[#1a8917] dark:prose-a:text-[#ccff00] prose-li:text-[19px] prose-blockquote:border-l-[#1a8917] dark:prose-blockquote:border-l-[#ccff00] prose-blockquote:not-italic prose-code:text-[#1a8917] dark:prose-code:text-[#ccff00] prose-code:before:content-none prose-code:after:content-none [&_h5]:text-[13px] [&_h5]:uppercase [&_h5]:tracking-wide [&_h5]:font-semibold [&_h5]:mt-6 [&_h5]:mb-2 [&_h5]:text-black/70 dark:[&_h5]:text-white/70 [&_h6]:text-[13px] [&_h6]:italic [&_h6]:font-semibold [&_h6]:mt-6 [&_h6]:mb-2 [&_h6]:text-black/60 dark:[&_h6]:text-white/60 max-w-none"
+                            dangerouslySetInnerHTML={{ __html: post.bodyHtml }}
+                        />
 
                         {/* Bottom Topic Footer Tags */}
                         {post.tags?.length > 0 && (
