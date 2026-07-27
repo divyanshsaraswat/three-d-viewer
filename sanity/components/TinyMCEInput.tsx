@@ -25,10 +25,10 @@ export function TinyMCEInput(props: TextInputProps) {
         menubar: "file edit view insert format tools table",
         plugins:
           "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code insertdatetime media table paste help wordcount",
-        toolbar:
+        toolbar: [
           "undo redo | blocks | bold italic | blockquote | bullist numlist | alignleft aligncenter alignright | link image removeformat",
-        toolbar2:
           "fontfamily fontsize | outdent indent | pastetext | charmap | hr | forecolor | table | help",
+        ],
         skin: isDark ? "oxide-dark" : "oxide",
         content_css: isDark ? "dark" : "default",
         images_upload_handler: (blobInfo) =>
