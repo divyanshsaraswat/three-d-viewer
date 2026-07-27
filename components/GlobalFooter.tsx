@@ -111,7 +111,9 @@ export default function GlobalFooter() {
                             <li><a href="/" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Home</a></li>
                             <li><a href="/about-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">About</a></li>
                             <li><a href="/products" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Products</a></li>
+                            <li><a href="/industrial" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Industrial</a></li>
                             <li><a href="/blog" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Blog</a></li>
+                            <li><a href="/faq" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">FAQ</a></li>
                             <li><a href="/contact-us" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Contact</a></li>
                         </ul>
                     </div>
@@ -177,11 +179,17 @@ export default function GlobalFooter() {
                 </div>
 
                 {/* Footer Bottom Bar */}
-                <div className="pt-8 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center text-xs opacity-60 text-black dark:text-white transition-colors">
-                    <p>© {new Date().getFullYear()} WEINIX by Re-Verse Green Clothing Pvt. Ltd. All Rights Reserved.</p>
+                <div className="pt-8 border-t border-black/10 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-5 text-xs opacity-60 text-black dark:text-white transition-colors">
+                    <p className="text-center md:text-left">© {new Date().getFullYear()} WEINIX by Re-Verse Green Clothing Pvt. Ltd. All Rights Reserved.</p>
+
+                    <div className="flex items-center gap-3">
+                        <a href="/terms" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">T&amp;C</a>
+                        <span className="w-1 h-1 rounded-full bg-current opacity-40" />
+                        <a href="/privacy-policy" className="hover:text-[#ccff00] hover:opacity-100 transition-colors">Privacy Policy</a>
+                    </div>
 
                     {/* Theme Toggle Pill */}
-                    <div className="flex items-center justify-center rounded-[2rem] p-1.5 shadow-inner mt-4 md:mt-0 transition-colors">
+                    <div className="flex items-center justify-center rounded-[2rem] p-1.5 shadow-inner transition-colors">
                         <button
                             onClick={() => { trackEvent('theme_changed', { theme: 'light' }); setTheme('light'); }}
                             className={`p-2 px-4 rounded-[1.5rem] transition-all duration-300 flex items-center justify-center cursor-pointer ${theme === 'light' ? 'bg-white text-black shadow-sm border border-black/5 dark:bg-[#2a2a2a] dark:text-white dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] dark:border-white/10' : 'hover:text-black dark:hover:text-gray-300 border border-transparent'}`}

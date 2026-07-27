@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BlurImage from '@/components/BlurImage';
-import { MessageCircle, Heart, Bookmark, Share, PlayCircle, Link2 } from 'lucide-react';
+import { MessageCircle, Heart, Bookmark, Share, PlayCircle, Link2, Instagram } from 'lucide-react';
 import Link from 'next/link';
 import type { Heading } from '@/lib/sanity/richText';
 
@@ -361,17 +361,26 @@ export default function BlogPostClient({
                                 {/* Left Side: Social sharing links */}
                                 <div className="flex items-center gap-3">
                                     {/* Copy Link Button */}
-                                    <button
-                                        onClick={handleCopyLink}
-                                        className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
-                                            isCopied
-                                                ? 'border-[#1a8917] dark:border-[#ccff00] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/5 dark:bg-[#ccff00]/5 scale-105'
-                                                : 'border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-                                        }`}
-                                        title={isCopied ? "Link copied!" : "Copy story link"}
-                                    >
-                                        <Link2 size={15} />
-                                    </button>
+                                    <div className="relative">
+                                        <button
+                                            onClick={handleCopyLink}
+                                            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
+                                                isCopied
+                                                    ? 'border-[#1a8917] dark:border-[#ccff00] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/5 dark:bg-[#ccff00]/5 scale-105'
+                                                    : 'border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+                                            }`}
+                                            title={isCopied ? "Link copied!" : "Copy story link"}
+                                        >
+                                            <Link2 size={15} />
+                                        </button>
+                                        <div
+                                            className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black text-[11px] font-semibold whitespace-nowrap transition-all duration-200 pointer-events-none ${
+                                                isCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'
+                                            }`}
+                                        >
+                                            Copied
+                                        </div>
+                                    </div>
                                     {/* LinkedIn Link */}
                                     {post.author.linkedin && (
                                         <a
@@ -396,6 +405,16 @@ export default function BlogPostClient({
                                             𝕏
                                         </a>
                                     )}
+                                    {/* Instagram Link (site-wide, not per-author in Sanity) */}
+                                    <a
+                                        href="https://www.instagram.com/weinix.in"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                                        title="Instagram"
+                                    >
+                                        <Instagram size={15} />
+                                    </a>
                                 </div>
 
                                 {/* Right Side: Page utility options */}

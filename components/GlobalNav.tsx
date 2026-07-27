@@ -27,9 +27,10 @@ export default function GlobalNav() {
                         <img src="/icon-weinix.svg" alt="Weinix Logo" className="w-10 h-10 object-contain" />
                         <span>WEINIX</span>
                     </Link>
-                    <div className={`hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold ${textColorClass} transition-colors`}>
+                    <div className={`hidden md:flex gap-5 lg:gap-8 text-[11px] lg:text-xs uppercase tracking-widest font-semibold ${textColorClass} transition-colors`}>
                         <Link href="/" className="hover:opacity-70 transition-opacity">Home</Link>
                         <Link href="/about-us" className="hover:opacity-70 transition-opacity">About Us</Link>
+                        <Link href="/industrial" className="hover:opacity-70 transition-opacity">Industrial</Link>
                         <Link href="/products" className="hover:opacity-70 transition-opacity">Products</Link>
                         <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link>
                         <Link href="/contact-us" className="hover:opacity-70 transition-opacity">Contact</Link>
@@ -82,9 +83,10 @@ export default function GlobalNav() {
                         <img src="/icon-weinix.svg" alt="Weinix Logo" className="w-10 h-10 object-contain" />
                         <span>WEINIX</span>
                     </Link>
-                    <div className="hidden md:flex gap-10 text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
+                    <div className="hidden md:flex gap-5 lg:gap-8 text-[11px] lg:text-xs uppercase tracking-widest font-semibold text-black dark:text-white transition-colors">
                         <Link href="/" className="hover:opacity-70 transition-opacity">Home</Link>
                         <Link href="/about-us" className="hover:opacity-70 transition-opacity">About Us</Link>
+                        <Link href="/industrial" className="hover:opacity-70 transition-opacity">Industrial</Link>
                         <Link href="/products" className="hover:opacity-70 transition-opacity">Products</Link>
                         <Link href="/blog" className="hover:opacity-70 transition-opacity">Blog</Link>
                         <Link href="/contact-us" className="hover:opacity-70 transition-opacity">Contact</Link>
