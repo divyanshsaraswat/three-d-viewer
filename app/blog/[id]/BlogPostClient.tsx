@@ -282,17 +282,17 @@ export default function BlogPostClient({
                         <div className="lg:hidden mb-8 anim-header">
                             <button
                                 onClick={() => setIsTocOpen(true)}
-                                className="w-full flex items-center justify-between px-4 py-3 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 rounded-xl text-left transition-all active:scale-[0.98] group cursor-pointer"
+                                className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 rounded-xl text-left transition-all active:scale-[0.98] group cursor-pointer"
                             >
-                                <div className="flex items-center gap-2">
-                                    <span className="text-black/60 dark:text-white/60 text-xs font-bold tracking-widest uppercase font-mono">
+                                <div className="flex items-center gap-2 min-w-0 flex-1">
+                                    <span className="shrink-0 text-black/60 dark:text-white/60 text-xs font-bold tracking-widest uppercase font-mono">
                                         On This Page
                                     </span>
-                                    <span className="text-[10px] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/10 dark:bg-[#ccff00]/10 border border-[#1a8917]/20 dark:border-[#ccff00]/30 px-2 py-0.5 rounded font-mono leading-none">
-                                        {activeId.toUpperCase().replace('-', ' ')}
+                                    <span className="min-w-0 truncate text-[10px] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/10 dark:bg-[#ccff00]/10 border border-[#1a8917]/20 dark:border-[#ccff00]/30 px-2 py-0.5 rounded font-mono leading-none">
+                                        {activeId.toUpperCase().replace(/-/g, ' ')}
                                     </span>
                                 </div>
-                                <span className="text-xs font-bold text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white font-mono flex items-center gap-1.5">
+                                <span className="shrink-0 text-xs font-bold text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white font-mono flex items-center gap-1.5">
                                     Outline <span>➔</span>
                                 </span>
                             </button>
@@ -576,17 +576,17 @@ export default function BlogPostClient({
             >
                 <button
                     onClick={() => setIsTocOpen(true)}
-                    className="w-full flex items-center justify-between px-5 py-3 bg-[#111]/95 backdrop-blur-md border border-white/10 rounded-full text-left transition-all active:scale-[0.98] group cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.3)] animate-fade-in"
+                    className="w-full flex items-center justify-between gap-3 px-5 py-3 bg-[#111]/95 backdrop-blur-md border border-white/10 rounded-full text-left transition-all active:scale-[0.98] group cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.3)] animate-fade-in"
                 >
-                    <div className="flex items-center gap-2">
-                        <span className="text-white/50 text-[10px] font-bold tracking-widest uppercase font-mono">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className="shrink-0 text-white/50 text-[10px] font-bold tracking-widest uppercase font-mono">
                             On This Page
                         </span>
-                        <span className="text-[10px] text-[#ccff00] bg-[#ccff00]/10 border border-[#ccff00]/25 px-2 py-0.5 rounded font-mono leading-none">
-                            {activeId.toUpperCase().replace('-', ' ')}
+                        <span className="min-w-0 truncate text-[10px] text-[#ccff00] bg-[#ccff00]/10 border border-[#ccff00]/25 px-2 py-0.5 rounded font-mono leading-none">
+                            {activeId.toUpperCase().replace(/-/g, ' ')}
                         </span>
                     </div>
-                    <span className="text-xs font-bold text-white/80 group-hover:text-[#ccff00] font-mono flex items-center gap-1.5 transition-colors">
+                    <span className="shrink-0 text-xs font-bold text-white/80 group-hover:text-[#ccff00] font-mono flex items-center gap-1.5 transition-colors">
                         Outline <span className="group-hover:translate-x-0.5 transition-transform">➔</span>
                     </span>
                 </button>
