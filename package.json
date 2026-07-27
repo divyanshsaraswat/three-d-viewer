@@ -16,6 +16,7 @@
     "@onboardjs/react": "^1.0.0-rc.3",
     "@playcanvas/react": "^0.11.3",
     "@sanity/image-url": "^2.1.1",
+    "@sanity/ui": "^3.2.0",
     "@tinymce/tinymce-react": "^6.3.0",
     "@use-gesture/react": "^10.3.1",
     "@vercel/analytics": "^2.0.1",
