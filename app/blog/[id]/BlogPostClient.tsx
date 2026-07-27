@@ -174,37 +174,46 @@ export default function BlogPostClient({
             } else {
                 setShowFloatingToc(false);
             }
+
+            // Active heading = whichever crossed the reading line most recently
+            // (largest top still <= the line), not just the last one found while
+            // walking the list — robust even if one entry reports a stray rect.
+            // The line sits 45% down the viewport (not a thin sliver near the
+            // top) so a heading counts as "reached" as soon as it's comfortably
+            // on screen, matching how a reader actually experiences the section.
+            // Looked up fresh every call (not cached) — a cached reference can
+            // silently go stale/detached if the article subtree is ever
+            // replaced, which then reports an all-zero rect for every heading.
+            const readingLine = window.innerHeight * 0.45;
+            let current: string | null = null;
+            let currentTop = -Infinity;
+            for (const sec of sections) {
+                const el = document.getElementById(sec.id);
+                if (!el) continue;
+                const top = el.getBoundingClientRect().top;
+                if (top <= readingLine && top > currentTop) {
+                    current = el.id;
+                    currentTop = top;
+                }
+            }
+            if (current) setActiveId(current);
         };
 
         window.addEventListener("scroll", handleScroll);
+
+        // Article body comes from Sanity — its final height isn't knowable at a
+        // fixed moment after mount (embedded images, fonts, and content length
+        // all vary per post and can keep reflowing after paint). A ResizeObserver
+        // on the page recomputes positions every time the layout actually
+        // settles, instead of trusting one guessed-timing snapshot.
+        const resizeObserver = new ResizeObserver(() => handleScroll());
+        resizeObserver.observe(document.body);
+
         handleScroll();
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    useEffect(() => {
-        const observerOptions = {
-            root: null,
-            rootMargin: "-15% 0px -55% 0px",
-            threshold: 0.1,
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    setActiveId(entry.target.id);
-                }
-            });
-        }, observerOptions);
-
-        const headingElements = sections.map((sec) => document.getElementById(sec.id));
-        headingElements.forEach((el) => {
-            if (el) observer.observe(el);
-        });
 
         return () => {
-            headingElements.forEach((el) => {
-                if (el) observer.unobserve(el);
-            });
+            window.removeEventListener("scroll", handleScroll);
+            resizeObserver.disconnect();
         };
     }, [sections]);
 
