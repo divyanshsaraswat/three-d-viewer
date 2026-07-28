@@ -50,6 +50,14 @@ export default function GlobalProvider({ children }: { children: React.ReactNode
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Also sync onto <html>: `.dark` on the wrapper div below covers all the
+    // app's own `dark:` utility classes, but browsers only reliably use
+    // `color-scheme` for native form-control popups (like <select> dropdowns)
+    // when it resolves at the true document root — not an inner descendant.
+    useEffect(() => {
+        document.documentElement.classList.toggle('dark', isDarkMode);
+    }, [isDarkMode]);
+
     return (
         <GlobalContext.Provider value={{
             hasEntered, setHasEntered,

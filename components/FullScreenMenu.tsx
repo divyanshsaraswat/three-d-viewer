@@ -119,7 +119,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                         <X size={24} className="group-hover:rotate-180 transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)]" />
                     </button>
 
-                    <div className="flex-1 flex flex-col justify-center mt-16 md:mt-12 w-full max-w-md mx-auto">
+                    <div className="flex-1 min-h-0 overflow-y-auto flex flex-col justify-center mt-16 md:mt-12 w-full max-w-md mx-auto">
                         {navLinks.map((link, idx) => {
                             const isAboutUs = link.title === "ABOUT US";
                             const href = isAboutUs ? "/about-us" : `/${link.title.toLowerCase().replace(' ', '-')}`;
@@ -129,7 +129,7 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
                                     key={idx}
                                     href={href}
                                     ref={el => { if (el) linksRef.current[idx] = el as any }}
-                                    className="relative group w-max cursor-pointer py-4 px-6 -ml-6 rounded-2xl mb-2 flex items-start overflow-hidden"
+                                    className="relative group w-max cursor-pointer py-3 px-6 -ml-6 rounded-2xl mb-1 flex items-start overflow-hidden"
                                     onClick={() => { trackEvent('full_screen_menu_nav_clicked', { link: link.title }); onClose(); }}
                                 >
                                     {/* Background block sliding from bottom to top on hover */}
@@ -137,11 +137,11 @@ export default function FullScreenMenu({ isOpen, onClose }: FullScreenMenuProps)
 
                                     <div className="relative z-10 overflow-hidden pointer-events-none flex items-start shadow-none">
                                         {/* Primary Text */}
-                                        <h2 className="text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-black dark:text-white transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                        <h2 className="text-[2rem] md:text-[2.75rem] font-bold uppercase tracking-tighter text-black dark:text-white transform group-hover:-translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
                                             {link.title}
                                         </h2>
                                         {/* Secondary Text absolutely positioned under the first */}
-                                        <h2 className="absolute top-0 left-0 text-[2.5rem] md:text-[3.5rem] font-bold uppercase tracking-tighter text-black dark:text-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
+                                        <h2 className="absolute top-0 left-0 text-[2rem] md:text-[2.75rem] font-bold uppercase tracking-tighter text-black dark:text-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] leading-none m-0 p-0">
                                             {link.title}
                                         </h2>
                                     </div>

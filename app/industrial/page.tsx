@@ -268,8 +268,11 @@ export default function IndustrialPage() {
     };
 
     const inputClass = "w-full bg-black/[0.03] dark:bg-white/[0.04] backdrop-blur-sm border border-black/10 dark:border-white/10 text-black dark:text-white placeholder:text-black/30 dark:placeholder:text-white/25 rounded-xl py-3.5 px-4 focus:outline-none focus:ring-1 focus:ring-[#ccff00]/50 focus:border-[#ccff00]/40 focus:bg-black/[0.06] dark:focus:bg-white/[0.06] transition-all duration-300 text-[14px] font-medium";
-    // Native <select> popups ignore our bg/text classes — color-scheme tells the browser to render the dropdown itself in the matching theme.
-    const selectClass = `${inputClass} dark:[color-scheme:dark] cursor-pointer`;
+    const selectClass = `${inputClass} cursor-pointer`;
+    // color-scheme (root-level or per-element) isn't reliably honored by every
+    // browser for native <option> popups — setting bg/text directly on each
+    // <option> is more forceful and consistently respected.
+    const optionClass = "bg-white dark:bg-[#111] text-black dark:text-white";
     const labelClass = "block text-[10px] uppercase tracking-[0.2em] text-black/40 dark:text-white/30 font-bold mb-2 pl-1";
 
     return (
@@ -687,8 +690,8 @@ export default function IndustrialPage() {
                                     <div>
                                         <label className={labelClass}>Industry *</label>
                                         <select value={industry} onChange={e => setIndustry(e.target.value)} className={selectClass} required>
-                                            <option value="">Select industry</option>
-                                            {industryOptions.map(o => <option key={o} value={o}>{o}</option>)}
+                                            <option value="" className={optionClass}>Select industry</option>
+                                            {industryOptions.map(o => <option key={o} value={o} className={optionClass}>{o}</option>)}
                                         </select>
                                     </div>
                                 </div>
@@ -696,8 +699,8 @@ export default function IndustrialPage() {
                                     <div>
                                         <label className={labelClass}>Product *</label>
                                         <select value={product} onChange={e => setProduct(e.target.value)} className={selectClass} required>
-                                            <option value="">Select product</option>
-                                            {productOptions.map(o => <option key={o} value={o}>{o}</option>)}
+                                            <option value="" className={optionClass}>Select product</option>
+                                            {productOptions.map(o => <option key={o} value={o} className={optionClass}>{o}</option>)}
                                         </select>
                                     </div>
                                     <div>
