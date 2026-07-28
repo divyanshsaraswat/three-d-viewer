@@ -23,6 +23,29 @@ const ALLOWED_ATTR = new Set([
 const URL_ATTR = new Set(["href", "src"]);
 const SAFE_URL = /^(https?:|mailto:|tel:|\/|#)/i;
 
+// Inline style properties that only ever show up as Microsoft Word paste
+// residue (mso-list, per-paragraph margin/text-indent/line-height) — no
+// TinyMCE toolbar control sets these, and Word emits them inconsistently
+// per-paragraph, which is what causes uneven spacing between list items or
+// paragraphs on the published page. Color/font/alignment/size stay allowed
+// since those ARE reachable from the toolbar and may be intentional.
+const STYLE_PROPERTY_DENYLIST = new Set([
+  "margin", "margin-top", "margin-bottom", "margin-left", "margin-right",
+  "text-indent", "line-height",
+]);
+
+function cleanStyle(style: string): string {
+  return style
+    .split(";")
+    .map((decl) => decl.trim())
+    .filter((decl) => {
+      if (!decl) return false;
+      const prop = decl.split(":")[0]?.trim().toLowerCase() ?? "";
+      return !prop.startsWith("mso-") && !STYLE_PROPERTY_DENYLIST.has(prop);
+    })
+    .join("; ");
+}
+
 // ponytail: hand-rolled allowlist sanitizer instead of isomorphic-dompurify —
 // dompurify's jsdom dependency broke Vercel's Turbopack SSR bundle (ESM/CJS
 // interop crash in html-encoding-sniffer). cheerio was already a dependency here.
@@ -45,6 +68,12 @@ function sanitize(html: string): string {
     for (const attr of Object.keys(el.attribs)) {
       if (attr.toLowerCase().startsWith("on") || !ALLOWED_ATTR.has(attr)) {
         $el.removeAttr(attr);
+        continue;
+      }
+      if (attr === "style") {
+        const cleaned = cleanStyle(el.attribs[attr]);
+        if (cleaned) $el.attr("style", cleaned);
+        else $el.removeAttr("style");
         continue;
       }
       if (URL_ATTR.has(attr) && !SAFE_URL.test(el.attribs[attr].trim())) {

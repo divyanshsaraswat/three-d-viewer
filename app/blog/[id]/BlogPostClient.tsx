@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BlurImage from '@/components/BlurImage';
-import { MessageCircle, Heart, Bookmark, Share, PlayCircle, Link2, Instagram } from 'lucide-react';
+import { MessageCircle, Heart, Bookmark, Share, PlayCircle, Link2, Instagram, Clock } from 'lucide-react';
 import Link from 'next/link';
 import type { Heading } from '@/lib/sanity/richText';
 
@@ -313,7 +313,7 @@ export default function BlogPostClient({
                                 <span className="text-[#ccff00] text-sm leading-none">✦</span> Member-only story
                             </div> */}
 
-                            <h1 className="text-4xl md:text-[46px] leading-[1.15] font-black tracking-tight mb-4 text-black dark:text-white">
+                            <h1 className="text-4xl md:text-[46px] leading-[1.15] font-black tracking-tight mb-6 text-black dark:text-white">
                                 {post.title}
                             </h1>
 
@@ -328,25 +328,25 @@ export default function BlogPostClient({
                             )}
 
                             {/* Author Byline Block */}
-                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
 
                                 {/* Author Info (Left) */}
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
                                         <BlurImage src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
                                     </div>
-                                    <div className="flex flex-col">
+                                    <div className="flex flex-col gap-0.5">
                                         <span className="font-bold text-black dark:text-white text-base leading-tight">
                                             {post.author.name}
                                         </span>
-                                        <span className="text-[12px] font-medium text-black/50 dark:text-white/40 mt-1">
+                                        <span className="text-[12px] font-medium text-black/50 dark:text-white/50 leading-tight">
                                             {post.author.designation}
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Dates and Read Time (Right) */}
-                                <div className="flex flex-wrap items-start gap-x-6 gap-y-2 text-xs md:text-sm font-medium pt-1">
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm font-medium">
                                     <div className="flex flex-col gap-1">
                                         <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Published</span>
                                         <span className="text-black/80 dark:text-white/80">{post.author.published}</span>
@@ -357,8 +357,11 @@ export default function BlogPostClient({
                                             <span className="text-black/80 dark:text-white/80">{post.author.updated}</span>
                                         </div>
                                     )}
-                                    <div className="text-black/80 dark:text-white/80 font-semibold font-mono text-xs">
-                                        {post.author.readTime}
+                                    <div className="flex flex-col gap-1">
+                                        <Clock size={12} className="text-black/40 dark:text-white/30" />
+                                        <span className="text-black/80 dark:text-white/80 font-semibold font-mono text-xs">
+                                            {post.author.readTime}
+                                        </span>
                                     </div>
                                 </div>
 

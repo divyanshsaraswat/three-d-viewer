@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import TinyMCEInput from "../components/TinyMCEInput";
+import TagsInput from "../components/TagsInput";
 
 export default defineType({
   name: "post",
@@ -62,6 +63,7 @@ export default defineType({
       group: "content",
       of: [{ type: "string" }],
       options: { layout: "tags" },
+      components: { input: TagsInput },
     }),
     defineField({ name: "readTime", title: "Read time", type: "string", group: "content", description: 'e.g. "9 min read"' }),
     defineField({ name: "publishedAt", title: "Published at", type: "datetime", group: "content", validation: (r) => r.required() }),

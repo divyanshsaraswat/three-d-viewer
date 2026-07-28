@@ -35,6 +35,40 @@ export function TinyMCEInput(props: TextInputProps) {
         ],
         skin: isDark ? "oxide-dark" : "oxide",
         content_css: isDark ? "dark" : "default",
+        // Every page (via AppShell's root wrapper and each page's own <main>)
+        // applies Tailwind's `font-sans` utility, which globals.css wires to
+        // `--font-geist-sans` — that's the font that actually renders on the
+        // published post, not the OS default. Load it into the editor iframe
+        // so "System Font" matches reality.
+        content_style:
+          "@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');" +
+          "body { font-family: 'Geist', sans-serif; }",
+        // Toolbar shows "System Font" as the inherited default, but TinyMCE's
+        // built-in font list has no entry to select back to it once changed —
+        // add one explicitly so it's a real, reselectable option. Also list
+        // Geist and Inter by name (both used on the site) so either can be
+        // picked directly, not just via the "System Font" alias.
+        font_family_formats:
+          "System Font=Geist,sans-serif;" +
+          "Geist=Geist,sans-serif;" +
+          "Inter=Inter,sans-serif;" +
+          "Andale Mono=andale mono,times;" +
+          "Arial=arial,helvetica,sans-serif;" +
+          "Arial Black=arial black,avant garde;" +
+          "Book Antiqua=book antiqua,palatino;" +
+          "Comic Sans MS=comic sans ms,sans-serif;" +
+          "Courier New=courier new,courier;" +
+          "Georgia=georgia,palatino;" +
+          "Helvetica=helvetica;" +
+          "Impact=impact,chicago;" +
+          "Symbol=symbol;" +
+          "Tahoma=tahoma,arial,helvetica,sans-serif;" +
+          "Terminal=terminal,monaco;" +
+          "Times New Roman=times new roman,times;" +
+          "Trebuchet MS=trebuchet ms,geneva;" +
+          "Verdana=verdana,geneva;" +
+          "Webdings=webdings;" +
+          "Wingdings=wingdings,zapf dingbats",
         images_upload_handler: (blobInfo) =>
           client.assets
             .upload("image", blobInfo.blob(), { filename: blobInfo.filename() })
