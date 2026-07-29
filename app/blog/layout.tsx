@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/utils/seo";
 
+const blogTitle = "Sustainable Materials & Circular Economy Blog/Insights | Weinix";
 const blogDescription =
-  "Insights into the future of circularity, high-volume material recovery, and sustainable manufacturing from the WEINIX team.";
+  "Explore the Weinix blog for insights on circular building materials, textile recycling, sustainable innovation, green construction, and the circular economy.";
 
 export const metadata: Metadata = {
-  title: "Journal | Circular Insights",
+  title: { absolute: blogTitle },
   description: blogDescription,
   alternates: {
     canonical: "/blog",
   },
   openGraph: {
-    title: `Journal | ${siteConfig.name}`,
+    title: blogTitle,
     description: blogDescription,
     url: "/blog",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `Journal | ${siteConfig.name}`,
+    title: blogTitle,
     description: blogDescription,
     images: ["/og-img.webp"],
   },

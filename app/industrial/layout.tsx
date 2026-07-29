@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/utils/seo";
 
+// Maps to the "B-2-B Page" entry in the SEO meta sheet — that row's
+// recommended URL (/b2b-solutions) doesn't exist in this codebase; this page
+// (/industrial) is our actual B2B/bulk-supply page, so the meta lands here.
+const industrialTitle = "Textile Board Manufacturer & Wholesale Supplier | Weinix";
 const industrialDescription =
-  "WEINIX Industrial supplies bulk recovered fibers, insulation, composite boards and recycled textile materials to manufacturers, construction firms, fashion brands and distributors across 25+ countries. Request a wholesale quote.";
+  "Weinix is a trusted textile board manufacturer and wholesale supplier, converting textile waste into premium building materials. Request a bulk quote today.";
 
 export const metadata: Metadata = {
-  title: "WEINIX Industrial | Bulk Recycled Textile Materials for Manufacturers & Distributors",
+  title: { absolute: industrialTitle },
   description: industrialDescription,
   keywords: [
     "recycled textile supplier",
@@ -20,9 +23,8 @@ export const metadata: Metadata = {
     canonical: "/industrial",
   },
   openGraph: {
-    title: `${siteConfig.name} Industrial | Bulk Recycled Textile Materials for Global Industries`,
-    description:
-      "Sustainable textile recycling solutions for manufacturers, wholesalers, importers, exporters and industrial buyers. 500+ business partners across 25+ countries.",
+    title: industrialTitle,
+    description: industrialDescription,
     url: "/industrial",
     images: [
       {
@@ -35,9 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "WEINIX Industrial | Bulk Recycled Textile Materials",
-    description:
-      "Sustainable textile recycling solutions for manufacturers, wholesalers, importers, exporters and industrial buyers.",
+    title: industrialTitle,
+    description: industrialDescription,
     images: ["/og-img.webp"],
   },
 };

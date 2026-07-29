@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/utils/seo";
 
+const aboutTitle = "About Us | Textile Waste Recycling & Circular Economy | Weinix";
 const aboutDescription =
-  "Weinix is the recycling and material recovery engine powering the circular fashion economy. We transform post-consumer clothing waste into industrial-grade raw materials.";
+  "Discover how Weinix leads textile waste recycling with innovative circular economy solutions, premium materials, and certified quality. Learn more about our mission today.";
 
 export const metadata: Metadata = {
-  title: "About Us | Infrastructure for Circularity",
+  title: { absolute: aboutTitle },
   description: aboutDescription,
   alternates: {
     canonical: "/about-us",
   },
   openGraph: {
-    title: `About Us | ${siteConfig.name}`,
+    title: aboutTitle,
     description: aboutDescription,
     url: "/about-us",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `About Us | ${siteConfig.name}`,
+    title: aboutTitle,
     description: aboutDescription,
     images: ["/og-img.webp"],
   },

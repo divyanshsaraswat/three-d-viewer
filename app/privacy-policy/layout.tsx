@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/utils/seo";
 
+const privacyTitle = "Privacy Policy | Weinix";
 const privacyDescription =
-  "How WEINIX collects, uses, and protects your personal information across our website and services.";
+  "Read the Weinix Privacy Policy to understand how we collect, use, protect, and manage your personal information when using our website and services.";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: { absolute: privacyTitle },
   description: privacyDescription,
   alternates: {
     canonical: "/privacy-policy",
   },
   openGraph: {
-    title: `Privacy Policy | ${siteConfig.name}`,
+    title: privacyTitle,
     description: privacyDescription,
     url: "/privacy-policy",
   },

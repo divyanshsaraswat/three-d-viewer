@@ -80,6 +80,21 @@ function sanitize(html: string): string {
         $el.removeAttr(attr);
       }
     }
+
+    // TinyMCE's embed feature (YouTube etc.) emits a bare <iframe> with fixed
+    // pixel width/height — wider than the article column, so it overflows and
+    // reflows (causing the embedded player to redraw its overlay) on scroll.
+    // Replace the fixed size with a fluid width + CSS aspect-ratio derived
+    // from the original dimensions, so it always fits its container.
+    if (el.tagName === "iframe") {
+      const w = parseInt(el.attribs.width, 10);
+      const h = parseInt(el.attribs.height, 10);
+      const styleParts = [cleanStyle(el.attribs.style || ""), "max-width:100%", "display:block"];
+      if (w > 0 && h > 0) styleParts.push(`aspect-ratio:${w}/${h}`);
+      $el.attr("style", styleParts.filter(Boolean).join("; "));
+      $el.attr("width", "100%");
+      $el.removeAttr("height");
+    }
   });
 
   return $.html();

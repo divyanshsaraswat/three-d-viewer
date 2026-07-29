@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/utils/seo";
 
+const termsTitle = "Terms & Conditions | Weinix";
 const termsDescription =
-  "Terms and conditions for using the WEINIX website, products, and services.";
+  "Review the Weinix Terms & Conditions to understand the rules, responsibilities, and conditions governing the use of our website, products, and services.";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions",
+  title: { absolute: termsTitle },
   description: termsDescription,
   alternates: {
     canonical: "/terms",
   },
   openGraph: {
-    title: `Terms & Conditions | ${siteConfig.name}`,
+    title: termsTitle,
     description: termsDescription,
     url: "/terms",
   },

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/utils/seo";
 
+const faqTitle = "FAQs | Textile Waste Recycling & Green Building Materials | Weinix";
 const faqDescription =
-  "Answers to common questions about WEINIX and our recycled textile-based building materials — panels, sheets, and brick-style solutions for sustainable, circular construction.";
+  "Find answers to common questions about Weinix, textile waste recycling, green building materials, and circular economy solutions. Explore our FAQs today.";
 
 export const metadata: Metadata = {
-  title: "FAQ | Frequently Asked Questions",
+  title: { absolute: faqTitle },
   description: faqDescription,
   alternates: {
     canonical: "/faq",
   },
   openGraph: {
-    title: `FAQ | ${siteConfig.name}`,
+    title: faqTitle,
     description: faqDescription,
     url: "/faq",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `FAQ | ${siteConfig.name}`,
+    title: faqTitle,
     description: faqDescription,
     images: ["/og-img.webp"],
   },

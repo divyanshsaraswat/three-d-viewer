@@ -17,13 +17,17 @@ const inter = Inter({
   display: "swap"
 });
 
+const homeTitle = "Green Building Materials & Textile Waste Recycling | Weinix";
+const homeDescription =
+  "Weinix transforms textile waste into premium green building materials through innovative textile waste recycling and circular waste management. Explore sustainable solutions today.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${siteConfig.name} | Circular Building Materials`,
+    default: homeTitle,
     template: `%s | ${siteConfig.name}`,
   },
-  description: siteConfig.description,
+  description: homeDescription,
   keywords: [...siteConfig.keywords],
   applicationName: siteConfig.name,
   authors: [
@@ -43,8 +47,8 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: `${siteConfig.name} | Future of Circular Architecture`,
-    description: siteConfig.description,
+    title: homeTitle,
+    description: homeDescription,
     url: "/",
     siteName: siteConfig.name,
     locale: "en_US",
@@ -61,8 +65,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} | Circular Architectural Surfaces`,
-    description: siteConfig.description,
+    title: homeTitle,
+    description: homeDescription,
     images: ["/icon-weinix.svg"],
   },
   verification: {
