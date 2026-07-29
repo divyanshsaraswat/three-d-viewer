@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import BlurImage from '@/components/BlurImage';
@@ -42,6 +42,233 @@ interface Bookmark {
     bookmarkedAt: string;
 }
 
+const BlogPostStaticContent = React.memo(function BlogPostStaticContent({
+    post,
+    isBookmarked,
+    isCopied,
+    handleCopyLink,
+    handleShare,
+    handleToggleBookmark,
+    prevId,
+    nextId,
+    navButtonsRef,
+}: {
+    post: BlogPostData;
+    isBookmarked: boolean;
+    isCopied: boolean;
+    handleCopyLink: () => void;
+    handleShare: () => void;
+    handleToggleBookmark: () => void;
+    prevId: string | null;
+    nextId: string | null;
+    navButtonsRef: React.RefObject<HTMLDivElement | null>;
+}) {
+    return (
+        <div className="w-full min-w-0">
+            <article className="max-w-[720px] mx-auto lg:mx-0">
+                {/* Title & Subtitle */}
+                <div className="mb-10 anim-header">
+                    <h1 className="text-4xl md:text-[46px] leading-[1.15] font-black tracking-tight mb-6 text-black dark:text-white">
+                        {post.title}
+                    </h1>
+
+                    {/* Highlighted Subtitle */}
+                    {post.subtitle && (
+                        <div className="inline-block relative mb-8 lg:mb-12">
+                            <div className="absolute inset-0 bg-[#e7f5e9] dark:bg-[#e7f5e9]/10 rounded-sm -z-10 -mx-1 -my-0.5"></div>
+                            <h2 className="text-xl md:text-[22px] text-[#2f4f4f] dark:text-[#a0c0c0] font-normal leading-snug">
+                                {post.subtitle}
+                            </h2>
+                        </div>
+                    )}
+
+                    {/* Author Byline Block */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
+                        {/* Author Info (Left) */}
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
+                                <BlurImage src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex flex-col gap-0.5">
+                                <span className="font-bold text-black dark:text-white text-base leading-tight">
+                                    {post.author.name}
+                                </span>
+                                <span className="text-[12px] font-medium text-black/50 dark:text-white/50 leading-tight">
+                                    {post.author.designation}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Dates and Read Time (Right) */}
+                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm font-medium">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Published</span>
+                                <span className="text-black/80 dark:text-white/80">{post.author.published}</span>
+                            </div>
+                            {post.author.updated && (
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Updated</span>
+                                    <span className="text-black/80 dark:text-white/80">{post.author.updated}</span>
+                                </div>
+                            )}
+                            <div className="flex flex-col gap-1">
+                                <Clock size={12} className="text-black/40 dark:text-white/30" />
+                                <span className="text-black/80 dark:text-white/80 font-semibold font-mono text-xs">
+                                    {post.author.readTime}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Share and Action Utility Bar */}
+                    <div className="flex items-center justify-between py-3.5 border-t border-b border-black/10 dark:border-white/10 mb-12">
+                        {/* Left Side: Social sharing links */}
+                        <div className="flex items-center gap-3">
+                            {/* Copy Link Button */}
+                            <div className="relative">
+                                <button
+                                    onClick={handleCopyLink}
+                                    className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
+                                        isCopied
+                                            ? 'border-[#1a8917] dark:border-[#ccff00] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/5 dark:bg-[#ccff00]/5 scale-105'
+                                            : 'border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+                                    }`}
+                                    title={isCopied ? "Link copied!" : "Copy story link"}
+                                >
+                                    <Link2 size={15} />
+                                </button>
+                                <div
+                                    className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black text-[11px] font-semibold whitespace-nowrap transition-all duration-200 pointer-events-none ${
+                                        isCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'
+                                    }`}
+                                >
+                                    Copied
+                                </div>
+                            </div>
+                            {/* LinkedIn Link */}
+                            {post.author.linkedin && (
+                                <a
+                                    href={post.author.linkedin}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-mono text-xs font-bold leading-none cursor-pointer"
+                                    title="LinkedIn Profile"
+                                >
+                                    in
+                                </a>
+                            )}
+                            {/* Twitter/X Link */}
+                            {post.author.twitter && (
+                                <a
+                                    href={post.author.twitter}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-serif text-sm font-bold leading-none cursor-pointer"
+                                    title="X Profile"
+                                >
+                                    𝕏
+                                </a>
+                            )}
+                            {/* Instagram Link (site-wide, not per-author in Sanity) */}
+                            <a
+                                href="https://www.instagram.com/weinix.in"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all cursor-pointer"
+                                title="Instagram"
+                            >
+                                <Instagram size={15} />
+                            </a>
+                        </div>
+
+                        {/* Right Side: Page utility options */}
+                        <div className="flex items-center gap-5 text-black/60 dark:text-white/60">
+                            <button
+                                onClick={handleToggleBookmark}
+                                className={`transition-colors cursor-pointer ${isBookmarked ? 'text-[#1a8917] dark:text-[#ccff00]' : 'hover:text-black dark:hover:text-white'}`}
+                                title={isBookmarked ? "Remove bookmark" : "Bookmark"}
+                            >
+                                <Bookmark size={20} fill={isBookmarked ? "currentColor" : "none"} />
+                            </button>
+                            <button
+                                onClick={handleShare}
+                                className="hover:text-black dark:hover:text-white transition-colors cursor-pointer"
+                                title="Share"
+                            >
+                                <Share size={18} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            {/* Expansive Hero Image */}
+            <div className="max-w-[720px] mx-auto lg:mx-0 mb-16 anim-hero-img">
+                <div className="w-full aspect-[21/9] md:aspect-[16/8] bg-gray-100 dark:bg-[#111] overflow-hidden rounded-[1rem] md:rounded-[2rem] shadow-sm">
+                    <BlurImage
+                        src={post.image}
+                        alt={post.imageAlt || post.title}
+                        className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-[2s]"
+                    />
+                </div>
+                {post.imageCaption && (
+                    <p className="text-center text-xs text-black/50 dark:text-white/50 mt-4 font-medium">{post.imageCaption}</p>
+                )}
+            </div>
+
+            {/* Article Content Block */}
+            <article className="max-w-[720px] mx-auto lg:mx-0 anim-content">
+                <div
+                    className="prose prose-lg dark:prose-invert prose-p:text-[20px] prose-p:leading-[1.6] prose-p:text-[#242424] dark:prose-p:text-[#e0e0e0] prose-p:font-normal prose-h1:text-[32px] prose-h1:font-bold prose-h2:text-[32px] prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-h3:mt-10 prose-h3:mb-4 prose-h4:text-[14px] prose-h4:uppercase prose-h4:tracking-wider prose-h4:font-bold prose-h4:mt-8 prose-h4:mb-3 prose-a:text-[#1a8917] dark:prose-a:text-[#ccff00] prose-li:text-[19px] prose-blockquote:border-l-[#1a8917] dark:prose-blockquote:border-l-[#ccff00] prose-blockquote:not-italic prose-code:text-[#1a8917] dark:prose-code:text-[#ccff00] prose-code:before:content-none prose-code:after:content-none [&_h5]:text-[13px] [&_h5]:uppercase [&_h5]:tracking-wide [&_h5]:font-semibold [&_h5]:mt-6 [&_h5]:mb-2 [&_h5]:text-black/70 dark:[&_h5]:text-white/70 [&_h6]:text-[13px] [&_h6]:italic [&_h6]:font-semibold [&_h6]:mt-6 [&_h6]:mb-2 [&_h6]:text-black/60 dark:[&_h6]:text-white/60 max-w-none"
+                    dangerouslySetInnerHTML={{ __html: post.bodyHtml }}
+                />
+
+                {/* Bottom Topic Footer Tags */}
+                {post.tags?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-16 mb-20 pt-10 border-t border-black/10 dark:border-white/10">
+                        {post.tags.map((tag, i) => (
+                            <span key={i} className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full text-sm font-medium transition-colors cursor-pointer text-black/70 dark:text-white/70">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
+
+                {/* Article Navigation Buttons */}
+                <div ref={navButtonsRef} className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-black/10 dark:border-white/10">
+                    {/* Back to Journal */}
+                    <Link
+                        href="/blog"
+                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95"
+                    >
+                        ← Back to Journal
+                    </Link>
+
+                    {/* Previous & Next Articles */}
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href={prevId ? `/blog/${prevId}` : '#'}
+                            className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95 ${
+                                !prevId ? 'opacity-30 pointer-events-none' : 'hover:border-black/30 dark:hover:border-white/30'
+                            }`}
+                        >
+                            ← Previous Article
+                        </Link>
+                        <Link
+                            href={nextId ? `/blog/${nextId}` : '#'}
+                            className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95 ${
+                                !nextId ? 'opacity-30 pointer-events-none' : 'hover:border-black/30 dark:hover:border-white/30'
+                            }`}
+                        >
+                            Next Article →
+                        </Link>
+                    </div>
+                </div>
+            </article>
+        </div>
+    );
+});
+
 export default function BlogPostClient({
     post,
     prevId,
@@ -61,21 +288,20 @@ export default function BlogPostClient({
     const [isCopied, setIsCopied] = useState(false);
     const [isTocOpen, setIsTocOpen] = useState(false);
     const [showFloatingToc, setShowFloatingToc] = useState(false);
-    const [isBottomVisible, setIsBottomVisible] = useState(false);
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     const navButtonsRef = useRef<HTMLDivElement>(null);
     const isBottomVisibleRef = useRef(false);
 
-    const handleCopyLink = () => {
+    const handleCopyLink = useCallback(() => {
         if (typeof window !== 'undefined') {
             navigator.clipboard.writeText(window.location.href);
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 2000);
         }
-    };
+    }, []);
 
-    const handleShare = async () => {
+    const handleShare = useCallback(async () => {
         if (typeof navigator !== 'undefined' && navigator.share) {
             try {
                 await navigator.share({ title: post.title, text: post.subtitle, url: window.location.href });
@@ -85,7 +311,7 @@ export default function BlogPostClient({
         } else {
             handleCopyLink();
         }
-    };
+    }, [post.title, post.subtitle, handleCopyLink]);
 
     useEffect(() => {
         try {
@@ -96,7 +322,7 @@ export default function BlogPostClient({
         }
     }, [id]);
 
-    const handleToggleBookmark = () => {
+    const handleToggleBookmark = useCallback(() => {
         try {
             const stored: Bookmark[] = JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || "[]");
             const exists = stored.some((b) => b.id === id);
@@ -108,7 +334,7 @@ export default function BlogPostClient({
         } catch {
             // ignore write failures (e.g. private browsing storage limits)
         }
-    };
+    }, [id, post.title, post.image]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -120,7 +346,6 @@ export default function BlogPostClient({
                     if (isFooter || isNavButtons) {
                         if (entry.isIntersecting) {
                             isBottomVisibleRef.current = true;
-                            setIsBottomVisible(true);
                             setShowFloatingToc(false);
                         } else {
                             // Check if either is still intersecting
@@ -131,7 +356,6 @@ export default function BlogPostClient({
 
                             const visible = isFooterIntersecting || isNavIntersecting;
                             isBottomVisibleRef.current = visible;
-                            setIsBottomVisible(visible);
                             if (!visible) {
                                 const scrollY = window.scrollY;
                                 setShowFloatingToc(scrollY > 400);
@@ -285,236 +509,37 @@ export default function BlogPostClient({
 
                 {/* Main Content Area */}
                 <div className="w-full min-w-0">
-                    <article className="max-w-[720px] mx-auto lg:mx-0">
-
-                        {/* Mobile Table of Contents Trigger Strip */}
-                        <div className="lg:hidden mb-8 anim-header">
-                            <button
-                                onClick={() => setIsTocOpen(true)}
-                                className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 rounded-xl text-left transition-all active:scale-[0.98] group cursor-pointer"
-                            >
-                                <div className="flex items-center gap-2 min-w-0 flex-1">
-                                    <span className="shrink-0 text-black/60 dark:text-white/60 text-xs font-bold tracking-widest uppercase font-mono">
-                                        On This Page
-                                    </span>
-                                    <span className="min-w-0 truncate text-[10px] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/10 dark:bg-[#ccff00]/10 border border-[#1a8917]/20 dark:border-[#ccff00]/30 px-2 py-0.5 rounded font-mono leading-none">
-                                        {activeId.toUpperCase().replace(/-/g, ' ')}
-                                    </span>
-                                </div>
-                                <span className="shrink-0 text-xs font-bold text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white font-mono flex items-center gap-1.5">
-                                    Outline <span>➔</span>
+                    {/* Mobile Table of Contents Trigger Strip */}
+                    <div className="lg:hidden mb-8 anim-header">
+                        <button
+                            onClick={() => setIsTocOpen(true)}
+                            className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 rounded-xl text-left transition-all active:scale-[0.98] group cursor-pointer"
+                        >
+                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                                <span className="shrink-0 text-black/60 dark:text-white/60 text-xs font-bold tracking-widest uppercase font-mono">
+                                    On This Page
                                 </span>
-                            </button>
-                        </div>
-
-                        {/* Title & Subtitle */}
-                        <div className="mb-10 anim-header">
-                            {/* <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/5 dark:bg-white/10 rounded-md text-xs font-semibold mb-6 border border-black/10 dark:border-white/10">
-                                <span className="text-[#ccff00] text-sm leading-none">✦</span> Member-only story
-                            </div> */}
-
-                            <h1 className="text-4xl md:text-[46px] leading-[1.15] font-black tracking-tight mb-6 text-black dark:text-white">
-                                {post.title}
-                            </h1>
-
-                            {/* Highlighted Subtitle */}
-                            {post.subtitle && (
-                                <div className="inline-block relative mb-8 lg:mb-12">
-                                    <div className="absolute inset-0 bg-[#e7f5e9] dark:bg-[#e7f5e9]/10 rounded-sm -z-10 -mx-1 -my-0.5"></div>
-                                    <h2 className="text-xl md:text-[22px] text-[#2f4f4f] dark:text-[#a0c0c0] font-normal leading-snug">
-                                        {post.subtitle}
-                                    </h2>
-                                </div>
-                            )}
-
-                            {/* Author Byline Block */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
-
-                                {/* Author Info (Left) */}
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
-                                        <BlurImage src={post.author.avatar} alt={post.author.name} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="flex flex-col gap-0.5">
-                                        <span className="font-bold text-black dark:text-white text-base leading-tight">
-                                            {post.author.name}
-                                        </span>
-                                        <span className="text-[12px] font-medium text-black/50 dark:text-white/50 leading-tight">
-                                            {post.author.designation}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Dates and Read Time (Right) */}
-                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm font-medium">
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Published</span>
-                                        <span className="text-black/80 dark:text-white/80">{post.author.published}</span>
-                                    </div>
-                                    {post.author.updated && (
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-black/40 dark:text-white/30 font-mono text-[10px] uppercase tracking-wider">Updated</span>
-                                            <span className="text-black/80 dark:text-white/80">{post.author.updated}</span>
-                                        </div>
-                                    )}
-                                    <div className="flex flex-col gap-1">
-                                        <Clock size={12} className="text-black/40 dark:text-white/30" />
-                                        <span className="text-black/80 dark:text-white/80 font-semibold font-mono text-xs">
-                                            {post.author.readTime}
-                                        </span>
-                                    </div>
-                                </div>
-
+                                <span className="min-w-0 truncate text-[10px] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/10 dark:bg-[#ccff00]/10 border border-[#1a8917]/20 dark:border-[#ccff00]/30 px-2 py-0.5 rounded font-mono leading-none">
+                                    {activeId.toUpperCase().replace(/-/g, ' ')}
+                                </span>
                             </div>
-
-                            {/* Share and Action Utility Bar */}
-                            <div className="flex items-center justify-between py-3.5 border-t border-b border-black/10 dark:border-white/10 mb-12">
-
-                                {/* Left Side: Social sharing links */}
-                                <div className="flex items-center gap-3">
-                                    {/* Copy Link Button */}
-                                    <div className="relative">
-                                        <button
-                                            onClick={handleCopyLink}
-                                            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
-                                                isCopied
-                                                    ? 'border-[#1a8917] dark:border-[#ccff00] text-[#1a8917] dark:text-[#ccff00] bg-[#1a8917]/5 dark:bg-[#ccff00]/5 scale-105'
-                                                    : 'border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-                                            }`}
-                                            title={isCopied ? "Link copied!" : "Copy story link"}
-                                        >
-                                            <Link2 size={15} />
-                                        </button>
-                                        <div
-                                            className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black text-[11px] font-semibold whitespace-nowrap transition-all duration-200 pointer-events-none ${
-                                                isCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'
-                                            }`}
-                                        >
-                                            Copied
-                                        </div>
-                                    </div>
-                                    {/* LinkedIn Link */}
-                                    {post.author.linkedin && (
-                                        <a
-                                            href={post.author.linkedin}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-mono text-xs font-bold leading-none cursor-pointer"
-                                            title="LinkedIn Profile"
-                                        >
-                                            in
-                                        </a>
-                                    )}
-                                    {/* Twitter/X Link */}
-                                    {post.author.twitter && (
-                                        <a
-                                            href={post.author.twitter}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all font-serif text-sm font-bold leading-none cursor-pointer"
-                                            title="X Profile"
-                                        >
-                                            𝕏
-                                        </a>
-                                    )}
-                                    {/* Instagram Link (site-wide, not per-author in Sanity) */}
-                                    <a
-                                        href="https://www.instagram.com/weinix.in"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all cursor-pointer"
-                                        title="Instagram"
-                                    >
-                                        <Instagram size={15} />
-                                    </a>
-                                </div>
-
-                                {/* Right Side: Page utility options */}
-                                <div className="flex items-center gap-5 text-black/60 dark:text-white/60">
-                                    <button
-                                        onClick={handleToggleBookmark}
-                                        className={`transition-colors cursor-pointer ${isBookmarked ? 'text-[#1a8917] dark:text-[#ccff00]' : 'hover:text-black dark:hover:text-white'}`}
-                                        title={isBookmarked ? "Remove bookmark" : "Bookmark"}
-                                    >
-                                        <Bookmark size={20} fill={isBookmarked ? "currentColor" : "none"} />
-                                    </button>
-                                    <button
-                                        onClick={handleShare}
-                                        className="hover:text-black dark:hover:text-white transition-colors cursor-pointer"
-                                        title="Share"
-                                    >
-                                        <Share size={18} />
-                                    </button>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </article>
-
-                    {/* Expansive Hero Image */}
-                    <div className="max-w-[720px] mx-auto lg:mx-0 mb-16 anim-hero-img">
-                        <div className="w-full aspect-[21/9] md:aspect-[16/8] bg-gray-100 dark:bg-[#111] overflow-hidden rounded-[1rem] md:rounded-[2rem] shadow-sm">
-                            <BlurImage
-                                src={post.image}
-                                alt={post.imageAlt || post.title}
-                                className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-[2s]"
-                            />
-                        </div>
-                        {post.imageCaption && (
-                            <p className="text-center text-xs text-black/50 dark:text-white/50 mt-4 font-medium">{post.imageCaption}</p>
-                        )}
+                            <span className="shrink-0 text-xs font-bold text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white font-mono flex items-center gap-1.5">
+                                Outline <span>➔</span>
+                            </span>
+                        </button>
                     </div>
 
-                    {/* Article Content Block */}
-                    <article className="max-w-[720px] mx-auto lg:mx-0 anim-content">
-                        <div
-                            className="prose prose-lg dark:prose-invert prose-p:text-[20px] prose-p:leading-[1.6] prose-p:text-[#242424] dark:prose-p:text-[#e0e0e0] prose-p:font-normal prose-h1:text-[32px] prose-h1:font-bold prose-h2:text-[32px] prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-h3:mt-10 prose-h3:mb-4 prose-h4:text-[14px] prose-h4:uppercase prose-h4:tracking-wider prose-h4:font-bold prose-h4:mt-8 prose-h4:mb-3 prose-a:text-[#1a8917] dark:prose-a:text-[#ccff00] prose-li:text-[19px] prose-blockquote:border-l-[#1a8917] dark:prose-blockquote:border-l-[#ccff00] prose-blockquote:not-italic prose-code:text-[#1a8917] dark:prose-code:text-[#ccff00] prose-code:before:content-none prose-code:after:content-none [&_h5]:text-[13px] [&_h5]:uppercase [&_h5]:tracking-wide [&_h5]:font-semibold [&_h5]:mt-6 [&_h5]:mb-2 [&_h5]:text-black/70 dark:[&_h5]:text-white/70 [&_h6]:text-[13px] [&_h6]:italic [&_h6]:font-semibold [&_h6]:mt-6 [&_h6]:mb-2 [&_h6]:text-black/60 dark:[&_h6]:text-white/60 max-w-none"
-                            dangerouslySetInnerHTML={{ __html: post.bodyHtml }}
-                        />
-
-                        {/* Bottom Topic Footer Tags */}
-                        {post.tags?.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-16 mb-20 pt-10 border-t border-black/10 dark:border-white/10">
-                                {post.tags.map((tag, i) => (
-                                    <span key={i} className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full text-sm font-medium transition-colors cursor-pointer text-black/70 dark:text-white/70">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Article Navigation Buttons */}
-                        <div ref={navButtonsRef} className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-black/10 dark:border-white/10">
-                            {/* Back to Journal */}
-                            <Link
-                                href="/blog"
-                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95"
-                            >
-                                ← Back to Journal
-                            </Link>
-
-                            {/* Previous & Next Articles */}
-                            <div className="flex items-center gap-3">
-                                <Link
-                                    href={prevId ? `/blog/${prevId}` : '#'}
-                                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95 ${
-                                        !prevId ? 'opacity-30 pointer-events-none' : 'hover:border-black/30 dark:hover:border-white/30'
-                                    }`}
-                                >
-                                    ← Previous Article
-                                </Link>
-                                <Link
-                                    href={nextId ? `/blog/${nextId}` : '#'}
-                                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-black/10 dark:border-white/10 text-sm font-bold transition-all hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white cursor-pointer active:scale-95 ${
-                                        !nextId ? 'opacity-30 pointer-events-none' : 'hover:border-black/30 dark:hover:border-white/30'
-                                    }`}
-                                >
-                                    Next Article →
-                                </Link>
-                            </div>
-                        </div>
-                    </article>
+                    <BlogPostStaticContent
+                        post={post}
+                        isBookmarked={isBookmarked}
+                        isCopied={isCopied}
+                        handleCopyLink={handleCopyLink}
+                        handleShare={handleShare}
+                        handleToggleBookmark={handleToggleBookmark}
+                        prevId={prevId}
+                        nextId={nextId}
+                        navButtonsRef={navButtonsRef}
+                    />
                 </div>
             </div>
 
