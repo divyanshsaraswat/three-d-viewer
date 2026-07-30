@@ -114,11 +114,8 @@ export default function FaqPage() {
                     FAQ
                 </span>
 
-                <h1 className="faq-title text-4xl sm:text-5xl md:text-[4.5rem] font-black leading-[0.95] tracking-tighter uppercase mb-6">
-                    FREQUENTLY ASKED
-                    <span className="block font-serif italic font-light text-2xl sm:text-3xl md:text-4xl text-black/60 dark:text-white/60 tracking-normal capitalize mt-3">
-                        Questions
-                    </span>
+                <h1 className="faq-title text-4xl sm:text-5xl md:text-[4rem] font-black leading-[1.05] tracking-tighter uppercase mb-6">
+                    Frequently Asked Questions
                 </h1>
 
                 <p className="faq-subtitle text-sm md:text-base font-medium tracking-wide text-black/60 dark:text-white/50 max-w-2xl mx-auto leading-relaxed">
