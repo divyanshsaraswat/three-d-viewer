@@ -35,6 +35,15 @@ export function TinyMCEInput(props: TextInputProps) {
         ],
         skin: isDark ? "oxide-dark" : "oxide",
         content_css: isDark ? "dark" : "default",
+        // TinyMCE's default relative_urls behavior rewrites any URL you type
+        // relative to where it thinks this document lives (Sanity Studio's own
+        // route), turning e.g. "/terms" into "../../terms" — a path that's
+        // only valid at Studio's URL depth and breaks once that HTML renders
+        // on the actual published post at a totally different route. Store
+        // exactly what's typed instead of letting TinyMCE rewrite it.
+        convert_urls: false,
+        relative_urls: false,
+        remove_script_host: false,
         // Every page (via AppShell's root wrapper and each page's own <main>)
         // applies Tailwind's `font-sans` utility, which globals.css wires to
         // `--font-geist-sans` — that's the font that actually renders on the
